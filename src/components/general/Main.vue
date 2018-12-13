@@ -2,7 +2,7 @@
   <div>
     <h1>Formoop</h1>
 
-    <p>{{getUser().email}}</p>
+    <Profile/>
 
     <p><router-link to="/create">Formulaires créés</router-link></p>
     <p><router-link to="/published">Formulaire en cours</router-link></p>
@@ -13,9 +13,11 @@
 
 <script>
   import Firebase from 'firebase';
+  import Profile from "@/components/general/Profile";
 
   export default {
     name: "Main",
+    components: {Profile},
     data(){
       return {
 
