@@ -19,6 +19,7 @@
 
 <script>
   import Firebase from 'firebase';
+  import {handleError} from "@/helpers/loginErrorHandlingHelpers";
 
   export default {
     name: "SignIn",
@@ -36,7 +37,7 @@
             this.$router.replace("/home");
           },
           function (err) {
-            alert(err.message);
+            alert(handleError(err));
           }
         );
       }
