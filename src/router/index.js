@@ -28,7 +28,8 @@ const router = new Router({
       name: 'Main',
       component: Main,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
+        any: false
       }
     },
     {
@@ -63,7 +64,8 @@ const router = new Router({
       name: 'CreatorHome',
       component: CreatorHome,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
+        any: false
       }
     },
     {
@@ -71,7 +73,8 @@ const router = new Router({
       name: 'creatorForm',
       component: CreatorForm,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
+        any: false
       }
     },
     {
@@ -98,6 +101,7 @@ const router = new Router({
       component: SupervisorDashboard,
       meta: {
         requiresAuth: true,
+        any: false
       }
     }
   ]
