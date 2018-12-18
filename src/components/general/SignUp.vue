@@ -3,8 +3,11 @@
     <h1>Inscription</h1>
 
     <form>
-      <span><input class="loginInput" type="text" placeholder="Identifiant" v-model="login"/></span>
-      <label><input class="passwordInput" type="password" placeholder="Mot de passe" v-model="password"/></label>
+      <span><input class="firstNameInput" type="text" placeholder="Prénom" v-model="firstName" v-on:keydown="keyHandler"/></span>
+      <span><input class="lastNameInput" type="text" placeholder="Nom" v-model="lastName" v-on:keydown="keyHandler"/></span>
+
+      <span><input class="loginInput" type="text" placeholder="Adresse email" v-model="login"/></span>
+      <span><input class="passwordInput" type="password" placeholder="Mot de passe" v-model="password"/></span>
     </form>
 
     <button @click="signUp">S'inscrire</button>
@@ -19,12 +22,16 @@
 
 <script>
   import Firebase from 'firebase';
+  import { updateUserProfileDisplayName } from '@/thunks/userAccountThunks'
+  import {handleError} from "@/helpers/loginErrorHandlingHelpers";
 
   export default {
     name: "SignUp",
     data() {
       return {
         login: null,
+        firstName: null,
+        lastName: null,
         password: null
       }
     },
@@ -33,12 +40,25 @@
         const router = this.$router;
         Firebase.auth().createUserWithEmailAndPassword(this.login, this.password).then(
           (user) => {
-            this.$router.replace("/home");
+            updateUserProfileDisplayName(Firebase.auth().currentUser, this.firstName, this.lastName )
+              .then(() => {
+                this.$router.replace("/home");
+              })
+              .catch(e=>{
+                console.log(e);
+                this.$router.replace("/home");
+              })
+
           },
           function (err) {
-            alert(err.message);
+            alert(handleError(err));
+
           }
         );
+      },
+
+      keyHandler(event){
+        if(event.key === ' ') event.preventDefault();
       }
     }
   }

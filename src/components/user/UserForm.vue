@@ -5,6 +5,9 @@
                :key="entry.id"
                :entry="entry"/>
     <button @click="saveAnswers">Enregistrer</button>
+
+    <InviteModal/>
+
   </div>
   <div v-else>
     <h1 class="errorMessage">Formulaire inconnu !</h1>
@@ -15,11 +18,13 @@
   import UserFormEntry from '@/components/user/UserFormEntry'
   import {setSelectedAnswersFB} from '@/thunks/userFormEntriesThunks'
   import * as Firebase from "firebase";
+  import InviteModal from "@/components/general/InviteModal";
   export default {
     name: 'UserForm',
-    components: {UserFormEntry},
+    components: {InviteModal, UserFormEntry},
     data () {
       return {
+        showModal: false,
         selectedAnswers: {}
       }
     },

@@ -37,6 +37,7 @@
           this.selectedAnswers = null
         }
       },
+
       setSelectedAnswers: function () {
         this.$root.$emit('set-selected-answers', this.entryID, this.selectedAnswers)
       }
