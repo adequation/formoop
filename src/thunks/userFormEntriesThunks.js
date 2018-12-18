@@ -13,3 +13,12 @@ export const setSelectedAnswersFB = (formID, answers, userID) => {
     })
   })
 };
+
+export const deleteUserAnswerFB = (formID, entryID, userID) => {
+  Firebase.database().ref(getPublishedFormFromID(formID).concat('/entries/').concat(entryID)
+    .concat('/usersAnswers/').concat(userID))
+    .remove().then( (e) => {})
+    .catch((e) => {
+      console.error(e)
+    })
+};
