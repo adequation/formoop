@@ -6,7 +6,6 @@ yarn-debug.log*
 yarn-error.log*
 /test/unit/coverage/
 /src/firebaseConfig.js
-/src/nodeMailerConfig.js
 
 # Editor directories and files
 .idea
