@@ -25,7 +25,10 @@
       </div>
 
       <div>
-        <textarea class="mail-content-textarea" title="" v-model="mailContent"></textarea>
+        <textarea class="mail-content-textarea"
+                  title=""
+                  placeholder="Contenu du mail (facultatif)"
+                  v-model="mailContent"></textarea>
       </div>
 
     </form>
@@ -37,6 +40,7 @@
 
 <script>
   import io from 'socket.io-client';
+  import {sendMailWithSocket} from "@/helpers/mailHelpers";
 
   export default {
     name: "MailSender",
@@ -48,30 +52,49 @@
         mailContent: '',
 
         mailerURL: 'localhost:3000',
-        socket: null,
-        messages: []
+        socket: null
       }
     },
+    props: {
+      beforeBody: {
+        type: String,
+        required: false
+      },
+      afterBody: {
+        type: String,
+        required: false
+      },
+    },
     methods: {
+
       addAdressToPool() {
         if (!this.mailAddresses.find(a => a === this.currentMailAdress)
           && this.isValidAdress(this.currentMailAdress))
-          this.mailAddresses.push(this.currentMailAdress)
+          this.mailAddresses.push(this.currentMailAdress);
+        this.currentMailAdress  = '';
       },
+
       deleteAdress(index) {
         this.mailAddresses.splice(index, 1);
       },
+
       isValidAdress(adress) {
         const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(adress);
       },
+
       sendMail() {
-        this.socket.emit('sendMail', {
-          from: 'stev@gmail.com',
+        sendMailWithSocket(this.socket, {
+          from: 'formoop@gmail.com',
           to: this.mailAddresses,
-          html: this.mailContent,
+          html: (this.beforeBody || '') + '<br/><br/>' + (this.mailContent || '') + '<br/><br/>' + (this.afterBody || ''),
           subject: this.mailSubject
         });
+
+        this.currentMailAdress  = '';
+        this.mailAddresses      = [];
+        this.mailSubject        = '';
+        this.mailContent        = '';
       }
     },
     created() {
@@ -86,4 +109,19 @@
 </script>
 
 <style scoped>
+  div {
+    margin: 1em;
+  }
+
+  textarea {
+    font-size: .8rem;
+    letter-spacing: 1px;
+  }
+  textarea {
+    padding: 10px;
+    line-height: 1.5;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-shadow: 1px 1px 1px #999;
+  }
 </style>
