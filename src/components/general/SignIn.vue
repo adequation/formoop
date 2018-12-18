@@ -3,7 +3,7 @@
     <h1>Connexion</h1>
 
     <form>
-      <span><input class="loginInput" type="text" placeholder="Identifiant" v-model="login"/></span>
+      <span><input class="loginInput" type="email" placeholder="Identifiant" v-model="login"/></span>
       <label><input class="passwordInput" type="password" placeholder="Mot de passe" v-model="password"/></label>
     </form>
 
