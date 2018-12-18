@@ -23,6 +23,7 @@
 <script>
   import Firebase from 'firebase';
   import { updateUserProfileDisplayName } from '@/thunks/userAccountThunks'
+  import {handleError} from "@/helpers/loginErrorHandlingHelpers";
 
   export default {
     name: "SignUp",
@@ -39,12 +40,19 @@
         const router = this.$router;
         Firebase.auth().createUserWithEmailAndPassword(this.login, this.password).then(
           (user) => {
-            updateUserProfileDisplayName(Firebase.auth().currentUser, this.firstName, this.lastName );
-            this.$router.replace("/home");
+            updateUserProfileDisplayName(Firebase.auth().currentUser, this.firstName, this.lastName )
+              .then(() => {
+                this.$router.replace("/home");
+              })
+              .catch(e=>{
+                console.log(e);
+                this.$router.replace("/home");
+              })
+
           },
           function (err) {
-            console.log(err);
-            alert(err.message);
+            alert(handleError(err));
+
           }
         );
       },
