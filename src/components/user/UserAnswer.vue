@@ -17,7 +17,8 @@
         <UserAnswerSelect :answers="answer.answers" :entryID="entryID"/>
       </div>
       <div>
-        <p class="answered-by">{{usersAnswers ? Object.keys(usersAnswers).length : ''}}</p>
+
+        <p class="answered-by"><strong>{{usersAnswers ? Object.keys(usersAnswers).length : ''}}</strong></p>
 
         <button v-if="usersAnswers[user.uid]" id="deleteAnswer" type="button"
                 @click="deleteAnswer()">Supprimer ma réponse
@@ -87,6 +88,11 @@
 
   .already-answered {
     color: #42b983;
+  }
+
+  .answered-by {
+    color: #42b983;
+    font-size: large;
   }
 
 </style>
