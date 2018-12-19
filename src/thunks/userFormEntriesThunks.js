@@ -20,5 +20,5 @@ export const deleteUserAnswerFB = (formID, entryID, userID) => {
     .remove().then( (e) => {})
     .catch((e) => {
       console.error(e)
-    })
+  })
 };

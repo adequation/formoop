@@ -9,12 +9,12 @@
       </span>
 
         <span>
-        <input title="" type="text" :value="a.text" v-on:input="optionTextOnChange($event.target, a.id)"/>
-      </span>
+          <input title="" type="text" :value="a.text" v-on:input="optionTextOnChange($event.target, a.id)"/>
+        </span>
 
         <span>
-        <button id="deleteOptionButton" type="button" @click="deleteOption(a.id)">Supprimer l'option </button>
-      </span>
+          <button id="deleteOptionButton" type="button" @click="deleteOption(a.id)">Supprimer l'option </button>
+        </span>
 
       </div>
 
