@@ -1,5 +1,5 @@
 <template>
-  <div class="answer">
+  <div class="user-answer">
     <div v-if="(user) || (usersAnswers ? Object.keys(usersAnswers).length <= 0 : true)"> <!-- && invited !-->
       <div v-if="answer.type === 'textarea'">
         <UserAnswerTextarea :entryID="entryID"/>
@@ -17,17 +17,16 @@
         <UserAnswerSelect :answers="answer.answers" :entryID="entryID"/>
       </div>
       <div>
-        {{(usersAnswers ? Object.keys(usersAnswers).map(u => u.substr(0,10).concat('...')).join(" | ") || '' : '')}}
-      </div>
 
-      <div v-if="usersAnswers[user.uid]">
-        <span>
-          <button id="deleteAnswer" type="button" @click="deleteAnswer()">Supprimer ma réponse</button>
-        </span>
-      </div>
+        <p class="answered-by"><strong>{{usersAnswers ? Object.keys(usersAnswers).length : ''}}</strong></p>
 
+        <button v-if="usersAnswers[user.uid]" id="deleteAnswer" type="button"
+                @click="deleteAnswer()">Supprimer ma réponse
+        </button>
+
+      </div>
     </div>
-    <div v-else-if="(!user) && (usersAnswers ? !Object.keys(usersAnswers).length <= 0 : true)" class="alreadyAnsweredDiv">
+    <div v-else-if="(!user) && (usersAnswers ? !Object.keys(usersAnswers).length <= 0 : true)" class="already-answered">
       <h3>Cette question a déjà une réponse</h3>
     </div>
     <div v-else>
@@ -44,8 +43,7 @@
   import UserAnswerSelect from './UserAnswerSelect'
   import * as Firebase from "firebase";
   import {firebaseConfig} from "@/firebaseConfig";
-  import {deleteUserAnswerFB} from "../../thunks/userFormEntriesThunks";
-
+  import {deleteUserAnswerFB} from "@/thunks/userFormEntriesThunks";
   export default {
     name: 'UserAnswer',
     components: {UserAnswerText, UserAnswerTextarea, UserAnswerRadio, UserAnswerCheckbox, UserAnswerSelect},
@@ -76,9 +74,6 @@
     },
     methods: {
       deleteAnswer(){
-        console.log(this.$store.getters.getUserFormID);
-        console.log(this.entryID);
-        console.log(this.user.uid);
         deleteUserAnswerFB(this.$store.getters.getUserFormID, this.entryID, this.user.uid);
       }
     }
@@ -86,10 +81,18 @@
 </script>
 
 <style scoped>
-  .answer{
+
+  .user-answer{
     margin: 1em;
   }
-  .alreadyAnsweredDiv {
+
+  .already-answered {
     color: #42b983;
   }
+
+  .answered-by {
+    color: #42b983;
+    font-size: large;
+  }
+
 </style>
