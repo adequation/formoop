@@ -5,15 +5,19 @@
 
 
     <input title="" type="text" class="formTitle" v-model="formTitle" :placeholder="formID"/>
-    <button @click="addEntry">Ajouter une question</button>
+
 
     <CreatorFormEntry v-for="entry in formEntries"
                       :key="entry.id"
                       :entry="entry"/>
 
-    <button @click="saveForm">Enregistrer le formulaire</button>
+    <button @click="addEntry">Ajouter une question</button>
 
-    <button @click="publishForm">Publier le formulaire</button>
+    <div>
+      <button @click="saveForm">Enregistrer le formulaire</button>
+      <button @click="publishForm">Publier le formulaire</button>
+    </div>
+
 
   </div>
 </template>
@@ -33,7 +37,7 @@
       return {
         formEntries: [],
         defaultFormEntry: {question:{title: ''}, type: 'radio', answers: []},
-        defaultQuestion: {title: ''},
+        defaultQuestion: {title: 'Titre de la question'},
         defaultAnswers: [{id: "", text: 'Option 1'}],
         formTitle: 'Formulaire sans titre',
         defaultFormTitle: 'Formulaire sans titre',
@@ -204,7 +208,6 @@
 <style scoped>
   .form{
     background-color: white;
-
   }
 
   input[type=text] {

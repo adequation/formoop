@@ -1,6 +1,7 @@
 <template>
-  <div class="formEntry">
-    <form>
+  <Collapse class="form-entry" :initialy-opened="false" :showArrow="true">
+    <h3 slot="header" class="form-entry-title">{{entry.question.title}}</h3>
+    <form slot="body" class="form-entry-content" >
       <div>
         <input title="" type="text" class="questionTitle" v-model="entry.question.title" placeholder="Titre de la question"/>
         <select title=""  @change="onChange($event.target)">
@@ -16,15 +17,16 @@
       <CreatorAnswer :answers="entry.answers" :types="types" :type="entry.type" :entryID="entry.id"></CreatorAnswer>
       <button type="button" @click="deleteEntry">Supprimer la question</button>
     </form>
-  </div>
+  </Collapse>
 </template>
 
 <script>
   import CreatorAnswer from './CreatorAnswer'
+  import Collapse from '@/components/containers/Collapse'
 
   export default {
     name: 'CreatorFormEntry',
-    components: {CreatorAnswer},
+    components: {CreatorAnswer, Collapse},
     props: {
       entry: {
         type: Object,
@@ -59,11 +61,19 @@
 </script>
 
 <style scoped>
-  .formEntry {
+  .form-entry {
     background-color: #f6f6f6;
-    margin: 1em;
+    margin: 0.5em;
     border: 1px solid #00000020;
     padding: 0.5em;
+  }
+
+  .form-entry-title {
+
+  }
+
+  .form-entry-content {
+
   }
 
 </style>
