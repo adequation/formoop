@@ -1,7 +1,17 @@
 import Profile from '@/components/general/Profile';
 import {mount} from "@vue/test-utils";
+import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
+
+const mockedUser = {
+  uid:          'abcdefgh123',
+  email:        'mock@mocked.com',
+  displayName:  'mock mocked'
+};
 
 describe('Profile.vue', () => {
+
+  //Overrides the current connected user
+  nativeFbFunctions.getCurrentUser = jest.fn(() => (mockedUser));
 
   const vmSaving = mount(Profile, {
 
@@ -39,7 +49,6 @@ describe('Profile.vue', () => {
     let atLeastOneTextInput = false;
 
     for (let i = 0; i < inputs.length; ++i) {
-      console.log(inputs.at(i).element);
       atLeastOneTextInput = atLeastOneTextInput || inputs.at(i).element.type === 'text';
       if(atLeastOneTextInput) break;
     }

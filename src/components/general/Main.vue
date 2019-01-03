@@ -12,8 +12,8 @@
 </template>
 
 <script>
-  import Firebase from 'firebase';
   import Profile from "@/components/general/Profile";
+  import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
   export default {
     name: "Main",
@@ -25,13 +25,10 @@
     },
     methods: {
       signOut() {
-        Firebase.auth().signOut().then(
+        nativeFbFunctions.signOut().then(
           () => this.$router.replace('/sign-in')
         );
       },
-      getUser(){
-        return Firebase.auth().currentUser;
-      }
     }
   }
 

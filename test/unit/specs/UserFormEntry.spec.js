@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import UserFormEntry from '@/components/user/UserFormEntry'
 import {mount} from "@vue/test-utils";
+import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
 const mockEntry =
   {
@@ -10,7 +11,17 @@ const mockEntry =
     alreadyAnswered: false
   };
 
+const mockedUser = {
+  uid:          'abcdefgh123',
+  email:        'mock@mocked.com',
+  displayName:  'mock mocked'
+};
+
 describe('UserFormEntry.vue', () => {
+
+  //Overrides the current connected user
+  nativeFbFunctions.getCurrentUser = jest.fn(() => (mockedUser));
+
   const vm = mount(UserFormEntry, {
     propsData: {
       entry : mockEntry

@@ -17,7 +17,8 @@ export default {
     },
     createdForms: state => {
       return state.createdForms
-    }
+    },
+    creatorID: state => state.creatorID
   },
   mutations: {
     setFormID: (state, {formID}) => {

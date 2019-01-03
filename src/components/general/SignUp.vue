@@ -24,6 +24,7 @@
   import Firebase from 'firebase';
   import { updateUserProfileDisplayName } from '@/thunks/userAccountThunks'
   import {handleError} from "@/helpers/loginErrorHandlingHelpers";
+  import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
   export default {
     name: "SignUp",
@@ -38,9 +39,9 @@
     methods: {
       signUp() {
         const router = this.$router;
-        Firebase.auth().createUserWithEmailAndPassword(this.login, this.password).then(
+        nativeFbFunctions.createUserWithEmailAndPassword(this.login, this.password).then(
           (user) => {
-            updateUserProfileDisplayName(Firebase.auth().currentUser, this.firstName, this.lastName )
+            updateUserProfileDisplayName(nativeFbFunctions.getCurrentUser(), this.firstName, this.lastName )
               .then(() => {
                 this.$router.replace("/home");
               })

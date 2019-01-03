@@ -107,7 +107,6 @@ const router = new Router({
       }
     },
 
-
     {
       path: '/mail',
       name: 'InviteModal',
