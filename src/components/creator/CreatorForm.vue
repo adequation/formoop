@@ -24,7 +24,7 @@
   import CreatorFormEntry from './CreatorFormEntry'
   import * as Firebase from "firebase";
   import {saveCreatorFormFB, publishCreatorFormFB} from "@/thunks/creatorForm";
-  import {getCreatedFormFromID} from "@/helpers/firebaseHelpers";
+  import {getCreatedFormFromID, nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
   export default {
     name: 'CreatorForm',
@@ -37,6 +37,11 @@
         defaultAnswers: [{id: "", text: 'Option 1'}],
         formTitle: 'Formulaire sans titre',
         defaultFormTitle: 'Formulaire sans titre',
+      }
+    },
+    computed:{
+      creatorID(){
+        return this.$store.getters.creatorID;
       }
     },
     methods: {
@@ -99,16 +104,14 @@
       //save form into firebase
       //then reset data from what we saved on firebase to stay in sync
       saveForm() {
-        const creatorID = Firebase.auth().currentUser.uid;
-
         this.validateEntries();
 
-        saveCreatorFormFB(creatorID,
+        saveCreatorFormFB(this.creatorID,
           this.formID,
           {id: this.formID, title: this.formTitle, entries: this.formEntries}).then((e) => {
 
           //if everything is done, we reset the form's data
-          this.getFormFromFB(creatorID, this.formID);
+          this.getFormFromFB(this.creatorID, this.formID);
 
         }).catch((e) => {
           console.log(e);
@@ -118,11 +121,9 @@
 
       //publish form into firebase
       publishForm() {
-        const creatorID = Firebase.auth().currentUser.uid;
-
         this.saveForm();
 
-        publishCreatorFormFB(creatorID, this.formID);
+        publishCreatorFormFB(this.creatorID, this.formID);
       }
 
     },
@@ -174,7 +175,7 @@
       });
 
       //retreive form
-      this.getFormFromFB(Firebase.auth().currentUser.uid, this.formID);
+      this.getFormFromFB(this.creatorID, this.formID);
     },
     computed: {
       formID() {
@@ -191,7 +192,7 @@
 
         //need to swap forms when the id changes
         if (this.formID !== this.$route.params.formID) {
-          this.getFormFromFB(Firebase.auth().currentUser.uid, this.$route.params.formID);
+          this.getFormFromFB(this.creatorID, this.$route.params.formID);
         }
 
         this.$store.dispatch('setFormID', {formID: this.$route.params.formID});

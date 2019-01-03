@@ -19,6 +19,7 @@
   import {getFormURL} from "@/helpers/rooterHelpers";
   import {getInvitationText} from "@/helpers/mailHelpers";
   import * as Firebase from "firebase";
+  import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
   export default {
     name: "InviteModal",
@@ -40,7 +41,7 @@
         return getFormURL(this.formID, window);
       },
       user(){
-        return Firebase.auth().currentUser;
+        return nativeFbFunctions.getCurrentUser();
       }
     },
     methods:{

@@ -17,8 +17,8 @@
 <script>
   import UserFormEntry from '@/components/user/UserFormEntry'
   import {setSelectedAnswersFB} from '@/thunks/userFormEntriesThunks'
-  import * as Firebase from "firebase";
   import InviteModal from "@/components/general/InviteModal";
+  import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   export default {
     name: 'UserForm',
     components: {InviteModal, UserFormEntry},
@@ -53,7 +53,7 @@
         this.selectedAnswers = tmp;
       },
       saveAnswers () {
-        const user = Firebase.auth().currentUser;
+        const user = nativeFbFunctions.getCurrentUser();
         if(user)
           setSelectedAnswersFB(this.formID, this.selectedAnswers, user.uid);
         else alert("Vous n'êtes pas connecté !");
