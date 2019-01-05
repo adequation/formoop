@@ -1,5 +1,6 @@
 <template>
   <transition name="modal">
+
     <div class="modal-mask">
       <div class="modal-wrapper">
         <div class="modal-container">
@@ -28,9 +29,11 @@
             <slot name="footer">
             </slot>
           </div>
+
         </div>
       </div>
     </div>
+
   </transition>
 </template>
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <form>
-      <span v-for="(a, i) in answers" :key="a.text">
+      <span v-for="(a, i) in answers" :key="a.id">
         <input title="" type="radio" :name="a.text" :value="a.id" v-model="selectedAnswers" v-on:input="onChange($event.target)">
         <label> {{a.text}} </label>
       </span>
