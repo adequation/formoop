@@ -2,8 +2,8 @@
   <div>
     <div v-if="!saving">
       <div v-if="!edit">
-        <p class="displayName">{{getUser().displayName}}</p>
-        <p class="mail">{{getUser().email}}</p>
+        <p class="displayName">{{user.displayName}}</p>
+        <p class="mail">{{user.email}}</p>
         <button @click="editProfile">Modifier</button>
       </div>
       <div v-else>
@@ -20,9 +20,8 @@
 </template>
 
 <script>
-  import Firebase from 'firebase';
   import {updateUserProfileDisplayName} from "@/thunks/userAccountThunks";
-  import {firebaseConfig} from "@/firebaseConfig";
+  import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
   export default {
     name: "Profile",
@@ -35,29 +34,21 @@
         edit: false
       }
     },
+    computed: {
+      user(){
+        return nativeFbFunctions.getCurrentUser();
+      }
+    },
     methods: {
-      getUser() {
-
-        /////test debug, remove when a cleaner solution is found...
-        if (!Firebase.apps.length) {
-          //Firebase.initializeApp(firebaseConfig);
-          return {displayName:'a a', email:'a@a.fr'};
-        }////test debug, remove when a cleaner solution is found...
-
-        return Firebase.auth().currentUser;
-      },
 
       updateProfile() {
 
-
-        updateUserProfileDisplayName(this.getUser(),
+        updateUserProfileDisplayName(this.user,
           this.firstName,
           this.lastName).then(() => {
 
-          this.setNamesData(this.getUser().displayName);
+          this.setNamesData(this.user.displayName);
           this.editProfile();
-
-
 
           this.saving = false;
 
@@ -69,7 +60,7 @@
 
       editProfile() {
         this.edit = !this.edit;
-        if(this.edit) this.setNamesData(this.getUser().displayName);
+        if(this.edit) this.setNamesData(this.user.displayName);
       },
 
       getNamesFromDisplayName(displayName) {
