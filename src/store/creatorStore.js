@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
 import Firebase from 'firebase'
-import {getCreatedForms} from "@/helpers/firebaseHelpers";
+import {getCreatedForms, nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
 Vue.use(Vuex);
 
@@ -24,6 +24,7 @@ export default {
     setFormID: (state, {formID}) => {
       state.formID = formID
     },
+
     setCreatedForms: (state) => {
       if(state.creatorID)
         Firebase.database().ref(getCreatedForms(state.creatorID))
@@ -38,8 +39,9 @@ export default {
             }
           })
     },
+
     setCreatorID: state => {
-      state.creatorID = Firebase.auth().currentUser.uid;
+      state.creatorID = nativeFbFunctions.getCurrentUser().uid;
     }
   },
   actions: {

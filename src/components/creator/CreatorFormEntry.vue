@@ -1,9 +1,13 @@
 <template>
-  <Collapse class="form-entry" :initialy-opened="false" :showArrow="true">
+  <Collapse class="form-entry" :initialy-opened="initialyOpened" :showArrow="true">
+
     <h3 slot="header" class="form-entry-title">{{entry.question.title}}</h3>
+
     <form slot="body" class="form-entry-content" >
       <div>
+
         <input title="" type="text" class="questionTitle" v-model="entry.question.title" placeholder="Titre de la question"/>
+
         <select title=""  @change="onChange($event.target)">
           <option v-for="(t, i) in types"
                   :key="i"
@@ -13,11 +17,16 @@
             {{t.displayName}}
           </option>
         </select>
+
       </div>
+
       <CreatorAnswer :answers="entry.answers" :types="types" :type="entry.type" :entryID="entry.id"></CreatorAnswer>
+
       <button type="button" @click="deleteEntry">Supprimer la question</button>
+
     </form>
   </Collapse>
+
 </template>
 
 <script>
@@ -31,6 +40,10 @@
       entry: {
         type: Object,
         required: true
+      },
+      initialyOpened : {
+        type: Boolean,
+        required : false
       }
     },
     data() {

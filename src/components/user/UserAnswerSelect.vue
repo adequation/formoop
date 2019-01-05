@@ -3,7 +3,7 @@
     <form>
       <select title="" @change="onChange($event.target)">
         <option value="-1"> </option>
-        <option v-for="(a, i) in answers" :key="a.text" :name="a.text" :value="a.id">
+        <option v-for="(a, i) in answers" :key="a.id" :name="a.text" :value="a.id">
           {{a.text}} </option>
       </select>
     </form>

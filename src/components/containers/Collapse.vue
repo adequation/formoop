@@ -60,10 +60,10 @@
         this.collapsed = !this.collapsed;
       },
       open() {
-        this.collapsed = true;
-      },
-      collapse() {
         this.collapsed = false;
+      },
+      close() {
+        this.collapsed = true;
       }
     }
   }
