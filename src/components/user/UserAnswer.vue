@@ -20,7 +20,7 @@
 
         <p class="answered-by"><strong>{{usersAnswers ? Object.keys(usersAnswers).length : ''}}</strong></p>
 
-        <button v-if="usersAnswers[user.uid]" id="deleteAnswer" type="button"
+        <button v-if="usersAnswers ? usersAnswers[user.uid] : false" id="deleteAnswer" type="button"
                 @click="deleteAnswer()">Supprimer ma réponse
         </button>
 
@@ -44,18 +44,13 @@
   import * as Firebase from "firebase";
   import {firebaseConfig} from "@/firebaseConfig";
   import {deleteUserAnswerFB} from "@/thunks/userFormEntriesThunks";
+  import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   export default {
     name: 'UserAnswer',
     components: {UserAnswerText, UserAnswerTextarea, UserAnswerRadio, UserAnswerCheckbox, UserAnswerSelect},
     computed:{
       user(){
-
-        /////test debug, remove when a cleaner solution is found...
-        if (!Firebase.apps.length) {
-          Firebase.initializeApp(firebaseConfig);
-        }////test debug, remove when a cleaner solution is found...
-
-        return Firebase.auth().currentUser;
+        return nativeFbFunctions.getCurrentUser();
       }
     },
     props:{

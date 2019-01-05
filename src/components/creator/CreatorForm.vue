@@ -5,15 +5,21 @@
 
 
     <input title="" type="text" class="formTitle" v-model="formTitle" :placeholder="formID"/>
+
+
+    <CreatorFormEntry v-for="(entry, i) in formEntries"
+                      :key="entry.id"
+                      :entry="entry"
+                      :initialyOpened="entry.initialyOpened"
+    />
+
     <button @click="addEntry">Ajouter une question</button>
 
-    <CreatorFormEntry v-for="entry in formEntries"
-                      :key="entry.id"
-                      :entry="entry"/>
+    <div>
+      <button @click="saveForm">Enregistrer le formulaire</button>
+      <button @click="publishForm">Publier le formulaire</button>
+    </div>
 
-    <button @click="saveForm">Enregistrer le formulaire</button>
-
-    <button @click="publishForm">Publier le formulaire</button>
 
   </div>
 </template>
@@ -24,7 +30,7 @@
   import CreatorFormEntry from './CreatorFormEntry'
   import * as Firebase from "firebase";
   import {saveCreatorFormFB, publishCreatorFormFB} from "@/thunks/creatorForm";
-  import {getCreatedFormFromID} from "@/helpers/firebaseHelpers";
+  import {getCreatedFormFromID, nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
   export default {
     name: 'CreatorForm',
@@ -32,8 +38,12 @@
     data() {
       return {
         formEntries: [],
-        defaultFormEntry: {question:{title: ''}, type: 'radio', answers: []},
-        defaultQuestion: {title: ''},
+        defaultFormEntry: {question:{title: ''},
+          type: 'radio',
+          answers: [],
+          initialyOpened : true //Opened collapse by default
+        },
+        defaultQuestion: {title: 'Titre de la question'},
         defaultAnswers: [{id: "", text: 'Option 1'}],
         formTitle: 'Formulaire sans titre',
         defaultFormTitle: 'Formulaire sans titre',
@@ -50,6 +60,7 @@
           id
         })
       },
+
       addFormEntryAnswer(id, answer) {
         const tmp = [...this.formEntries];
         const fe = tmp.find(e => e.id === id);
@@ -58,6 +69,7 @@
           this.formEntries = tmp;
         }
       },
+
       setFormEntryType(id, type) {
         const tmp = [...this.formEntries];
         const fe = tmp.find(e => e.id === id);
@@ -66,6 +78,7 @@
           this.formEntries = tmp;
         }
       },
+
       setForm(form){
         if(!form) {
           this.formEntries = [];
@@ -76,6 +89,7 @@
         this.formTitle = form.formTitle || this.defaultFormTitle;
 
       },
+
       getFormFromFB(creatorID, formID) {
         Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
           .on('value', (snapshot) => {
@@ -90,25 +104,27 @@
 
       //make sure that the form is ready to deploy
       validateEntries() {
-        this.formEntries = this.formEntries.map((fe, i) => ({...fe,
+        this.formEntries = this.formEntries.map((fe, i) => {
+          delete fe.initialyOpened; // we remove the default state of the collapse
+
+          return ({...fe,
             question: {...fe.question, title: (fe.question.title || "Titre de la question "+(i+1))},
             index: i
-          }));
+          })
+        });
       },
 
       //save form into firebase
       //then reset data from what we saved on firebase to stay in sync
       saveForm() {
-        const creatorID = Firebase.auth().currentUser.uid;
-
         this.validateEntries();
 
-        saveCreatorFormFB(creatorID,
+        saveCreatorFormFB(this.creatorID,
           this.formID,
           {id: this.formID, title: this.formTitle, entries: this.formEntries}).then((e) => {
 
           //if everything is done, we reset the form's data
-          this.getFormFromFB(creatorID, this.formID);
+          this.getFormFromFB(this.creatorID, this.formID);
 
         }).catch((e) => {
           console.log(e);
@@ -118,11 +134,9 @@
 
       //publish form into firebase
       publishForm() {
-        const creatorID = Firebase.auth().currentUser.uid;
-
         this.saveForm();
 
-        publishCreatorFormFB(creatorID, this.formID);
+        publishCreatorFormFB(this.creatorID, this.formID);
       }
 
     },
@@ -130,6 +144,7 @@
       //when arriving, set the ID in the store from the router
       this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
       this.$store.dispatch('setPublishedForms');
+      this.$store.dispatch('setCreatorID', {formID: null})
 
       //emitting of a new entry
       this.$root.$on('add-entry-answer', (id, answer) => {
@@ -174,14 +189,19 @@
       });
 
       //retreive form
-      this.getFormFromFB(Firebase.auth().currentUser.uid, this.formID);
+      this.getFormFromFB(this.creatorID, this.formID);
     },
     computed: {
       formID() {
         return this.$store.getters.getCreatorFormID
       },
+
       isPublished(){
         return this.$store.getters.publishedForms.find(pe => pe.id === this.formID)
+      },
+
+      creatorID(){
+        return this.$store.getters.creatorID;
       }
     },
     watch: {
@@ -191,7 +211,7 @@
 
         //need to swap forms when the id changes
         if (this.formID !== this.$route.params.formID) {
-          this.getFormFromFB(Firebase.auth().currentUser.uid, this.$route.params.formID);
+          this.getFormFromFB(this.creatorID, this.$route.params.formID);
         }
 
         this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
@@ -204,7 +224,6 @@
 <style scoped>
   .form{
     background-color: white;
-
   }
 
   input[type=text] {

@@ -20,6 +20,7 @@
 <script>
   import Firebase from 'firebase';
   import {handleError} from "@/helpers/loginErrorHandlingHelpers";
+  import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
   export default {
     name: "SignIn",
@@ -32,7 +33,8 @@
     methods: {
       signIn() {
         const router = this.$router;
-        Firebase.auth().signInWithEmailAndPassword(this.login, this.password).then(
+
+        nativeFbFunctions.signInWithEmailAndPassword(this.login, this.password).then(
           (user) => {
             this.$router.replace("/home");
           },

@@ -1,18 +1,13 @@
 <template>
   <div class="form" v-if="formEntries" >
     <h1>{{formTitle}}</h1>
-
-    <div v-if="!invitDisplay">
-      <button @click="showInvit">Inviter</button>
-    </div>
-    <div v-else>
-      <UserInvitation :formID="formID"></UserInvitation>
-    </div>
-
     <UserFormEntry v-for="entry in formEntries"
                :key="entry.id"
                :entry="entry"/>
     <button @click="saveAnswers">Enregistrer</button>
+
+    <InviteModal/>
+
   </div>
   <div v-else>
     <h1 class="errorMessage">Formulaire inconnu !</h1>
@@ -21,16 +16,16 @@
 
 <script>
   import UserFormEntry from '@/components/user/UserFormEntry'
-  import UserInvitation from '@/components/user/UserInvitation'
   import {setSelectedAnswersFB} from '@/thunks/userFormEntriesThunks'
-  import * as Firebase from "firebase";
+  import InviteModal from "@/components/general/InviteModal";
+  import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   export default {
     name: 'UserForm',
-    components: {UserFormEntry, UserInvitation},
+    components: {InviteModal, UserFormEntry},
     data () {
       return {
-        selectedAnswers: {},
-        invitDisplay: false
+        showModal: false,
+        selectedAnswers: {}
       }
     },
     computed: {
@@ -58,13 +53,10 @@
         this.selectedAnswers = tmp;
       },
       saveAnswers () {
-        const user = Firebase.auth().currentUser;
+        const user = nativeFbFunctions.getCurrentUser();
         if(user)
           setSelectedAnswersFB(this.formID, this.selectedAnswers, user.uid);
         else alert("Vous n'êtes pas connecté !");
-      },
-      showInvit (){
-        this.invitDisplay = !this.invitDisplay;
       }
     },
     watch: {

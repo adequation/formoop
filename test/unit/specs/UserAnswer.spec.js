@@ -6,6 +6,8 @@ import UserAnswerRadio from '@/components/user/UserAnswerRadio'
 import UserAnswerCheckbox from '@/components/user/UserAnswerCheckbox'
 import UserAnswerSelect from '@/components/user/UserAnswerSelect'
 import { mount } from '@vue/test-utils'
+import * as firebaseHelpers from '@/helpers/firebaseHelpers'
+import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
 const mockProps =
   {
@@ -21,7 +23,17 @@ const mockAlreadyAnswered =
     alreadyAnswered: true
   };
 
+const mockedUser = {
+  uid:          'abcdefgh123',
+  email:        'mock@mocked.com',
+  displayName:  'mock mocked'
+};
+
+
 describe('UserAnswer.vue', () => {
+
+  //Overrides the current connected user
+  nativeFbFunctions.getCurrentUser = jest.fn(() => (mockedUser));
 
   const vmText = mount(UserAnswer, {
     propsData: {
