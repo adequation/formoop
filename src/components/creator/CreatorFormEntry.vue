@@ -75,10 +75,7 @@
 
 <style scoped>
   .form-entry {
-    background-color: #f6f6f6;
-    margin: 0.5em;
-    border: 1px solid #00000020;
-    padding: 0.5em;
+   margin-top: 0.2em;
   }
 
   .form-entry-title {

@@ -74,5 +74,9 @@
 </script>
 
 <style scoped>
-
+  input[type=text] {
+    border: none;
+    border-bottom: 1px solid lightgrey;
+    font-size: large;
+  }
 </style>

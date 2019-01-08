@@ -226,12 +226,6 @@
     background-color: white;
   }
 
-  input[type=text] {
-    border: none;
-    border-bottom: 1px solid lightgrey;
-    font-size: large;
-  }
-
   .ghostText {
     color: lightgray;
   }
