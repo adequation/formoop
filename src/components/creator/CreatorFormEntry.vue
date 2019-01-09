@@ -75,7 +75,7 @@
 
 <style scoped>
   .form-entry {
-   margin-top: 0.2em;
+    margin-top: 0.2em;
   }
 
   .form-entry-title {

@@ -24,7 +24,8 @@ describe('CreatorAnswerList.vue', () => {
   it('Option values should be same as mock props', () => {
 
     let every = true;
-    let optionInputs = vm.findAll('.option input');
+    let optionInputs = vm.findAll('.option input[type=text]');
+
     for (let i = 0; i < optionInputs.length; ++i) {
       every = every && optionInputs.at(i).element.value === vm.props().answers[i].text
     }
