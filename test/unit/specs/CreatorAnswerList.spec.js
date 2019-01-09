@@ -1,17 +1,25 @@
 import Vue from 'vue';
 import CreatorAnswerList from '@/components/creator/CreatorAnswerList';
-import {mount} from "@vue/test-utils";
+import {createWrapper, mount} from "@vue/test-utils";
 
-const mockProps = {
+const mockPropsFull = {
   answers: [{id: 'a', text: 'Option 1'}, {id: 'b', text: 'Option 2'}, {id: 'c', text: 'Option 3'}],
   type: 'radio',
   entryID: 'id'
 };
 
+const mockPropsempty = {
+  answers: [],
+  type: 'radio',
+  entryID: 'id'
+};
+
+
+
 describe('CreatorAnswerList.vue', () => {
   const vm = mount(CreatorAnswerList, {
     propsData: {
-      ...mockProps
+      ...mockPropsFull
     }
   });
 
@@ -33,4 +41,45 @@ describe('CreatorAnswerList.vue', () => {
     expect(every).toBe(true);
   });
 
+  it('Should emit when delete option clicked', () => {
+    const button = vm.find('.delete-option-button');
+    button.trigger('click');
+    expect(vm.emitted()).toBeTruthy();
+  });
+
+  it('Should emit right entryID', () => {
+    let button = vm.find('#deleteButton0');
+    button.trigger('click');
+    const rootWrapper = createWrapper(vm.vm.$root);
+    expect(rootWrapper.emitted('delete-entry-option')[0][1]).toEqual('a');
+  });
+
+  it('Should emit when add option clicked', () => {
+    const button = vm.find('.add-option-button');
+    button.trigger('click');
+    expect(vm.emitted()).toBeTruthy();
+  });
+
+  it('Should emit when edit option clicked', () => {
+    const text = vm.find('input[type=text]');
+    text.trigger('changed');
+    expect(vm.emitted()).toBeTruthy();
+  });
+
+  it('Should emit same text that in text arrea', () => {
+    const text = vm.find('input[type=text]');
+    text.setValue('new text');
+    const rootWrapper = createWrapper(vm.vm.$root);
+    expect(rootWrapper.emitted('edit-entry-option')[0][2]).toEqual(text.element.value);
+  });
+
+  it('Click should not work', () => {
+    const radioButtons = vm.findAll('input[type=radio]');
+    radioButtons.at(0).trigger('click');
+    expect(radioButtons.at(0).element.checked).toBe(true);
+  });
+
+  //TODO - cover with empty props.
+
 });
+
