@@ -13,7 +13,8 @@
                       :initialyOpened="entry.initialyOpened"
     />
 
-    <button @click="addEntry">Ajouter une question</button>
+    <button @click="addEntry(false)">Ajouter une question</button>
+    <button @click="addEntry(true)">Ajouter une question générique</button>
 
     <div>
       <button @click="saveForm">Enregistrer le formulaire</button>
@@ -55,15 +56,35 @@
         e.preventDefault();
       },
 
-      addEntry() {
+      addEntry(generic) {
         const id = uuid.v4();
-        //copy default answer array, and generate new option ids
-        this.formEntries.push({
+
+        const entry = {
           ...this.defaultFormEntry,
           question: {...this.defaultQuestion},
           answers: [...this.defaultAnswers.map(a => ({...a, id: uuid.v4()}))],
           id
-        })
+        };
+
+        if(generic) {
+          entry.genericProperty = '';
+          entry.generic = true;
+          entry.question.blocks = [
+            {
+              id: uuid.v4(),
+              type: 'text',
+              content: "Texte standard"
+            },
+            {
+              id: uuid.v4(),
+              type: 'variable',
+              content: "nom_variable"
+            }
+          ];
+      }
+
+        //copy default answer array, and generate new option ids
+        this.formEntries.push(entry);
       },
 
       addFormEntryAnswer(id, answer) {

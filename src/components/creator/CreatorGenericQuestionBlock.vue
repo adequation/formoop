@@ -1,10 +1,12 @@
 <template>
   <div class="generic-question-block">
-    <div v-for="block in questionBlocks"
+  <input class="generic-question-block-property" type="text" placeholder="Champ concerné" v-model="entry.genericProperty"/>
+
+  <div class="generic-question-block-question-title">
+    <div v-for="block in entry.question.blocks"
          :class="getClassFromType(block.type)"
-         contenteditable="true"
          @contextmenu="swapType(block, $event)">
-      {{block.content}}
+     <input type="text" v-model="block.content"/>
       <button @click="deleteBlock(block)">✖</button>
     </div>
 
@@ -13,6 +15,7 @@
       <option @click="addVariable">variable</option>
       <option @click="addText">texte</option>
     </select>
+  </div>
   </div>
 </template>
 
@@ -23,19 +26,13 @@
     name: "CreatorGenericQuestionBlock",
     data() {
       return {
-        questionBlocks: [
-          {
-            id: uuid.v4(),
-            type: 'text',
-            content: "Texte standard"
-          },
-          {
-            id: uuid.v4(),
-            type: 'variable',
-            content: "nom_variable"
-          }
-        ]
       }
+    },
+    props: {
+      entry: {
+        type: Object,
+        required: true
+      },
     },
     methods: {
       addVariable() {
@@ -68,6 +65,7 @@
       swapType(block, e) {
         const blockIndex = this.questionBlocks.findIndex(b => b.id === block.id);
 
+        console.log(this.questionBlocks[blockIndex].content)
 
         if (blockIndex >= 0) {
           const foundBlock = this.questionBlocks[blockIndex];
@@ -88,6 +86,10 @@
 <style scoped>
 
   .generic-question-block{
+    margin-bottom: 0.5em;
+  }
+
+  .generic-question-block-question-title{
     margin-top: 0.5em;
   }
 
@@ -98,6 +100,12 @@
     margin: 0 0.1em 0 0.1em;
     font-size: large;
     border-radius: 20px 20px 20px 20px;
+  }
+
+  .block input[type=text]{
+    background: none;
+    border : none;
+    width: auto;
   }
 
   .block button {
