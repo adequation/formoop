@@ -69,7 +69,7 @@
     },
     methods: {
       deleteAnswer(){
-        deleteUserAnswerFB(this.$store.getters.getUserFormID, this.entryID, this.user.uid);
+        deleteUserAnswerFB(this.$store.getters.getUserFormPath, this.entryID, this.user.uid);
       }
     }
   }

@@ -2,8 +2,8 @@
   <div class="form" v-if="formEntries" >
     <h1>{{formTitle}}</h1>
     <UserFormEntry v-for="entry in formEntries"
-               :key="entry.id"
-               :entry="entry"/>
+                   :key="entry.id"
+                   :entry="entry"/>
     <button @click="saveAnswers">Enregistrer</button>
 
     <InviteModal/>
@@ -37,14 +37,17 @@
       },
       formTitle () {
         return this.$store.getters.getUserFormTitle
+      },
+      formPath() {
+        return this.$store.getters.getUserFormPath
       }
     },
     created: function () {
+      this.$store.dispatch('setFormID', {formID: this.$route.params.formID}).then(this.$store.dispatch('setFormPath'))
+        .then(this.$store.dispatch('setFormEntries')).then(this.$store.dispatch('setFormTitle'));
       this.$root.$on('set-selected-answers', (id, answers) => {
         this.setSelectedAnswers(id, answers)
       });
-
-      this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
     },
     methods: {
       setSelectedAnswers (id, answers) {
@@ -55,13 +58,14 @@
       saveAnswers () {
         const user = nativeFbFunctions.getCurrentUser();
         if(user)
-          setSelectedAnswersFB(this.formID, this.selectedAnswers, user.uid);
+          setSelectedAnswersFB(this.formPath, this.selectedAnswers, user.uid);
         else alert("Vous n'êtes pas connecté !");
       }
     },
     watch: {
       '$route' (to, from) {
-        this.$store.dispatch('setFormID', {formID: this.$route.params.formID})
+        this.$store.dispatch('setFormID', {formID: this.$route.params.formID}).then(this.$store.dispatch('setFormPath'))
+          .then(this.$store.dispatch('setFormEntries')).then(this.$store.dispatch('setFormTitle'))
       }
     }
   }

@@ -3,9 +3,10 @@
 
     <h1 class="ghostText" v-bind:class="{ publishedForm: isPublished }">{{formID}}</h1>
 
-
     <input title="" type="text" class="formTitle" v-model="formTitle" :placeholder="formID"/>
 
+    <!-- entry for campaign  -->
+    <input title="" type="text" class="formCampaign" v-model="formCampaign" :placeholder="defaultFormCampaign"/>
 
     <CreatorFormEntry v-for="(entry, i) in formEntries"
                       :key="entry.id"
@@ -46,6 +47,8 @@
         defaultQuestion: {title: 'Titre de la question'},
         defaultAnswers: [{id: "", text: 'Option 1'}],
         formTitle: 'Formulaire sans titre',
+        formCampaign: '',
+        defaultFormCampaign:'Formulaire sans campagne',
         defaultFormTitle: 'Formulaire sans titre',
       }
     },
@@ -83,11 +86,12 @@
         if(!form) {
           this.formEntries = [];
           this.formTitle = this.defaultFormTitle;
+          this.formCampaign = this.defaultFormCampaign;
           return;
         }
         this.formEntries = form.formEntries || [];
         this.formTitle = form.formTitle || this.defaultFormTitle;
-
+        this.formCampaign = form.formCampaign || this.defaultFormCampaign;
       },
 
       getFormFromFB(creatorID, formID) {
@@ -95,7 +99,7 @@
           .on('value', (snapshot) => {
             const value = snapshot.val();
             if(value){
-              this.setForm({formEntries: value.entries, formTitle: value.title});
+              this.setForm({formEntries: value.entries, formTitle: value.title, formCampaign: value.campaign});
             }else{
               this.setForm(null);
             }
@@ -119,16 +123,32 @@
       saveForm() {
         this.validateEntries();
 
-        saveCreatorFormFB(this.creatorID,
-          this.formID,
-          {id: this.formID, title: this.formTitle, entries: this.formEntries}).then((e) => {
+        //if campaign is not set, upload an normal form
+        if(this.formCampaign === this.defaultFormCampaign || this.formCampaign === ''){
+          saveCreatorFormFB(this.creatorID,
+            this.formID,
+            {id: this.formID, title: this.formTitle, entries: this.formEntries}).then((e) => {
 
-          //if everything is done, we reset the form's data
-          this.getFormFromFB(this.creatorID, this.formID);
+            //if everything is done, we reset the form's data
+            this.getFormFromFB(this.creatorID, this.formID);
 
-        }).catch((e) => {
-          console.log(e);
-        });
+          }).catch((e) => {
+            console.log(e);
+          });
+        }
+        //else upload form associated with the campaign
+        else{
+          saveCreatorFormFB(this.creatorID,
+            this.formID,
+            {id: this.formID, title: this.formTitle, entries: this.formEntries, campaign: this.formCampaign}).then((e) => {
+
+            //if everything is done, we reset the form's data
+            this.getFormFromFB(this.creatorID, this.formID);
+
+          }).catch((e) => {
+            console.log(e);
+          });
+        }
 
       },
 
@@ -144,7 +164,7 @@
       //when arriving, set the ID in the store from the router
       this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
       this.$store.dispatch('setPublishedForms');
-      this.$store.dispatch('setCreatorID', {formID: null})
+      this.$store.dispatch('setCreatorID', {formID: null});
 
       //emitting of a new entry
       this.$root.$on('add-entry-answer', (id, answer) => {

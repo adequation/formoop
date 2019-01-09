@@ -1,10 +1,10 @@
 import * as Firebase from 'firebase'
 import {getCreatedFormFromID, getPublishedFormFromID} from "@/helpers/firebaseHelpers";
 
-export const setSelectedAnswersFB = (formID, answers, userID) => {
+
+export const setSelectedAnswersFB = (formPath, answers, userID) => {
   Object.keys(answers).forEach(aKey => {
-    const answer = answers[aKey];
-    Firebase.database().ref(getPublishedFormFromID(formID).concat('/entries/').concat(aKey)
+    Firebase.database().ref(formPath.concat('/entries/').concat(aKey)
       .concat('/usersAnswers/'.concat(userID)))
       .set(answers).then((e) => {
 
@@ -14,8 +14,8 @@ export const setSelectedAnswersFB = (formID, answers, userID) => {
   })
 };
 
-export const deleteUserAnswerFB = (formID, entryID, userID) => {
-  Firebase.database().ref(getPublishedFormFromID(formID).concat('/entries/').concat(entryID)
+export const deleteUserAnswerFB = (formPath, entryID, userID) => {
+  Firebase.database().ref(formPath.concat('/entries/').concat(entryID)
     .concat('/usersAnswers/').concat(userID))
     .remove().then( (e) => {})
     .catch((e) => {

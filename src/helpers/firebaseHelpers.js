@@ -20,9 +20,14 @@ export const getCreatedFormFromID = (creatorID, formID) => '/users/'.concat(crea
 
 export const getCreatedForms = (creatorID) => '/users/'.concat(creatorID).concat("/createdForms");
 
+
 ///// PUBLISHED FORMS
 
 export const getPublishedFormFromID = (formID) => publishingPath.concat(formID);
 
-export const publishingPath = '/publishedForms/';
+export const publishingPath = '/published/Forms/';
+
+export const publishingCampaignPath = '/published/Campaign/';
+
+export const getPublishedFormInCampaignFromID = (campaign, formID) => publishingCampaignPath.concat(campaign).concat('/').concat(formID);
 
