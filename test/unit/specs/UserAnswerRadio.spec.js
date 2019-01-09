@@ -22,7 +22,6 @@ describe('UserAnswerRadio.vue', () => {
 
   it('should have the same number of elem as mock data', () => {
     const radios = vm.findAll('input');
-
     expect(radios.length).toBe(5);
 
   });
@@ -48,5 +47,20 @@ describe('UserAnswerRadio.vue', () => {
 
     expect(every).toBe(true);
   });
+
+
+  it ('should emit when clicked', () => {
+    let options = vm.findAll('input');
+    options.at(0).trigger('click');
+    expect(vm.emitted()).toBeTruthy();
+  });
+
+  it ('sould e true if clicked', () => {
+    let options = vm.findAll('input');
+    options.at(2).trigger('click');
+    expect(options.at(2).element.checked).toBe(true);
+  });
+
+
 
 });
