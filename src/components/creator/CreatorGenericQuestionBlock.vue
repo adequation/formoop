@@ -42,7 +42,7 @@
           content: "nom_variable"
         };
 
-        this.questionBlocks.push(newVariable);
+        this.entry.question.blocks.push(newVariable);
       },
 
       addText() {
@@ -52,24 +52,24 @@
           content: "Texte standard"
         };
 
-        this.questionBlocks.push(newText);
+        this.entry.question.blocks.push(newText);
       },
 
       deleteBlock(block) {
-        const blocIndex = this.questionBlocks.findIndex(b => b.id === block.id);
+        const blocIndex = this.entry.question.blocks.findIndex(b => b.id === block.id);
 
 
-        if (blocIndex >= 0) this.questionBlocks.splice(blocIndex, 1);
+        if (blocIndex >= 0) this.entry.question.blocks.splice(blocIndex, 1);
       },
 
       swapType(block, e) {
-        const blockIndex = this.questionBlocks.findIndex(b => b.id === block.id);
+        const blockIndex = this.entry.question.blocks.findIndex(b => b.id === block.id);
 
-        console.log(this.questionBlocks[blockIndex].content)
+        console.log(this.entry.question.blocks[blockIndex].content);
 
         if (blockIndex >= 0) {
-          const foundBlock = this.questionBlocks[blockIndex];
-          this.questionBlocks[blockIndex].type = foundBlock.type === 'text' ? 'variable' : 'text';
+          const foundBlock = this.entry.question.blocks[blockIndex];
+          this.entry.question.blocks[blockIndex].type = foundBlock.type === 'text' ? 'variable' : 'text';
         }
 
         e.preventDefault();
