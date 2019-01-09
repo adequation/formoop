@@ -68,10 +68,6 @@
       }
     },
     methods: {
-      getSymbol(type) {
-        const icons = {default: 'x', radio: 'o', checkbox: '[x]', select: '>'};
-        return icons[type] ? icons[type] : icons['default'];
-      },
 
       addOption() {
         const newAnswer = {id: uuid.v4(), text: this.defaultOption.text.concat('' + (this.answers.length + 1))};
