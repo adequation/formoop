@@ -50,6 +50,11 @@
       }
     },
     methods: {
+
+      disableClick(e) {
+        e.preventDefault();
+      },
+
       addEntry() {
         const id = uuid.v4();
         //copy default answer array, and generate new option ids
@@ -222,14 +227,9 @@
 </script>
 
 <style scoped>
+
   .form{
     background-color: white;
-  }
-
-  input[type=text] {
-    border: none;
-    border-bottom: 1px solid lightgrey;
-    font-size: large;
   }
 
   .ghostText {
@@ -239,4 +239,5 @@
   .publishedForm {
     color: steelblue;
   }
+
 </style>

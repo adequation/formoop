@@ -70,16 +70,28 @@
 </script>
 
 <style scoped>
-  .collapse {
 
+  .collapse {
   }
 
   .collapse-header {
+    background-color: #f5f5f5;
+    padding: 0.2em ;
+    border-top: 1px solid #00000020;
+
+    border-radius: 5px 5px 0 0;
 
   }
 
   .collapse-body {
+    background-color: #fcfcfc;
+    border-bottom: 10px solid #f5f5f5;
+    border-left: 10px solid #f5f5f5;
+    border-right: 10px solid #f5f5f5;
 
+    border-radius: 0 0 5px 5px;
+
+    padding: 0.5em;
   }
 
   .collapse-arrow {
@@ -98,12 +110,12 @@
   }
 
   .accordion-fade-slide-enter {
-    transform: translateY(-25px);
+    transform: translateY(-10px);
     opacity: 0;
   }
 
   .accordion-fade-slide-leave-to {
-    transform: translateY(-25px);
+    transform: translateY(-10px);
     opacity: 0;
   }
 
