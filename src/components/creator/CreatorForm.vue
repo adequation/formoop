@@ -18,7 +18,8 @@
 
     <div>
       <button @click="saveForm">Enregistrer le formulaire</button>
-      <button @click="publishForm">Publier le formulaire</button>
+
+      <JsonImportModal :form-entries="formEntries" :save-form="saveForm" />
     </div>
 
 
@@ -32,10 +33,11 @@
   import * as Firebase from "firebase";
   import {saveCreatorFormFB, publishCreatorFormFB} from "@/thunks/creatorForm";
   import {getCreatedFormFromID, nativeFbFunctions} from "@/helpers/firebaseHelpers";
+  import JsonImportModal from "@/components/creator/JsonImportModal";
 
   export default {
     name: 'CreatorForm',
-    components: {CreatorFormEntry},
+    components: {JsonImportModal, CreatorFormEntry},
     data() {
       return {
         formEntries: [],
@@ -48,6 +50,7 @@
         defaultAnswers: [{id: "", text: 'Option 1'}],
         formTitle: 'Formulaire sans titre',
         defaultFormTitle: 'Formulaire sans titre',
+        showModal: false
       }
     },
     methods: {
@@ -157,14 +160,6 @@
         });
 
       },
-
-      //publish form into firebase
-      publishForm() {
-        this.saveForm();
-
-        publishCreatorFormFB(this.creatorID, this.formID);
-      }
-
     },
     created: function () {
       //when arriving, set the ID in the store from the router

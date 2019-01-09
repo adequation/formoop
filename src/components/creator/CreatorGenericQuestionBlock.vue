@@ -65,8 +65,6 @@
       swapType(block, e) {
         const blockIndex = this.entry.question.blocks.findIndex(b => b.id === block.id);
 
-        console.log(this.entry.question.blocks[blockIndex].content);
-
         if (blockIndex >= 0) {
           const foundBlock = this.entry.question.blocks[blockIndex];
           this.entry.question.blocks[blockIndex].type = foundBlock.type === 'text' ? 'variable' : 'text';
