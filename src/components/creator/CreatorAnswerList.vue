@@ -15,7 +15,7 @@
       </span>
 
         <span>
-        <button class="option-button delete-option-button" type="button" @click="deleteOption(a.id)">✖</button>
+        <button class="option-button delete-option-button" :id="'deleteButton' + i" type="button" @click="deleteOption(a.id)">✖</button>
       </span>
 
       </div>
