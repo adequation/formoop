@@ -1,10 +1,17 @@
 import * as Firebase from 'firebase'
-import {getCreatedFormFromID, publishingPath} from "@/helpers/firebaseHelpers";
+import {campaignPath, getCreatedFormFromID, publishingPath} from "@/helpers/firebaseHelpers";
 
 export const saveCreatorFormFB = (creatorID, formID, form) => {
 
   return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
     .set(form);
+
+};
+
+export const saveFormCampaignFB = (campaignID, campaign) => {
+
+  return Firebase.database().ref(campaignPath.concat(campaignID))
+    .set(campaign);
 
 };
 
