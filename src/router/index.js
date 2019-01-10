@@ -11,7 +11,6 @@ import SupervisorDashboard from '@/components/supervisor/SupervisorDashboard'
 import PublishedForms from '@/components/general/PublishedForms'
 import FormCampaign from '@/components/general/FormCampaign'
 import CreatorCampaign from '@/components/creator/CreatorCampaign'
-import InviteModal from '@/components/general/InviteModal'
 
 import Firebase from 'firebase';
 
@@ -124,17 +123,8 @@ const router = new Router({
         requiresAuth: true,
         any: false
       }
-    },
-
-    {
-      path: '/mail',
-      name: 'InviteModal',
-      component: InviteModal,
-      meta: {
-        requiresAuth: false,
-        any: true
-      }
     }
+
   ]
 });
 
