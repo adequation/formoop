@@ -16,11 +16,36 @@ export const saveFormCampaignFB = (campaignID, campaign) => {
 
 };
 
+
+export const setFormsCampaignFB = (campaignID, forms) => {
+
+  return Firebase.database().ref(campaignPath.concat(campaignID).concat('/forms')).once('value', (snapshot) => {
+    const campaigns = snapshot.val() || []; //we get the current campaign forms
+
+    console.log("campaignFBSetcamp", campaigns);
+    console.log("campaignFBSetforms", forms);
+
+    forms.forEach(f => {
+      const formIndex = campaigns.find(cf => cf.id === f.id);
+
+      //we override if the form exists
+      //if the form doesn't exist, we add it
+      if(formIndex >=0) campaigns[formIndex] = f;
+      else campaigns.push(f);
+    });
+
+    console.log("newCampaign", campaigns);
+
+    //we set the new array
+    Firebase.database().ref(campaignPath.concat(campaignID).concat('/forms')).set(campaigns);
+  });
+
+};
+
 const writePublishedCreatorFormFB = (form) => {
   return Firebase.database().ref(publishingPath.concat(form.id))
     .set(form);
 };
-
 
 const parseFormToUser = (form) => {
   const parsedForm = {id: form.id, title: form.title};
@@ -112,7 +137,6 @@ const parseGenericFormToUser = (form, entity) => {
 
       const parsedEntries = parseGenericEntry(e, entity);
       parsedEntries.forEach(pe => {
-        console.log(pe.id);
         entriesObject[pe.id] = {...pe};
       });
     }
@@ -128,15 +152,19 @@ const parseGenericFormToUser = (form, entity) => {
 };
 
 const generateAndPublishForms = (creatorForm, entities) => {
-  console.log(JSON.stringify(entities));
-  console.log('--------------------');
+  const createdForms = [];
+
   Object.keys(entities).forEach(entityKey => {
     const parsedForm = parseGenericFormToUser(creatorForm, entities[entityKey]);
     writePublishedCreatorFormFB(parsedForm);
+
+    createdForms.push({id: parsedForm.id, title: parsedForm.title});
   });
+
+  return createdForms;
 };
 
-export const publishGenericFormsFB = (creatorID, formID, entities) => {
+export const publishGenericFormsFB = (creatorID, formID, entities, campaignID = null) => {
 
   //we fetch the form in firebase
   //then we publish it
@@ -144,7 +172,12 @@ export const publishGenericFormsFB = (creatorID, formID, entities) => {
     .on('value', function (snapshot) {
       const value = snapshot.val();
       if (value) {
-        generateAndPublishForms(value, entities);
+        const createdForms = generateAndPublishForms(value, entities);
+
+        if(campaignID){
+          console.log('ccc', campaignID, createdForms);
+          setFormsCampaignFB(campaignID,  createdForms);
+        }
       }
     });
 

@@ -37,8 +37,8 @@
         },
 
         setCampaign() {
-          this.name          = this.campaignName;
-          this.selectedForms = this.campaignForms;
+          this.name          = this.campaignName  || '';
+          this.selectedForms = this.campaignForms || [];
         },
 
         addFormToCampaign(form){
