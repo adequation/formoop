@@ -37,11 +37,15 @@
 
 <style scoped>
 
+  .user-grouped-question{
+    margin: 0.5em;
+  }
+
   .user-group-entry{
     background-color: #f6f6f6;
-    margin: 0.2em auto;
+    margin: 0.2em auto !important;
     border: 1px solid #00000020;
-    width:100%;
+    width:100% !important;
   }
 
   .user-grouped-question-container{

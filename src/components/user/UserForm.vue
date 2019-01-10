@@ -2,13 +2,13 @@
   <div class="form" v-if="formEntries" >
     <h1>{{formTitle}}</h1>
 
-    <UserFormEntry v-for="entry in singleEntries"
-               :key="entry.id"
-               :entry="entry"/>
-
     <UserGroupedQuestion v-for="group in groupedEntries"
                    :key="group.id"
                    :group="group"/>
+
+    <UserFormEntry v-for="entry in singleEntries"
+                   :key="entry.id"
+                   :entry="entry"/>
 
     <button @click="saveAnswers">Enregistrer</button>
 
@@ -51,26 +51,34 @@
           }
         });
 
-        return Object.keys(groups).map(key => groups[key]);
+        return Object.keys(groups).map(key => {
+          groups[key].entries.sort((a,b) => a.question.title.localeCompare(b.question.title));
+
+          return groups[key];
+        });
       },
 
       formEntries () {
         return this.$store.getters.getFormEntries
       },
+
       formID () {
         return this.$store.getters.getUserFormID
       },
+
       formTitle () {
         return this.$store.getters.getUserFormTitle
       }
     },
     created: function () {
+
       this.$root.$on('set-selected-answers', (id, answers) => {
         this.setSelectedAnswers(id, answers)
       });
 
       this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
-      this.$store.dispatch('setFormCampaigns')
+      this.$store.dispatch('setFormCampaigns');
+
     },
     methods: {
       setSelectedAnswers (id, answers) {

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h4 v-if="small">{{question.title}}</h4>
-    <h2 v-else>{{question.title}}</h2>
+    <h4 class="user-question-title" v-if="small">{{question.title}}</h4>
+    <h2 class="user-question-title" v-else>{{question.title}}</h2>
   </div>
 </template>
 
@@ -22,5 +22,7 @@
 </script>
 
 <style scoped>
+  .user-question-title{
 
+  }
 </style>

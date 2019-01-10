@@ -29,7 +29,7 @@ describe('UserFormEntry.vue', () => {
   });
 
   it('title should be same as mock', () => {
-    expect(vm.find('#title').text())
+    expect(vm.find('.user-question-title').text())
       .toEqual(vm.props().entry.question.title)
   });
 });
