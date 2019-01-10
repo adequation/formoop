@@ -37,7 +37,7 @@ export default {
         })
     },
     setFormID: (state, {formID}) => {
-      state.formID = formID
+      state.formID = formID;
     },
     setFormTitle: (state) => {
       Firebase.database().ref(getPublishedFormFromID(state.formID))
