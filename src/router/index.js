@@ -9,6 +9,8 @@ import CreatorHome from '@/components/creator/CreatorHome'
 import SupervisorForm from '@/components/supervisor/SupervisorForm'
 import SupervisorDashboard from '@/components/supervisor/SupervisorDashboard'
 import PublishedForms from '@/components/general/PublishedForms'
+import FormCampaign from '@/components/general/FormCampaign'
+import CreatorCampaign from '@/components/creator/CreatorCampaign'
 
 import Firebase from 'firebase';
 
@@ -57,6 +59,24 @@ const router = new Router({
       meta: {
         requiresAuth: false,
         any: true
+      }
+    },
+    {
+      path: '/campaigns',
+      name: 'FormCampaign',
+      component: FormCampaign,
+      meta: {
+        requiresAuth: true,
+        any: false
+      }
+    },
+    {
+      path: '/campaigns/:campaignID',
+      name: 'CreatorCampaign',
+      component: CreatorCampaign,
+      meta: {
+        requiresAuth: true,
+        any: false
       }
     },
     {

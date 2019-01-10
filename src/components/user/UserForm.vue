@@ -45,6 +45,7 @@
       });
 
       this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
+      this.$store.dispatch('setFormCampaigns')
     },
     methods: {
       setSelectedAnswers (id, answers) {

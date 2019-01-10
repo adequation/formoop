@@ -116,7 +116,6 @@
         }
         this.formEntries = form.formEntries || [];
         this.formTitle = form.formTitle || this.defaultFormTitle;
-
       },
 
       getFormFromFB(creatorID, formID) {

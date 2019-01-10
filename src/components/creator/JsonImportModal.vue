@@ -17,11 +17,14 @@
           <p>Publication et création de {{Object.keys(importedEntities).length}} formulaires</p>
 
           <p>
-            Publier dans la campagne : <select>
-            <option value="none">Aucune</option>
-            <option value="new">Nouvelle campagne</option>
-            <option v-for="c in formCampaigns" :key="c.id" :value="c.id">{{c.name}}</option>
-          </select>
+            Publier dans la campagne :
+            <select @change="onCampaignChange($event.target)" title="">
+              <option value="none">Aucune</option>
+              <option value="new">Nouvelle campagne</option>
+              <option v-for="c in formCampaigns" :key="c.id" :value="c.id">{{c.name}}</option>
+            </select>
+
+            <input v-if="newPublishingCampaign" type="text" title="" v-model="newPublishingCampaignName"/>
           </p>
 
           <button type="button" @click="generateAndPublishForms">Publier !</button>
@@ -41,7 +44,8 @@
 <script>
   import Modal from "@/components/containers/Modal";
   import JsonParser from "@/components/general/JsonParser";
-  import {publishCreatorFormFB, publishGenericFormsFB} from "@/thunks/creatorForm";
+  import {publishCreatorFormFB, publishGenericFormsFB, saveFormCampaignFB} from "@/thunks/creatorForm";
+  import * as uuid from "uuid";
 
   export default {
     name: "JsonImportModal",
@@ -51,7 +55,10 @@
         showModal: false,
         importedEntities: {},
         publishable: false,
-        errors: false
+        errors: false,
+        newPublishingCampaign: false,
+        newPublishingCampaignName: '',
+        publishingCampaign: null
       }
     },
 
@@ -87,6 +94,22 @@
         this.errors = false;
       },
 
+      onCampaignChange: function (target) {
+        if (target.value === 'none') {
+          this.newPublishingCampaign = false;
+          this.publishingCampaign = null;
+
+        } else if (target.value === 'new') {
+          this.newPublishingCampaign = true;
+          this.newPublishingCampaignName = "Nouvelle campagne";
+          this.publishingCampaign = uuid.v4();
+
+        } else {
+          this.newPublishingCampaign = false;
+          this.publishingCampaign = target.value;
+        }
+      },
+
       formContainsGenericQuestion() {
         let containsGenericQuestion = false;
 
@@ -115,7 +138,24 @@
       },
 
       generateAndPublishForms() {
-        publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities);
+
+        if(this.publishingCampaign){ //all forms will be under the same campaign
+
+          if(this.newPublishingCampaign){ // we create a new campaign
+            saveFormCampaignFB(this.publishingCampaign, {id: this.publishingCampaign, name:this.newPublishingCampaignName}).then((e) => {
+
+              publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.publishingCampaign);
+
+            }).catch((e) => {
+              console.log(e);
+            });
+          }else{ //we use an existing campaign
+            publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.publishingCampaign);
+          }
+        }else{ // no campaigns
+          publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities);
+        }
+
         this.closeModal();
       },
 
@@ -156,6 +196,7 @@
         )
       }
     },
+
     created: function () {
 
       this.$root.$on('json-parsed', (parsed) => {
@@ -165,7 +206,7 @@
         this.errors = !this.publishable
       });
 
-      //this.$store.dispatch('setFormCampaigns');
+      this.$store.dispatch('setFormCampaigns')
 
     }
   }
