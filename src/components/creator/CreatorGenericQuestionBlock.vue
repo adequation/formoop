@@ -1,21 +1,25 @@
 <template>
   <div class="generic-question-block">
-  <input class="generic-question-block-property" type="text" placeholder="Champ concerné" v-model="entry.genericProperty"/>
+    <input class="generic-question-block-property" type="text" placeholder="Champ concerné"
+           v-model="entry.genericProperty"/>
 
-  <div class="generic-question-block-question-title">
-    <div v-for="block in entry.question.blocks"
-         :class="getClassFromType(block.type)"
-         @contextmenu="swapType(block, $event)">
-     <input type="text" v-model="block.content"/>
-      <button @click="deleteBlock(block)">✖</button>
+    <div class="generic-question-block-question-title">
+
+      <div v-for="block in entry.question.blocks"
+           :class="getClassFromType(block.type)"
+           @contextmenu="swapType(block, $event)">
+
+        <input type="text" v-model="block.content" size="7"/>
+        <button @click="deleteBlock(block)">✖</button>
+
+      </div>
+
+      <select>
+        <option>+</option>
+        <option @click="addVariable">variable</option>
+        <option @click="addText">texte</option>
+      </select>
     </div>
-
-    <select>
-      <option>+</option>
-      <option @click="addVariable">variable</option>
-      <option @click="addText">texte</option>
-    </select>
-  </div>
   </div>
 </template>
 
@@ -25,8 +29,7 @@
   export default {
     name: "CreatorGenericQuestionBlock",
     data() {
-      return {
-      }
+      return {}
     },
     props: {
       entry: {
@@ -83,11 +86,11 @@
 
 <style scoped>
 
-  .generic-question-block{
+  .generic-question-block {
     margin-bottom: 0.5em;
   }
 
-  .generic-question-block-question-title{
+  .generic-question-block-question-title {
     margin-top: 0.5em;
   }
 
@@ -100,9 +103,9 @@
     border-radius: 20px 20px 20px 20px;
   }
 
-  .block input[type=text]{
+  .block input[type=text] {
     background: none;
-    border : none;
+    border: none;
     width: auto;
   }
 

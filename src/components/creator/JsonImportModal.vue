@@ -3,15 +3,35 @@
 
     <button @click="publishForm">Publier le formulaire</button>
 
-    <Modal v-if="showModal" @close="showModal = false">
+    <Modal v-if="showModal" @close="closeModal">
 
-      <h3 slot="header">Ajouter un fichier pour créer une question générique</h3>
+      <h1 slot="header">Publication du formulaire</h1>
 
       <div slot="body">
-        <JsonParser/>
-      </div>
+        <p>Fichier de génération :
+          <JsonParser/>
+        </p>
 
-      {{importedEntities}}
+        <div v-if="publishable">
+
+          <p>Publication et création de {{Object.keys(importedEntities).length}} formulaires</p>
+
+          <p>
+            Publier dans la campagne : <select>
+            <option value="none">Aucune</option>
+            <option value="new">Nouvelle campagne</option>
+            <option v-for="c in formCampaigns" :key="c.id" :value="c.id">{{c.name}}</option>
+          </select>
+          </p>
+
+          <button type="button" @click="generateAndPublishForms">Publier !</button>
+        </div>
+
+        <div v-else-if="!publishable && errors">
+          ERREURS
+        </div>
+
+      </div>
 
     </Modal>
 
@@ -21,6 +41,7 @@
 <script>
   import Modal from "@/components/containers/Modal";
   import JsonParser from "@/components/general/JsonParser";
+  import {publishCreatorFormFB, publishGenericFormsFB} from "@/thunks/creatorForm";
 
   export default {
     name: "JsonImportModal",
@@ -28,9 +49,12 @@
     data() {
       return {
         showModal: false,
-        importedEntities: {}
+        importedEntities: {},
+        publishable: false,
+        errors: false
       }
     },
+
     props: {
       formEntries: {
         type: Array,
@@ -39,14 +63,37 @@
       saveForm: {
         type: Function,
         required: true
+      },
+    },
+
+    computed: {
+      formCampaigns() {
+        return this.$store.getters.formCampaigns;
+      },
+
+      formID() {
+        return this.$store.getters.getCreatorFormID
+      },
+
+      creatorID() {
+        return this.$store.getters.creatorID;
       }
     },
+
     methods: {
+      closeModal() {
+        this.showModal = false;
+        this.publishable = false;
+        this.errors = false;
+      },
+
       formContainsGenericQuestion() {
         let containsGenericQuestion = false;
+
         this.formEntries.forEach(fe => {
           if (fe.generic) containsGenericQuestion = true;
         });
+
         return containsGenericQuestion;
       },
 
@@ -60,9 +107,15 @@
 
         if (this.formContainsGenericQuestion()) {
           this.showModal = true;
+        } else {
+          console.log("publi");
+          publishCreatorFormFB(this.creatorID, this.formID);
         }
-        //publishCreatorFormFB(this.creatorID, this.formID);
 
+      },
+
+      generateAndPublishForms() {
+        publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities);
       },
 
       verifyEntitiesIntegrity(entities, entries) {
@@ -107,9 +160,11 @@
       this.$root.$on('json-parsed', (parsed) => {
         this.importedEntities = parsed;
 
-        if (this.verifyEntitiesIntegrity(this.importedEntities, this.getGenericEntries())) console.log('ok');
-        else console.log('non');
+        this.publishable = !!this.verifyEntitiesIntegrity(this.importedEntities, this.getGenericEntries());
+        this.errors = !this.publishable
       });
+
+      //this.$store.dispatch('setFormCampaigns');
 
     }
   }

@@ -9,7 +9,6 @@ import CreatorHome from '@/components/creator/CreatorHome'
 import SupervisorForm from '@/components/supervisor/SupervisorForm'
 import SupervisorDashboard from '@/components/supervisor/SupervisorDashboard'
 import PublishedForms from '@/components/general/PublishedForms'
-import Test from '@/components/general/test'
 
 import Firebase from 'firebase';
 
@@ -103,16 +102,6 @@ const router = new Router({
       meta: {
         requiresAuth: true,
         any: false
-      }
-    },
-
-    {
-      path: '/test',
-      name: 'Test',
-      component: Test,
-      meta: {
-        requiresAuth: false,
-        any: true
       }
     }
 
