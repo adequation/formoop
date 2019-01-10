@@ -116,6 +116,7 @@
 
       generateAndPublishForms() {
         publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities);
+        this.closeModal();
       },
 
       verifyEntitiesIntegrity(entities, entries) {
