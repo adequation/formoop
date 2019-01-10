@@ -1,6 +1,5 @@
 import * as Firebase from 'firebase'
 import {campaignPath, getCreatedFormFromID, publishingPath} from "@/helpers/firebaseHelpers";
-import {getCreatedFormFromID, publishingPath} from "@/helpers/firebaseHelpers";
 import * as uuid from "uuid";
 
 export const saveCreatorFormFB = (creatorID, formID, form) => {
