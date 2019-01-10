@@ -1,9 +1,15 @@
 <template>
   <div class="form" v-if="formEntries" >
     <h1>{{formTitle}}</h1>
-    <UserFormEntry v-for="entry in formEntries"
+
+    <UserFormEntry v-for="entry in singleEntries"
                :key="entry.id"
                :entry="entry"/>
+
+    <UserGroupedQuestion v-for="group in groupedEntries"
+                   :key="group.id"
+                   :group="group"/>
+
     <button @click="saveAnswers">Enregistrer</button>
 
     <InviteModal/>
@@ -19,9 +25,10 @@
   import {setSelectedAnswersFB} from '@/thunks/userFormEntriesThunks'
   import InviteModal from "@/components/general/InviteModal";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
+  import UserGroupedQuestion from "@/components/user/UserGroupedQuestion";
   export default {
     name: 'UserForm',
-    components: {InviteModal, UserFormEntry},
+    components: {UserGroupedQuestion, InviteModal, UserFormEntry},
     data () {
       return {
         showModal: false,
@@ -29,6 +36,24 @@
       }
     },
     computed: {
+      singleEntries(){
+        return this.formEntries.filter(fe => !fe.grouped);
+      },
+
+      groupedEntries(){
+        const groups = {};
+
+        this.formEntries.forEach(fe => {
+          if(fe.grouped) {
+            if(groups[fe.group]) groups[fe.group].entries.push(fe);
+
+            else groups[fe.group] = {entries : [fe], question: fe.groupQuestion, id: fe.group};
+          }
+        });
+
+        return Object.keys(groups).map(key => groups[key]);
+      },
+
       formEntries () {
         return this.$store.getters.getFormEntries
       },
@@ -53,6 +78,7 @@
         tmp[id] = answers;
         this.selectedAnswers = tmp;
       },
+
       saveAnswers () {
         const user = nativeFbFunctions.getCurrentUser();
         if(user)

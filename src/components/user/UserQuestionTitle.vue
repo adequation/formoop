@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h2 id="title">{{question.title}}</h2>
+    <h4 v-if="small">{{question.title}}</h4>
+    <h2 v-else>{{question.title}}</h2>
   </div>
 </template>
 
@@ -11,6 +12,10 @@
       question: {
         type: Object,
         required: true
+      },
+      small: {
+        type: Boolean,
+        required: false
       }
     }
   }

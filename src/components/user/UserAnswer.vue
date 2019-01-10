@@ -65,6 +65,10 @@
       usersAnswers:{
         type: Object,
         required: false
+      },
+      small: {
+        type: Boolean,
+        required: false
       }
     },
     methods: {
