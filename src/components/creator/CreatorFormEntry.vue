@@ -1,12 +1,17 @@
 <template>
   <Collapse class="form-entry" :initialy-opened="initialyOpened" :showArrow="true">
 
-    <h3 slot="header" class="form-entry-title">{{entry.question.title}}</h3>
+    <div slot="header" >
+      <h3 class="form-entry-title" v-if="entry.generic">{{getGenericTitle(entry.question.blocks)}}</h3>
+      <h3 class="form-entry-title" v-else>{{entry.question.title}}</h3>
+    </div>
 
     <form slot="body" class="form-entry-content" >
+
       <div>
 
-        <input title="" type="text" class="questionTitle" v-model="entry.question.title" placeholder="Titre de la question"/>
+        <CreatorGenericQuestionBlock v-if="entry.generic" :entry="entry" />
+        <input v-else title="" type="text" class="questionTitle" v-model="entry.question.title" placeholder="Titre de la question"/>
 
         <select title=""  @change="onChange($event.target)">
           <option v-for="(t, i) in types"
@@ -32,10 +37,12 @@
 <script>
   import CreatorAnswer from './CreatorAnswer'
   import Collapse from '@/components/containers/Collapse'
+  import CreatorGenericQuestionBlock from "@/components/creator/CreatorGenericQuestionBlock";
+  import {getGenericQuestionTitle} from "@/helpers/genericQuestionHelpers";
 
   export default {
     name: 'CreatorFormEntry',
-    components: {CreatorAnswer, Collapse},
+    components: {CreatorGenericQuestionBlock, CreatorAnswer, Collapse},
     props: {
       entry: {
         type: Object,
@@ -68,6 +75,9 @@
       },
       deleteEntry(){
         this.$parent.$emit('delete-entry', this.entry.id);
+      },
+      getGenericTitle (blocks){
+        return getGenericQuestionTitle(blocks);
       }
     },
   }

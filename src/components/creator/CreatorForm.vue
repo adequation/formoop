@@ -13,11 +13,13 @@
                       :initialyOpened="entry.initialyOpened"
     />
 
-    <button @click="addEntry">Ajouter une question</button>
+    <button @click="addEntry(false)">Ajouter une question</button>
+    <button @click="addEntry(true)">Ajouter une question générique</button>
 
     <div>
       <button @click="saveForm">Enregistrer le formulaire</button>
-      <button @click="publishForm">Publier le formulaire</button>
+
+      <JsonImportModal :form-entries="formEntries" :save-form="saveForm" />
     </div>
 
 
@@ -31,10 +33,11 @@
   import * as Firebase from "firebase";
   import {saveCreatorFormFB, publishCreatorFormFB} from "@/thunks/creatorForm";
   import {getCreatedFormFromID, nativeFbFunctions} from "@/helpers/firebaseHelpers";
+  import JsonImportModal from "@/components/creator/JsonImportModal";
 
   export default {
     name: 'CreatorForm',
-    components: {CreatorFormEntry},
+    components: {JsonImportModal, CreatorFormEntry},
     data() {
       return {
         formEntries: [],
@@ -47,6 +50,7 @@
         defaultAnswers: [{id: "", text: 'Option 1'}],
         formTitle: 'Formulaire sans titre',
         defaultFormTitle: 'Formulaire sans titre',
+        showModal: false
       }
     },
     methods: {
@@ -55,15 +59,35 @@
         e.preventDefault();
       },
 
-      addEntry() {
+      addEntry(generic) {
         const id = uuid.v4();
-        //copy default answer array, and generate new option ids
-        this.formEntries.push({
+
+        const entry = {
           ...this.defaultFormEntry,
           question: {...this.defaultQuestion},
           answers: [...this.defaultAnswers.map(a => ({...a, id: uuid.v4()}))],
           id
-        })
+        };
+
+        if(generic) {
+          entry.genericProperty = '';
+          entry.generic = true;
+          entry.question.blocks = [
+            {
+              id: uuid.v4(),
+              type: 'text',
+              content: "Texte standard"
+            },
+            {
+              id: uuid.v4(),
+              type: 'variable',
+              content: "nom_variable"
+            }
+          ];
+      }
+
+        //copy default answer array, and generate new option ids
+        this.formEntries.push(entry);
       },
 
       addFormEntryAnswer(id, answer) {
@@ -136,14 +160,6 @@
         });
 
       },
-
-      //publish form into firebase
-      publishForm() {
-        this.saveForm();
-
-        publishCreatorFormFB(this.creatorID, this.formID);
-      }
-
     },
     created: function () {
       //when arriving, set the ID in the store from the router
