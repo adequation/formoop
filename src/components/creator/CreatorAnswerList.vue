@@ -5,20 +5,38 @@
       <div class="option" v-for="(a,i) in answers" :key="i">
 
       <span>
-        {{getSymbol(type)}}
+        <input v-if="type==='radio'" title="" type="radio" checked @click="disableClick($event)"/>
+        <input v-if="type==='checkbox'" title="" type="checkbox" checked @click="disableClick($event)"/>
+        <span v-if="type==='select'">⌄</span>
       </span>
 
         <span>
-          <input title="" type="text" :value="a.text" v-on:input="optionTextOnChange($event.target, a.id)"/>
-        </span>
+        <input title="" type="text" :value="a.text" v-on:input="optionTextOnChange($event.target, a.id)"/>
+      </span>
 
         <span>
-          <button id="deleteOptionButton" type="button" @click="deleteOption(a.id)">Supprimer l'option </button>
-        </span>
+        <button class="option-button delete-option-button" type="button" @click="deleteOption(a.id)">✖</button>
+      </span>
 
       </div>
 
-      <button id="addOptionButton" @click="addOption" type="button">Ajouter une option</button>
+      <div class="fake-option">
+
+      <span>
+        <input v-if="type==='radio'" title="" type="radio"  @click="disableClick($event)"/>
+        <input v-if="type==='checkbox'" title="" type="checkbox"  @click="disableClick($event)"/>
+        <span v-if="type==='select'">⌄</span>
+      </span>
+
+        <span>
+        <input title="" disabled type="text" value=". . ." @click="addOption"/>
+      </span>
+
+        <span>
+              <button class="option-button add-option-button" @click="addOption" type="button">✚</button>
+      </span>
+
+      </div>
 
     </form>
   </div>
@@ -54,19 +72,27 @@
         const icons = {default: 'x', radio: 'o', checkbox: '[x]', select: '>'};
         return icons[type] ? icons[type] : icons['default'];
       },
+
       addOption() {
         const newAnswer = {id: uuid.v4(), text: this.defaultOption.text.concat('' + (this.answers.length + 1))};
         this.$root.$emit('add-entry-answer', this.entryID, newAnswer);
       },
+
       editOption(optionID, optionText) {
         this.$root.$emit('edit-entry-option', this.entryID, optionID, optionText)
       },
+
       deleteOption(optionID) {
-        if(this.answers.length > 1)
-        this.$root.$emit('delete-entry-option', this.entryID, optionID);
+        if (this.answers.length > 1)
+          this.$root.$emit('delete-entry-option', this.entryID, optionID);
       },
+
       optionTextOnChange(target, optionID) {
         this.editOption(optionID, target.value)
+      },
+
+      disableClick(e) {
+        e.preventDefault();
       }
 
     }
@@ -75,4 +101,43 @@
 
 <style scoped>
 
+  .option {
+    margin-top: 0.5em;
+  }
+
+  .fake-option {
+    margin-top: 0.5em;
+  }
+
+  input[type=text] {
+    background: none;
+    border: none;
+    border-bottom: 1px solid lightgrey;
+    font-size: large;
+  }
+
+  button.option-button {
+    background: none;
+    color: rgba(0, 0, 0, 0.4);
+    font-size: large;
+    border: none;
+
+    outline-style:none;
+    box-shadow:none;
+  }
+
+  .delete-option-button {
+  }
+
+  .delete-option-button:hover {
+    color: rgba(255, 0, 0, 0.75);
+  }
+
+  .add-option-button {
+    margin-top: 0.1em;
+  }
+
+  .add-option-button:hover {
+    color: rgba(75, 200, 0, 0.75);
+  }
 </style>

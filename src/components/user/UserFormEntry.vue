@@ -1,7 +1,7 @@
 <template>
   <div class="userFormEntry">
-    <UserQuestionTitle :question="entry.question"/>
-    <UserAnswer :answer="entry.answer" :entryID="entry.id" :usersAnswers="entry.usersAnswers"/>
+    <UserQuestionTitle :question="entry.question" :small="small"/>
+    <UserAnswer :answer="entry.answer" :entryID="entry.id" :usersAnswers="entry.usersAnswers" :small="small"/>
   </div>
 </template>
 
@@ -15,6 +15,10 @@
       entry: {
         type: Object,
         required: true
+      },
+      small: {
+        type: Boolean,
+        required: false
       }
     }
   }

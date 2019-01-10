@@ -26,3 +26,6 @@ export const getPublishedFormFromID = (formID) => publishingPath.concat(formID);
 
 export const publishingPath = '/publishedForms/';
 
+///// CAMPAIGNS
+
+export const campaignPath = '/formCampaigns/';

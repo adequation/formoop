@@ -9,8 +9,8 @@ import CreatorHome from '@/components/creator/CreatorHome'
 import SupervisorForm from '@/components/supervisor/SupervisorForm'
 import SupervisorDashboard from '@/components/supervisor/SupervisorDashboard'
 import PublishedForms from '@/components/general/PublishedForms'
-import MailSender from '@/components/general/MailSender'
-import InviteModal from '@/components/general/InviteModal'
+import FormCampaign from '@/components/general/FormCampaign'
+import CreatorCampaign from '@/components/creator/CreatorCampaign'
 
 import Firebase from 'firebase';
 
@@ -63,6 +63,24 @@ const router = new Router({
       }
     },
     {
+      path: '/campaigns',
+      name: 'FormCampaign',
+      component: FormCampaign,
+      meta: {
+        requiresAuth: true,
+        any: false
+      }
+    },
+    {
+      path: '/campaigns/:campaignID',
+      name: 'CreatorCampaign',
+      component: CreatorCampaign,
+      meta: {
+        requiresAuth: true,
+        any: false
+      }
+    },
+    {
       path: '/create/',
       name: 'CreatorHome',
       component: CreatorHome,
@@ -106,17 +124,8 @@ const router = new Router({
         requiresAuth: true,
         any: false
       }
-    },
-
-    {
-      path: '/mail',
-      name: 'InviteModal',
-      component: InviteModal,
-      meta: {
-        requiresAuth: false,
-        any: true
-      }
     }
+
   ]
 });
 
