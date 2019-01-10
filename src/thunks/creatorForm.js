@@ -98,7 +98,11 @@ const parseGenericFormToUser = (form, entity) => {
   const entriesObject = {};
   form.entries.forEach(e => {
 
+
+
     if (e.generic) {
+      if(e.grouped) e.group = uuid.v4();
+
       const parsedEntries = parseGenericEntry(e, entity);
       parsedEntries.forEach(pe => {
         console.log(pe.id);

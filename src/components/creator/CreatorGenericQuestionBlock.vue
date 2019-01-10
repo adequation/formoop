@@ -1,5 +1,16 @@
 <template>
   <div class="generic-question-block">
+
+    <div class="generic-question-block-grouped">
+      <input title="" type="checkbox" v-model="entry.grouped"> Question groupée ?
+      <input v-if="entry.grouped"
+        class="generic-question-block-group-question"
+             type="text"
+             placeholder="Question générale"
+             v-model="entry.groupQuestion"/>
+    </div>
+
+
     <input class="generic-question-block-property" type="text" placeholder="Champ concerné"
            v-model="entry.genericProperty"/>
 
@@ -9,7 +20,7 @@
            :class="getClassFromType(block.type)"
            @contextmenu="swapType(block, $event)">
 
-        <input type="text" v-model="block.content" size="7"/>
+        <input title="" type="text" v-model="block.content" size="7"/>
         <button @click="deleteBlock(block)">✖</button>
 
       </div>
@@ -38,6 +49,7 @@
       },
     },
     methods: {
+
       addVariable() {
         const newVariable = {
           id: uuid.v4(),
