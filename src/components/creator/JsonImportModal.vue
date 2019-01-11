@@ -1,7 +1,7 @@
 <template>
   <div class="json-import-modal">
 
-    <button @click="publishForm">Publier le formulaire</button>
+    <button type="button" @click="publishForm">Publier le formulaire</button>
 
     <Modal v-if="showModal" @close="closeModal">
 

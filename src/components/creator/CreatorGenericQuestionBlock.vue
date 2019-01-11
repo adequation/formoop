@@ -21,15 +21,12 @@
            @contextmenu="swapType(block, $event)">
 
         <input title="" type="text" v-model="block.content" size="7"/>
-        <button @click="deleteBlock(block)">✖</button>
+        <button type="button" @click="deleteBlock(block)">✖</button>
 
       </div>
 
-      <select>
-        <option>+</option>
-        <option @click="addVariable">variable</option>
-        <option @click="addText">texte</option>
-      </select>
+      <button type="button" @click="addVariable">variable</button>
+      <button type="button" @click="addText">texte</button>
     </div>
   </div>
 </template>
@@ -71,10 +68,11 @@
       },
 
       deleteBlock(block) {
-        const blocIndex = this.entry.question.blocks.findIndex(b => b.id === block.id);
+        if(this.entry.question.blocks.length >1){
+          const blocIndex = this.entry.question.blocks.findIndex(b => b.id === block.id);
 
-
-        if (blocIndex >= 0) this.entry.question.blocks.splice(blocIndex, 1);
+          if (blocIndex >= 0) this.entry.question.blocks.splice(blocIndex, 1);
+        }
       },
 
       swapType(block, e) {

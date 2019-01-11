@@ -15,7 +15,7 @@
       <h1>Aucun formulaire créé</h1>
     </div>
 
-    <button @click="createNewForm">Créer un formulaire</button>
+    <button type="button" @click="createNewForm">Créer un formulaire</button>
   </div>
 </template>
 
