@@ -6,6 +6,8 @@
       <span><input class="firstNameInput" type="text" placeholder="Prénom" v-model="firstName" v-on:keydown="keyHandler"/></span>
       <span><input class="lastNameInput" type="text" placeholder="Nom" v-model="lastName" v-on:keydown="keyHandler"/></span>
 
+      <span><input class="companyName" type="text" placeholder="Entreprise" v-model="userData.company" v-on:keydown="keyHandler"></span>
+
       <span><input class="loginInput" type="text" placeholder="Adresse email" v-model="login"/></span>
       <span><input class="passwordInput" type="password" placeholder="Mot de passe" v-model="password"/></span>
     </form>
@@ -21,8 +23,7 @@
 </template>
 
 <script>
-  import Firebase from 'firebase';
-  import { updateUserProfileDisplayName } from '@/thunks/userAccountThunks'
+  import { updateUserProfileDisplayName, updateUserProfileData } from '@/thunks/userAccountThunks'
   import {handleError} from "@/helpers/loginErrorHandlingHelpers";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
@@ -33,7 +34,10 @@
         login: null,
         firstName: null,
         lastName: null,
-        password: null
+        password: null,
+        userData: {
+          company: null,
+        },
       }
     },
     methods: {
@@ -43,13 +47,15 @@
           (user) => {
             updateUserProfileDisplayName(nativeFbFunctions.getCurrentUser(), this.firstName, this.lastName )
               .then(() => {
-                this.$router.replace("/home");
+                updateUserProfileData(nativeFbFunctions.getCurrentUser(), this.userData)
               })
-              .catch(e=>{
-                console.log(e);
-                this.$router.replace("/home");
-              })
-
+                .then(() => {
+                  this.$router.replace("/home");
+                })
+                .catch(e=>{
+                  console.log(e);
+                  this.$router.replace("/home");
+                })
           },
           function (err) {
             alert(handleError(err));

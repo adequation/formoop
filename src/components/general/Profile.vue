@@ -4,11 +4,19 @@
       <div v-if="!edit">
         <p class="displayName">{{user.displayName}}</p>
         <p class="mail">{{user.email}}</p>
+
+        <p v-for="data in Object.keys(userData)" :class="data"> {{data }}  {{ userData[data] }}</p>
+
         <button @click="editProfile">Modifier</button>
       </div>
       <div v-else>
         <input class="firstNameInput" type="text" placeholder="Prénom" v-model="firstName" v-on:keydown="keyHandler"/>
         <input class="lastNameInput" type="text" placeholder="Nom" v-model="lastName" v-on:keydown="keyHandler"/>
+
+        <p v-for="data in Object.keys(userData)"> {{ data }}
+        <input :class="data.concat('Input')" type="text" :placeholder="data" v-model="userData[data]" v-on:keydown="keyHandler">
+        </p>
+
         <button @click="updateProfile">Sauvegarder</button>
         <button @click="editProfile">Annuler</button>
       </div>
@@ -20,7 +28,7 @@
 </template>
 
 <script>
-  import {updateUserProfileDisplayName} from "@/thunks/userAccountThunks";
+  import {updateUserProfileDisplayName, getUserData, updateUserProfileData} from "@/thunks/userAccountThunks";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
   export default {
@@ -30,12 +38,19 @@
         firstName: '',
         lastName: '',
 
+        userData:{},
+
         saving: false,
         edit: false
       }
     },
     computed: {
       user(){
+
+        getUserData(nativeFbFunctions.getCurrentUser()).then( (data) => {
+          this.userData = {...data.val()}
+        });
+
         return nativeFbFunctions.getCurrentUser();
       }
     },
@@ -45,12 +60,21 @@
 
         updateUserProfileDisplayName(this.user,
           this.firstName,
-          this.lastName).then(() => {
+          this.lastName)
+          .then(() =>{
+            updateUserProfileData(
+              this.user,
+              this.userData);
+          })
+          .then(() => {
 
-          this.setNamesData(this.user.displayName);
-          this.editProfile();
+            this.setNamesData(this.user.displayName);
+              getUserData(nativeFbFunctions.getCurrentUser()).then( (data) => {
+                this.userData = {...data.val()}
+              });
+            this.editProfile();
 
-          this.saving = false;
+            this.saving = false;
 
         }).catch((err) => console.log(err));
 
