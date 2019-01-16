@@ -1,19 +1,20 @@
 <template>
   <Collapse class="form-entry" :initialy-opened="initialyOpened" :showArrow="true">
 
-    <div slot="header" >
+    <div slot="header">
       <h3 class="form-entry-title" v-if="entry.generic">{{getGenericTitle(entry.question.blocks)}}</h3>
       <h3 class="form-entry-title" v-else>{{entry.question.title}}</h3>
     </div>
 
-    <form slot="body" class="form-entry-content" >
+    <form slot="body" class="form-entry-content">
 
       <div>
 
-        <CreatorGenericQuestionBlock v-if="entry.generic" :entry="entry" />
-        <input v-else title="" type="text" class="questionTitle" v-model="entry.question.title" placeholder="Titre de la question"/>
+        <CreatorGenericQuestionBlock v-if="entry.generic" :entry="entry"/>
+        <input v-else title="" type="text" class="questionTitle" v-model="entry.question.title"
+               placeholder="Titre de la question"/>
 
-        <select title=""  @change="onChange($event.target)">
+        <select title="" @change="onChange($event.target)">
           <option v-for="(t, i) in types"
                   :key="i"
                   :name="t.value"
@@ -48,9 +49,9 @@
         type: Object,
         required: true
       },
-      initialyOpened : {
+      initialyOpened: {
         type: Boolean,
-        required : false
+        required: false
       }
     },
     data() {
@@ -67,19 +68,22 @@
       }
     },
     methods: {
-      onChange (target) {
+      onChange(target) {
         this.setEntryType(target.value);
       },
-      setEntryType (type) {
+      setEntryType(type) {
         this.$parent.$emit('set-entry-type', this.entry.id, type)
       },
-      deleteEntry(){
+      deleteEntry() {
         this.$parent.$emit('delete-entry', this.entry.id);
       },
-      getGenericTitle (blocks){
+      getGenericTitle(blocks) {
         return getGenericQuestionTitle(blocks);
       }
     },
+    mounted() {
+      this.$root.$emit('mounted-entry', this.entry.id);
+    }
   }
 </script>
 

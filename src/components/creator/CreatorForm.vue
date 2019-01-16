@@ -11,10 +11,8 @@
                       :key="entry.id"
                       :entry="entry"
                       :initialyOpened="entry.initialyOpened"
+                      :ref="entry.id"
     />
-
-    <button type="button" @click="addEntry(false)">Ajouter une question</button>
-    <button type="button" @click="addEntry(true)">Ajouter une question générique</button>
 
     <div>
       <button type="button" @click="saveForm">Enregistrer le formulaire</button>
@@ -22,6 +20,12 @@
       <JsonImportModal :form-entries="formEntries" :save-form="saveForm" />
     </div>
 
+    <DockingMenu>
+      <div slot="body">
+        <button type="button" @click="addEntry(false)">Ajouter une question</button>
+        <button type="button" @click="addEntry(true)">Ajouter une question générique</button>
+      </div>
+    </DockingMenu>
 
   </div>
 </template>
@@ -34,10 +38,11 @@
   import {saveCreatorFormFB, publishCreatorFormFB} from "@/thunks/creatorForm";
   import {getCreatedFormFromID, nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import JsonImportModal from "@/components/creator/JsonImportModal";
+  import DockingMenu from "@/components/containers/DockingMenu";
 
   export default {
     name: 'CreatorForm',
-    components: {JsonImportModal, CreatorFormEntry},
+    components: {JsonImportModal, CreatorFormEntry, DockingMenu},
     data() {
       return {
         formEntries: [],
@@ -164,7 +169,7 @@
       //when arriving, set the ID in the store from the router
       this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
       this.$store.dispatch('setPublishedForms');
-      this.$store.dispatch('setCreatorID', {formID: null})
+      this.$store.dispatch('setCreatorID', {formID: null});
 
       //emitting of a new entry
       this.$root.$on('add-entry-answer', (id, answer) => {
@@ -174,6 +179,11 @@
       //emitting the type of an entry
       this.$on('set-entry-type', (id, type) => {
         this.setFormEntryType(id, type)
+      });
+
+      //when an entry is mounted
+      this.$root.$on('mounted-entry', (id) => {
+        window.scrollTo(0, document.body.scrollHeight);
       });
 
       //emitting of a new entry option
