@@ -8,7 +8,7 @@ const mockEntry =
     question: {title: 'Question 1'},
     answer: {type: 'checkbox', answers: [{text: 'a'}, {text: 'b'}, {text: 'c'}, {text: 'd'}, {text: 'e'}]},
     id: 'Q1',
-    alreadyAnswered: false
+    alreadyAnswered: false,
   };
 
 const mockedUser = {
@@ -24,7 +24,8 @@ describe('UserFormEntry.vue', () => {
 
   const vm = mount(UserFormEntry, {
     propsData: {
-      entry : mockEntry
+      entry : mockEntry,
+      userAnswers : {}
     }
   });
 

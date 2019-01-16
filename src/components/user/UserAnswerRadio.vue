@@ -14,7 +14,7 @@
     name: 'AnswerRadio',
     data () {
       return {
-        selectedAnswers: null
+        selectedAnswers: this.currentUserAnswers || ''
       }
     },
     props: {
@@ -25,6 +25,10 @@
       entryID: {
         type: String,
         required: true
+      },
+      currentUserAnswers: {
+        type: String,
+        required: false
       }
     },
     methods: {

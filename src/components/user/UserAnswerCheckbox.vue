@@ -2,7 +2,11 @@
   <div>
     <form>
       <span v-for="(a, i) in answers" :key="a.text">
-        <label>  <input type="checkbox" :name="a.text" :value="a.id" v-on:input="onChange($event.target)">
+        <label>  <input type="checkbox"
+                        :name="a.text"
+                        :value="a.id"
+                        v-on:input="onChange($event.target)"
+                        :checked="selectedAnswers.includes(a.id)">
         {{a.text}} </label>
       </span>
     </form>
@@ -20,11 +24,15 @@
       entryID: {
         type: String,
         required: true
+      },
+      currentUserAnswers: {
+        type: Array,
+        required: false
       }
     },
     data () {
       return {
-        selectedAnswers: []
+        selectedAnswers: this.currentUserAnswers || []
       }
     },
     methods: {
