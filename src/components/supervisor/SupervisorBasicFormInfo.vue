@@ -2,6 +2,8 @@
   <div>
     <SupervisorProgressChart :percentage="getPercentage('answered')"/>
 
+    <SupervisorForceDirectedGraph :userAnswers="userAnswers" :formEntries="formEntries"/>
+
     <p><span class="answer-percentage">{{Number(getPercentage("answered")).toFixed(2)}}%</span>
       des questions ont une réponse</p>
     <p><span class="not-answered-percentage">{{Number(getPercentage("notAnswered")).toFixed(2)}}%</span>
@@ -11,9 +13,10 @@
 
 <script>
   import SupervisorProgressChart from "@/components/supervisor/SupervisorProgressChart"
+  import SupervisorForceDirectedGraph from "@/components/supervisor/SupervisorForceDirectedGraph";
   export default {
     name: "SupervisorBasicFormInfo",
-    components:{SupervisorProgressChart},
+    components:{SupervisorForceDirectedGraph, SupervisorProgressChart},
     props: {
       formEntries: {
         type: Array,

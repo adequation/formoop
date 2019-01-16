@@ -12,6 +12,7 @@
                        :entry="entry"
                        :key="entry.id"
                        class="user-group-entry"
+                       :userAnswers="userAnswers"
                        :small="true"/>
 
       </div>
@@ -30,7 +31,11 @@
       group: {
         type: Object,
         required: true
-      }
+      },
+      userAnswers: {
+        type: Object,
+        required: true
+      },
     }
   }
 </script>
