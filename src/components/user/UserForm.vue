@@ -8,11 +8,12 @@
 
     <UserFormEntry v-for="entry in singleEntries"
                    :key="entry.id"
-                   :entry="entry"/>
+                   :entry="entry"
+                   :userAnswers="userAnswers || {}"/>
 
     <button @click="saveAnswers">Enregistrer</button>
 
-    <InviteModal/>
+    <InviteModal v-if="user"/>
 
   </div>
   <div v-else>
@@ -38,6 +39,10 @@
     computed: {
       singleEntries(){
         return this.formEntries.filter(fe => !fe.grouped);
+      },
+
+      user(){
+        return nativeFbFunctions.getCurrentUser();
       },
 
       groupedEntries(){
@@ -68,6 +73,10 @@
 
       formTitle () {
         return this.$store.getters.getUserFormTitle
+      },
+
+      userAnswers () {
+        return this.$store.getters.userAnswers || {}
       }
     },
     created: function () {
@@ -88,9 +97,9 @@
       },
 
       saveAnswers () {
-        const user = nativeFbFunctions.getCurrentUser();
-        if(user)
-          setSelectedAnswersFB(this.formID, this.selectedAnswers, user.uid);
+        if(this.user)
+          setSelectedAnswersFB(this.formID, this.selectedAnswers, this.user.uid);
+
         else alert("Vous n'êtes pas connecté !");
       }
     },
