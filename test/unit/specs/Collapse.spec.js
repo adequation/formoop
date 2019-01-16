@@ -1,6 +1,5 @@
 import Collapse from '@/components/containers/Collapse'
 import {mount} from '@vue/test-utils'
-import * as jest from "jest";
 
 const mockPropsOpenArrow =
   {

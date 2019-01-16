@@ -15,7 +15,7 @@ describe('UserQuestionTitle.vue', () => {
   });
 
   it('Should display the same text as in mock data', () => {
-    const title = vm.find('#title');
+    const title = vm.find('.user-question-title');
 
     expect(title.text()).toBe(mockEntry.question.title);
   })
