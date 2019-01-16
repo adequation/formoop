@@ -1,5 +1,5 @@
 import * as Firebase from 'firebase'
-import {setFormsCampaignFB} from "./creatorForm";
+import {getUser} from "@/helpers/firebaseHelpers";
 
 export function updateUserProfile( user, data){
   return user.updateProfile(data);
@@ -10,16 +10,13 @@ export function updateUserProfileDisplayName(user, firstName, lastName){
   return updateUserProfile(user, {displayName});
 }
 
-export const updateUserProfileData = (user, userData) => {
-  Object.keys(userData).forEach(userDataKey => {
-    Firebase.database().ref('/users/'.concat(user.uid).concat('/data/').concat(userDataKey))
-      .set(userData[userDataKey])
-  })
+export const updateUserProfileMetaData = (user, userData) => {
+    return Firebase.database().ref(getUser(user.uid).concat('/metaData/'))
+      .set(userData)
 };
 
-export function getUserData(user){
-  let data;
-  return Firebase.database().ref('/users/'.concat(user.uid).concat('/data'))
+export function getUserMetaData(user){
+  return Firebase.database().ref(getUser(user.uid).concat('/metaData'))
     .once('value', function (snapshot) {
       return snapshot.val()
     })

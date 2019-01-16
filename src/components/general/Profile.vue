@@ -2,20 +2,17 @@
   <div>
     <div v-if="!saving">
       <div v-if="!edit">
-        <p class="displayName">{{user.displayName}}</p>
-        <p class="mail">{{user.email}}</p>
-
-        <p v-for="data in Object.keys(userData)" :class="data"> {{data }}  {{ userData[data] }}</p>
+        <p class="displayName">{{userMetaData.firstName}} {{userMetaData.lastName}}</p>
+        <p class="displayCompany">Entreprise {{userMetaData.company }} </p>
+        <p class="mail">Email {{user.email}}</p>
 
         <button @click="editProfile">Modifier</button>
       </div>
       <div v-else>
-        <input class="firstNameInput" type="text" placeholder="Prénom" v-model="firstName" v-on:keydown="keyHandler"/>
-        <input class="lastNameInput" type="text" placeholder="Nom" v-model="lastName" v-on:keydown="keyHandler"/>
 
-        <p v-for="data in Object.keys(userData)"> {{ data }}
-        <input :class="data.concat('Input')" type="text" :placeholder="data" v-model="userData[data]" v-on:keydown="keyHandler">
-        </p>
+        <p>Prénom <input class="firstNameInput" type="text" placeholder="Prénom" v-model="userMetaData.firstName" v-on:keydown="keyHandler"/></p>
+        <p>Nom <input class="lastNameInput" type="text" placeholder="Nom" v-model="userMetaData.lastName" v-on:keydown="keyHandler"/></p>
+        <p>Entreprise<input class="companyInput" type="text" placeholder="Entreprise" v-model="userMetaData.company" ></p>
 
         <button @click="updateProfile">Sauvegarder</button>
         <button @click="editProfile">Annuler</button>
@@ -28,17 +25,14 @@
 </template>
 
 <script>
-  import {updateUserProfileDisplayName, getUserData, updateUserProfileData} from "@/thunks/userAccountThunks";
+  import {updateUserProfileDisplayName, getUserMetaData, updateUserProfileMetaData} from "@/thunks/userAccountThunks";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
   export default {
     name: "Profile",
     data() {
       return {
-        firstName: '',
-        lastName: '',
-
-        userData:{},
+        userMetaData:{},
 
         saving: false,
         edit: false
@@ -47,8 +41,8 @@
     computed: {
       user(){
 
-        getUserData(nativeFbFunctions.getCurrentUser()).then( (data) => {
-          this.userData = {...data.val()}
+        getUserMetaData(nativeFbFunctions.getCurrentUser()).then( (data) => {
+          this.userMetaData = {...data.val()}
         });
 
         return nativeFbFunctions.getCurrentUser();
@@ -58,23 +52,16 @@
 
       updateProfile() {
 
-        updateUserProfileDisplayName(this.user,
-          this.firstName,
-          this.lastName)
-          .then(() =>{
-            updateUserProfileData(
-              this.user,
-              this.userData);
-          })
-          .then(() => {
+        updateUserProfileMetaData(
+          this.user,
+          this.userMetaData)
+        .then(() => {
+            getUserMetaData(nativeFbFunctions.getCurrentUser()).then( (data) => {
+              this.userMetaData = {...data.val()}
+            });
+          this.editProfile();
 
-            this.setNamesData(this.user.displayName);
-              getUserData(nativeFbFunctions.getCurrentUser()).then( (data) => {
-                this.userData = {...data.val()}
-              });
-            this.editProfile();
-
-            this.saving = false;
+          this.saving = false;
 
         }).catch((err) => console.log(err));
 
@@ -83,23 +70,10 @@
       },
 
       editProfile() {
+        if (this.edit)
+          getUserMetaData(nativeFbFunctions.getCurrentUser()).then( (data) => {
+            this.userMetaData = {...data.val()}});
         this.edit = !this.edit;
-        if(this.edit) this.setNamesData(this.user.displayName);
-      },
-
-      getNamesFromDisplayName(displayName) {
-        const namesArray = displayName.split(' ');
-        return {
-          firstName: namesArray[0],
-          lastName: namesArray[1]
-        };
-      },
-
-      setNamesData(displayName) {
-        const names = this.getNamesFromDisplayName(displayName);
-
-        this.firstName = names.firstName;
-        this.lastName = names.lastName;
       },
 
       keyHandler(event){
