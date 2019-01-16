@@ -54,6 +54,8 @@
         return this.userAnswers[this.entryID] || {};
       },
       currentUserAnswers() {
+        if(!this.user) return null;
+
         return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.uid] : {};
       }
     },

@@ -13,14 +13,16 @@ const mockProps =
   {
     answer: {type: 'text', answers: []},
     entryID: 'A1',
-    alreadyAnswered: false
+    alreadyAnswered: false,
+    userAnswers : {}
   };
 
 const mockAlreadyAnswered =
   {
     answer: {type: 'select', answers: [{text: 'a'}, {text: 'b'}, {text: 'c'}, {text: 'd'}, {text: 'e'}]},
     entryID: 'A1',
-    alreadyAnswered: true
+    alreadyAnswered: true,
+    userAnswers : {}
   };
 
 const mockedUser = {
