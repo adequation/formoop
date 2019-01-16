@@ -13,11 +13,11 @@
                       :initialyOpened="entry.initialyOpened"
     />
 
-    <button type="button" @click="addEntry(false)">Ajouter une question</button>
-    <button type="button" @click="addEntry(true)">Ajouter une question générique</button>
+    <button class='creator-form-button add-simple-entry' type="button" @click="addEntry(false)">Ajouter une question</button>
+    <button class='creator-form-button add-generic-entry' type="button" @click="addEntry(true)">Ajouter une question générique</button>
 
     <div>
-      <button type="button" @click="saveForm">Enregistrer le formulaire</button>
+      <button class='creator-form-button save-form' type="button" @click="saveForm">Enregistrer le formulaire</button>
 
       <JsonImportModal :form-entries="formEntries" :save-form="saveForm" />
     </div>
