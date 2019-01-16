@@ -2,14 +2,14 @@ import Vue from 'vue';
 import CreatorAnswerList from '@/components/creator/CreatorAnswerList';
 import {createWrapper, mount} from "@vue/test-utils";
 
-const mockPropsFull = {
+const mockProps1 = {
   answers: [{id: 'a', text: 'Option 1'}, {id: 'b', text: 'Option 2'}, {id: 'c', text: 'Option 3'}],
   type: 'radio',
   entryID: 'id'
 };
 
-const mockPropsempty = {
-  answers: [],
+const mockProps2 = {
+  answers: [{id: 'a', text: 'Option 1'}],
   type: 'radio',
   entryID: 'id'
 };
@@ -19,7 +19,7 @@ const mockPropsempty = {
 describe('CreatorAnswerList.vue', () => {
   const vm = mount(CreatorAnswerList, {
     propsData: {
-      ...mockPropsFull
+      ...mockProps1
     }
   });
 
@@ -79,7 +79,20 @@ describe('CreatorAnswerList.vue', () => {
     expect(radioButtons.at(0).element.checked).toBe(true);
   });
 
-  //TODO - cover with empty props.
+
+  const vm2 = mount(CreatorAnswerList, {
+    propsData: {
+      ...mockProps2
+    }
+  });
+
+  it('Sould not emit if the only element is deleted', () => {
+    let button = vm2.find('.delete-option-button');
+    button.trigger('click');
+    expect(vm2.emitted('.delete-option-button')).toBeUndefined();
+  });
+
+
 
 });
 
