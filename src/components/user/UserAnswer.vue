@@ -18,8 +18,6 @@
       </div>
       <div>
 
-        <p class="answered-by"><strong>{{currentEntryAnswers ? Object.keys(currentEntryAnswers).length : ''}}</strong></p>
-
         <button v-if="currentUserAnswers ? currentUserAnswers : false" id="deleteAnswer" type="button"
                 @click="deleteAnswer()">Supprimer ma réponse
         </button>
@@ -53,7 +51,7 @@
         return nativeFbFunctions.getCurrentUser();
       },
       currentEntryAnswers() {
-        return this.usersAnswers[this.entryID] || {};
+        return this.userAnswers[this.entryID] || {};
       },
       currentUserAnswers() {
         return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.uid] : {};
@@ -68,7 +66,7 @@
         type: String,
         required: true
       },
-      usersAnswers:{
+      userAnswers:{
         type: Object,
         required: false
       },
@@ -93,11 +91,6 @@
 
   .already-answered {
     color: #42b983;
-  }
-
-  .answered-by {
-    color: #42b983;
-    font-size: large;
   }
 
 </style>
