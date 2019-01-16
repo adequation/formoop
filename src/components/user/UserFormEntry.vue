@@ -1,7 +1,7 @@
 <template>
   <div class="userFormEntry">
     <UserQuestionTitle :question="entry.question" :small="small"/>
-    <UserAnswer :answer="entry.answer" :entryID="entry.id" :usersAnswers="entry.usersAnswers" :small="small"/>
+    <UserAnswer :answer="entry.answer" :entryID="entry.id" :usersAnswers="userAnswers" :small="small"/>
   </div>
 </template>
 
@@ -13,6 +13,10 @@
     components: {UserAnswer, UserQuestionTitle},
     props: {
       entry: {
+        type: Object,
+        required: true
+      },
+      userAnswers: {
         type: Object,
         required: true
       },

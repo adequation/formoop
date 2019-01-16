@@ -1,32 +1,32 @@
 <template>
   <div class="user-answer">
-    <div v-if="(user) || (usersAnswers ? Object.keys(usersAnswers).length <= 0 : true)"> <!-- && invited !-->
+    <div v-if="(user) || (currentUserAnswers ? Object.keys(currentUserAnswers).length <= 0 : true)"> <!-- && invited !-->
       <div v-if="answer.type === 'textarea'">
-        <UserAnswerTextarea :entryID="entryID"/>
+        <UserAnswerTextarea :entryID="entryID" :currentUserAnswers="currentUserAnswers"/>
       </div>
       <div v-if="answer.type === 'text'">
-        <UserAnswerText :entryID="entryID"/>
+        <UserAnswerText :entryID="entryID" :currentUserAnswers="currentUserAnswers"/>
       </div>
       <div v-if="answer.type === 'radio'">
-        <UserAnswerRadio :answers="answer.answers" :entryID="entryID"/>
+        <UserAnswerRadio :answers="answer.answers" :entryID="entryID" :currentUserAnswers="currentUserAnswers"/>
       </div>
       <div v-if="answer.type === 'checkbox'">
-        <UserAnswerCheckbox :answers="answer.answers" :entryID="entryID"/>
+        <UserAnswerCheckbox :answers="answer.answers" :entryID="entryID" :currentUserAnswers="currentUserAnswers"/>
       </div>
       <div v-if="answer.type === 'select'">
-        <UserAnswerSelect :answers="answer.answers" :entryID="entryID"/>
+        <UserAnswerSelect :answers="answer.answers" :entryID="entryID" :currentUserAnswers="currentUserAnswers"/>
       </div>
       <div>
 
-        <p class="answered-by"><strong>{{usersAnswers ? Object.keys(usersAnswers).length : ''}}</strong></p>
+        <p class="answered-by"><strong>{{currentEntryAnswers ? Object.keys(currentEntryAnswers).length : ''}}</strong></p>
 
-        <button v-if="usersAnswers ? usersAnswers[user.uid] : false" id="deleteAnswer" type="button"
+        <button v-if="currentUserAnswers ? currentUserAnswers : false" id="deleteAnswer" type="button"
                 @click="deleteAnswer()">Supprimer ma réponse
         </button>
 
       </div>
     </div>
-    <div v-else-if="(!user) && (usersAnswers ? !Object.keys(usersAnswers).length <= 0 : true)" class="already-answered">
+    <div v-else-if="(!user) && (currentEntryAnswers ? !Object.keys(currentEntryAnswers).length <= 0 : true)" class="already-answered">
       <h3>Cette question a déjà une réponse</h3>
     </div>
     <div v-else>
@@ -51,6 +51,12 @@
     computed:{
       user(){
         return nativeFbFunctions.getCurrentUser();
+      },
+      currentEntryAnswers() {
+        return this.usersAnswers[this.entryID] || {};
+      },
+      currentUserAnswers() {
+        return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.uid] : {};
       }
     },
     props:{

@@ -8,7 +8,8 @@
 
     <UserFormEntry v-for="entry in singleEntries"
                    :key="entry.id"
-                   :entry="entry"/>
+                   :entry="entry"
+                   :userAnswers="userAnswers || {}"/>
 
     <button @click="saveAnswers">Enregistrer</button>
 
@@ -68,6 +69,10 @@
 
       formTitle () {
         return this.$store.getters.getUserFormTitle
+      },
+
+      userAnswers () {
+        return this.$store.getters.userAnswers
       }
     },
     created: function () {
@@ -91,6 +96,7 @@
         const user = nativeFbFunctions.getCurrentUser();
         if(user)
           setSelectedAnswersFB(this.formID, this.selectedAnswers, user.uid);
+
         else alert("Vous n'êtes pas connecté !");
       }
     },

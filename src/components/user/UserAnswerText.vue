@@ -1,21 +1,27 @@
 <template>
   <div>
-    <input title="" class="answerText" type="text" v-model="selectedAnswers" v-on:input="onChange($event.target)"/>
+    <input title="" class="answerText" type="text"
+           v-model="selectedAnswers"
+           v-on:input="onChange($event.target)"/>
   </div>
 </template>
 
 <script>
   export default {
     name: 'UserAnswerText',
-    data () {
+    data() {
       return {
-        selectedAnswers: null
+        selectedAnswers: this.currentUserAnswers || ''
       }
     },
     props: {
       entryID: {
         type: String,
         required: true
+      },
+      currentUserAnswers: {
+        type: String,
+        required: false
       }
     },
     methods: {
