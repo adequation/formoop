@@ -122,8 +122,6 @@
       this.updateGraph = function () {
         percent = this.localPercentage;
 
-        console.log(percent);
-
         pathForeground.transition()
           .duration(750)
           .call(arcTweenOld, percent, oldValue);

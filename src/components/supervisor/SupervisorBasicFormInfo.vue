@@ -20,26 +20,29 @@
         required: true
       }
     },
+    computed: {
+      userAnswers() {
+        return this.$store.getters.userAnswers;
+      }
+    },
     methods: {
       getPercentage(filterType){
         return (this.filterEntries(filterType).length / this.formEntries.length) * 100;
       },
+
       filterEntries(filterType) {
         switch (filterType) {
           case "answered":
             return this.formEntries.filter(e => this.isAnswered(e));
           case "notAnswered":
             return this.formEntries.filter(e => !this.isAnswered(e));
-          case "conflict":
-            return this.formEntries.filter(e => false);
           case "default":
             return this.formEntries;
         }
       },
+
       isAnswered(formEntry){
-        if(formEntry.usersAnswers)
-          return Object.keys(formEntry.usersAnswers).length > 0;
-        else return false;
+        return this.userAnswers ? !!this.userAnswers[formEntry.id] : false;
       }
     }
   }
