@@ -4,6 +4,9 @@
 
     <SupervisorForceDirectedGraph :userAnswers="userAnswers" :formEntries="formEntries"/>
 
+    <SupervisorCirclePacking :userAnswers="userAnswers" :formEntries="formEntries"/>
+
+
     <p><span class="answer-percentage">{{Number(getPercentage("answered")).toFixed(2)}}%</span>
       des questions ont une réponse</p>
     <p><span class="not-answered-percentage">{{Number(getPercentage("notAnswered")).toFixed(2)}}%</span>
@@ -14,9 +17,11 @@
 <script>
   import SupervisorProgressChart from "@/components/supervisor/SupervisorProgressChart"
   import SupervisorForceDirectedGraph from "@/components/supervisor/SupervisorForceDirectedGraph";
+  import SupervisorCirclePacking from "@/components/supervisor/SupervisorCirclePacking";
+
   export default {
     name: "SupervisorBasicFormInfo",
-    components:{SupervisorForceDirectedGraph, SupervisorProgressChart},
+    components:{SupervisorForceDirectedGraph, SupervisorProgressChart, SupervisorCirclePacking},
     props: {
       formEntries: {
         type: Array,

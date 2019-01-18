@@ -1,5 +1,5 @@
 <template>
-  <div id="chart" class="supervisor-force-directed-graph">
+  <div id="force-graph-svg" class="supervisor-force-directed-graph">
 
   </div>
 </template>
@@ -11,6 +11,9 @@
     name: "SupervisorForceDirectedGraph",
     data() {
       return {
+        w: this.width  || 500,
+        h: this.height || 500,
+
         entryNodeRadius: 10,
         userNodeRadius: 7,
         answerNodeRadius: 5
@@ -24,6 +27,14 @@
       formEntries: {
         type: Array,
         required: true
+      },
+      width: {
+        type: Number,
+        required: false
+      },
+      height: {
+        type: Number,
+        required: false
       }
     },
     computed: {
@@ -49,10 +60,15 @@
             case 'radio' :
             case 'select':
             case 'checkbox' :
-              const entryAnswers = entry.answer.answers.map(a => ({entryID: entry.id, id: a.id, text: a.text}));
+              const entryAnswers = entry.answer.answers.map(a => ({entryIDs: [entry.id], id: a.id, text: a.text}));
 
               entryAnswers.forEach(ea => {
-                if(!answers.find(a => ea.id === a.id )) answers.push(ea);
+                const a = answers.find(a => ea.id === a.id );
+                if(!a) {
+                  answers.push(ea);
+                }else{
+                  a.entryIDs.push(entry.id)
+                }
               });
 
               break;
@@ -89,7 +105,8 @@
             text: e.question.title,
             radius: this.entryNodeRadius,
             group: "entry"
-          })
+          });
+
         });
 
         answers.forEach(a => {
@@ -100,10 +117,13 @@
             group: "answer"
           });
 
-          links.push({
-            source: a.id,
-            target: a.entryID
+          a.entryIDs.forEach(eID => {
+            links.push({
+              source: a.id,
+              target: eID
+            });
           });
+
         });
 
         users.forEach(u => {
@@ -156,8 +176,8 @@
       }
     },
     mounted() {
-      const links =  this.graphData.links.map(d => Object.create(d));
-      const nodes =  this.graphData.nodes.map(d => Object.create(d));
+      const links = this.graphData.links;
+      const nodes = this.graphData.nodes;
 
       const simulation = d3.forceSimulation(nodes)
         .force("link", d3.forceLink(links).id(d => d.id))
@@ -165,13 +185,11 @@
         .force("x", d3.forceX())
         .force("y", d3.forceY());
 
-      const width = 300, height = 300;
-
-      const svg = d3.select("#chart")
+      const svg = d3.select("#force-graph-svg")
         .append("svg")
-        .attr('width', width)
-        .attr('height', height)
-        .attr("viewBox", [-width / 2, -height / 2, width, height]);
+        .attr('width', this.w)
+        .attr('height', this.h)
+        .attr("viewBox", [-this.w / 2, -this.h / 2, this.w, this.h]);
 
       const link = svg.append("g")
         .attr("stroke", "#999")
