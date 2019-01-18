@@ -1,9 +1,9 @@
 <template>
-  <div class="userFormEntry">
+  <div :class="hasAnswered ? 'user-form-entry-answered' : 'user-form-entry'">
 
     <div :class="showAnswers || Object.keys(otherUserAnswers).length <= 0 ? 'answered-by-opened' : 'answered-by'">
-      <button type="button" @click="switchAnswersView" title="Voir les réponses">
-        {{currentEntryAnswers ? Object.keys(currentEntryAnswers).length : ''}}☻
+      <button type="button" class="user-form-entry-answer-counter" @click="switchAnswersView" title="Voir les réponses">
+        {{currentEntryAnswers ? Object.keys(currentEntryAnswers).length : ''}} ☻
       </button>
     </div>
 
@@ -60,6 +60,10 @@
         return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.uid] : {};
       },
 
+      hasAnswered(){
+        return !!this.currentUserAnswers;
+      },
+
       otherUserAnswers() {
         if (!this.user) return {};
 
@@ -102,16 +106,29 @@
       }
     }
   }
+
+  /**/
 </script>
 
 <style scoped>
-  .userFormEntry {
+  .user-form-entry {
     background-color: #f6f6f6;
-    margin: 1em auto;
-    border: 1px solid #00000020;
+    margin: 0.5em auto;
+    padding: 0.5em;
+
     width: 75%;
 
-    border-radius: 5px;
+    border-left: 7px solid #aaaaaa;
+  }
+
+  .user-form-entry-answered{
+    background-color: #e1f5eb;
+
+    margin: 0.5em auto;
+    padding: 0.5em;
+    width: 75%;
+
+    border-left: 7px solid #42b983;
   }
 
   .answered-by {
@@ -127,30 +144,50 @@
   }
 
   .answered-by-list {
-    margin: auto;
-
-    background-color: #e6e6e6;
-    border: 1px solid #00000020;
-    width: 50%;
+    margin-left: 1em;
+    text-align: left;
   }
 
   .answered-by button {
-    color: #42b983;
+    color: #fff;
+
     font-size: large;
-    background: none;
+    background: #42b983;
     border: none;
+
+    border-radius: 10px;
   }
 
   .answered-by button:hover {
-    color: #329650;
-    background: none;
-    border: none;
+    background: #2d8246;
   }
 
   .answered-by-opened button {
-    color: #fa7d32;
+    color: #fff;
     font-size: large;
-    background: none;
+    background: #fa7d32;
     border: none;
+
+    border-radius: 10px;
   }
+
+  .answered-by-opened button:hover {
+    background: #c86428;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  ul li {
+    padding: 20px;
+    font-size: 1.3em;
+    background-color: #E0EDF4;
+    border-left: 5px solid #3EB3F6;
+    margin-bottom: 2px;
+    color: #3E5252;
+  }
+
 </style>

@@ -11,6 +11,10 @@
                    :entry="entry"
                    :userAnswers="userAnswers || {}"/>
 
+    <progress :max="formEntries.length" :value="Object.keys(userAnswers).length">
+      {{Object.keys(userAnswers).length/formEntries.length * 100}}%
+    </progress>
+
     <button @click="saveAnswers">Enregistrer</button>
 
     <InviteModal v-if="user"/>
