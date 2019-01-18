@@ -11,13 +11,20 @@
                    :entry="entry"
                    :userAnswers="userAnswers || {}"/>
 
-    <progress :max="formEntries.length" :value="Object.keys(userAnswers).length">
-      {{Object.keys(userAnswers).length/formEntries.length * 100}}%
-    </progress>
+    <div>
+      <progress class="user-form-progress" :max="formEntries.length" :value="Object.keys(userAnswers).length">
+        {{Object.keys(userAnswers).length/formEntries.length * 100}}%
+      </progress>
+      <span class="user-form-progress-value">
+        {{Math.floor(Object.keys(userAnswers).length/formEntries.length * 100)}}%
+      </span>
+    </div>
 
     <button @click="saveAnswers">Enregistrer</button>
 
     <InviteModal v-if="user"/>
+
+
 
   </div>
   <div v-else>
@@ -116,5 +123,27 @@
 </script>
 
 <style scoped>
-  .errorMessage {}
+  .user-form-progress {
+    border: 0;
+    background: #eee;
+
+    width: 75%;
+    line-height: 1em;
+  }
+
+  .user-form-progress-value {
+    color: #42b983;
+  }
+
+  .user-form-progress::-moz-progress-bar {
+    background: #42b983
+  }
+
+  .user-form-progress::-webkit-progress-bar {
+    background: #eee;
+  }
+
+  .user-form-progress::-webkit-progress-value {
+    background: #42b983
+  }
 </style>

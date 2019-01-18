@@ -37,5 +37,12 @@
 </script>
 
 <style scoped>
+  input[type=text] {
+    border: 1px solid #00000030;
+    background: white;
 
+    padding: 0.3em 0.3em 0.3em 0.75em;
+
+    border-radius: 20px;
+  }
 </style>

@@ -175,19 +175,4 @@
     background: #c86428;
   }
 
-  ul {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-  }
-
-  ul li {
-    padding: 20px;
-    font-size: 1.3em;
-    background-color: #E0EDF4;
-    border-left: 5px solid #3EB3F6;
-    margin-bottom: 2px;
-    color: #3E5252;
-  }
-
 </style>
