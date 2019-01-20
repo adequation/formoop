@@ -1,10 +1,10 @@
 <template>
-  <div class="form">
+  <div class="creator-form">
 
-    <h1 class="ghostText" v-bind:class="{ publishedForm: isPublished }">{{formID}}</h1>
+    <h1 class="creator-form-ghost-text" v-bind:class="isPublished ? 'creator-published-form' : ''">{{formID}}</h1>
 
 
-    <input title="" type="text" class="formTitle" v-model="formTitle" :placeholder="formID"/>
+    <input title="" type="text" class="creator-form-title" v-model="formTitle" :placeholder="formID"/>
 
 
     <CreatorFormEntry v-for="(entry, i) in formEntries"
@@ -14,16 +14,18 @@
                       :ref="entry.id"
     />
 
-    <div>
-      <button type="button" @click="saveForm">Enregistrer le formulaire</button>
-
-      <JsonImportModal :form-entries="formEntries" :save-form="saveForm" />
+    <div class="creator-form-footer">
     </div>
 
-    <DockingMenu>
+    <DockingMenu class="creator-form-bottom-menu">
       <div slot="body">
         <button type="button" @click="addEntry(false)">Ajouter une question</button>
+
         <button type="button" @click="addEntry(true)">Ajouter une question générique</button>
+
+        <button type="button" @click="saveForm">Enregistrer le formulaire</button>
+
+        <JsonImportModal :form-entries="formEntries" :save-form="saveForm" />
       </div>
     </DockingMenu>
 
@@ -253,16 +255,20 @@
 
 <style scoped>
 
-  .form{
+  .creator-form{
     background-color: white;
   }
 
-  .ghostText {
+  .creator-form-ghost-text {
     color: lightgray;
   }
 
-  .publishedForm {
+  .creator-published-form {
     color: steelblue;
+  }
+
+  .creator-form-footer {
+    margin: 9em;
   }
 
 </style>

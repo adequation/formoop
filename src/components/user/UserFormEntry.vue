@@ -63,7 +63,7 @@
       },
 
       currentEntryAnswers() {
-        return this.userAnswers[this.entry.id] || {};
+        return this.userAnswers ? this.userAnswers[this.entry.id] || {} : {};
       },
 
       currentUserAnswers() {

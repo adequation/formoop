@@ -19,10 +19,19 @@
 <style scoped>
 
 .docking-menu{
+
+  padding-right: 5em;
+
+  border-top: 1px solid #00000055;
+
   position: fixed;
   left: 0;
   bottom: 0;
   width: 100%;
-  background-color: #f5f5f5;
+
+
+  background-color: #c0c0c0;
+
+  z-index: 12;
 }
 </style>

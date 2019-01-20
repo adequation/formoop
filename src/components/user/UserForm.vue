@@ -11,18 +11,29 @@
                    :entry="entry"
                    :userAnswers="userAnswers || {}"/>
 
-    <div>
-      <progress class="user-form-progress" :max="formEntries.length" :value="Object.keys(userAnswers).length">
-        {{Object.keys(userAnswers).length/formEntries.length * 100}}%
-      </progress>
-      <span class="user-form-progress-value">
-        {{Math.floor(Object.keys(userAnswers).length/formEntries.length * 100)}}%
-      </span>
+
+    <div class="user-form-footer">
+
     </div>
 
-    <button @click="saveAnswers">Enregistrer</button>
+    <DockingMenu class="user-form-menu">
+      <div slot="body">
 
-    <InviteModal v-if="user"/>
+        <div class="user-form-progress-wrapper">
+
+          <div class="user-form-progress-bar"
+               :style="{width: Math.floor(Object.keys(userAnswers).length/formEntries.length * 100) + '%'}">
+          </div>
+
+
+        </div>
+
+        <button @click="saveAnswers">Enregistrer</button>
+
+        <InviteModal v-if="user"/>
+
+      </div>
+    </DockingMenu>
 
 
   </div>
@@ -37,10 +48,11 @@
   import InviteModal from "@/components/general/InviteModal";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import UserGroupedQuestion from "@/components/user/UserGroupedQuestion";
+  import DockingMenu from "@/components/containers/DockingMenu";
 
   export default {
     name: 'UserForm',
-    components: {UserGroupedQuestion, InviteModal, UserFormEntry},
+    components: {DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
     data() {
       return {
         showModal: false,
@@ -122,27 +134,27 @@
 </script>
 
 <style scoped>
-  .user-form-progress {
+  .user-form-progress-bar {
     border: 0;
-    background: #eee;
+    background: linear-gradient(to right, #42b983, #42b983, #47ce54);
 
-    width: 75%;
-    line-height: 1em;
+    height: 0.35em;
+  }
+
+  .user-form-progress-wrapper {
+    width: 100%;
+    float: left;
   }
 
   .user-form-progress-value {
+
+    font-weight: 600;
     color: #42b983;
+
+    position: fixed;
   }
 
-  .user-form-progress::-moz-progress-bar {
-    background: #42b983
-  }
-
-  .user-form-progress::-webkit-progress-bar {
-    background: #eee;
-  }
-
-  .user-form-progress::-webkit-progress-value {
-    background: #42b983
+  .user-form-footer {
+    margin: 9em;
   }
 </style>
