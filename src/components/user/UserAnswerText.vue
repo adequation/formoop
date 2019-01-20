@@ -26,11 +26,17 @@
     },
     methods: {
       onChange: function (target) {
-        this.selectedAnswers = target.value;
+        this.selectedAnswers = target.value || null;
         this.setSelectedAnswers()
       },
+
       setSelectedAnswers: function () {
         this.$root.$emit('set-selected-answers', this.entryID, this.selectedAnswers)
+      }
+    },
+    watch:{
+      currentUserAnswers: function (val) {
+        this.selectedAnswers = val || ''
       }
     }
   }
