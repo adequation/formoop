@@ -39,7 +39,7 @@
       color(value) {
         return d3.scaleLinear()
           .domain([0, 5])
-          .range(["hsl(152,80%,80%)", "hsl(228,30%,40%)"])
+          .range(["hsl(180,80%,80%)", "hsl(200,30%,40%)"])
           .interpolate(d3.interpolateHcl)(value)
       },
 
@@ -175,7 +175,7 @@
         .on("click", d => focus !== d && (zoom(d, this.w), d3.event.stopPropagation()));
 
       const label = svg.append("g")
-        .style("font", "20px sans-serif")
+        .style("font", "10px sans-serif")
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
         .selectAll("text")
@@ -183,7 +183,7 @@
         .enter().append("text")
         .style("fill-opacity", d => d.parent === root ? 1 : 0)
         .style("display", d => d.parent === root ? "inline" : "none")
-        .text(d => d.data.name);
+        .text(d => d.data.name.length > 50 ? d.data.name.substring(0, 50) + '...' : d.data.name);
 
       zoomTo([root.x, root.y, root.r * 2], this.w);
 
