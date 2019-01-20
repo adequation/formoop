@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
 import Firebase from 'firebase'
-import {getPublishedFormFromID, publishedFormsPath, publishingPath} from "@/helpers/firebaseHelpers";
+import {getAnsweringPath, getPublishedFormFromID, publishedFormsPath} from "@/helpers/firebaseHelpers";
 
 Vue.use(Vuex);
 
@@ -10,6 +10,7 @@ export default {
     formEntries: [],
     formID: '',
     formTitle: '',
+    userAnswers: {}
   },
   getters: {
     getFormEntries: state => {
@@ -23,6 +24,8 @@ export default {
     getUserFormTitle: state => {
       return state.formTitle
     },
+
+    userAnswers: state => state.userAnswers
   },
   mutations: {
     setFormEntries: (state) => {
@@ -36,15 +39,28 @@ export default {
           else state.formEntries = null
         })
     },
+
     setFormID: (state, {formID}) => {
       state.formID = formID;
     },
+
     setFormTitle: (state) => {
       Firebase.database().ref(getPublishedFormFromID(state.formID))
         .on('value', function (snapshot) {
           const value = snapshot.val();
           if (value) state.formTitle = value.title;
           else state.formTitle = null
+        })
+    },
+
+    setUserAnswers: (state) => {
+      Firebase.database().ref(getAnsweringPath(state.formID))
+        .on('value', function (snapshot) {
+          const value = snapshot.val();
+          if (value) {
+            state.userAnswers = value;
+          }
+          else state.userAnswers = {}
         })
     },
   },
@@ -56,10 +72,13 @@ export default {
       context.commit('setFormID', {formID});
       context.commit('setFormEntries');
       context.commit('setFormTitle');
-
+      context.commit('setUserAnswers');
     },
     setFormTitle: (context) => {
       context.commit('setFormTitle')
+    },
+    setUserAnswers: (context) => {
+      context.commit('setUserAnswers')
     },
   }
 

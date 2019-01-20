@@ -5,9 +5,9 @@
 
       <transition name="arrow-rotate" mode="out-in">
 
-        <div key="collapsedArrow" v-if="collapsed">➤</div>
+        <div key="collapsedArrow" v-if="collapsed"><i class="material-icons">chevron_right</i></div>
         <div key="uncollapsedArrow" class="uncollapsed-arrow"
-             v-else>➤
+             v-else><i class="material-icons">chevron_right</i>
         </div>
 
       </transition>
