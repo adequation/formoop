@@ -10,11 +10,21 @@
     <UserFormEntry v-for="entry in singleEntries"
                    :key="entry.id"
                    :entry="entry"
-                   :userAnswers="userAnswers"/>
+                   :userAnswers="userAnswers || {}"/>
+
+    <div>
+      <progress class="user-form-progress" :max="formEntries.length" :value="Object.keys(userAnswers).length">
+        {{Object.keys(userAnswers).length/formEntries.length * 100}}%
+      </progress>
+      <span class="user-form-progress-value">
+        {{Math.floor(Object.keys(userAnswers).length/formEntries.length * 100)}}%
+      </span>
+    </div>
 
     <button @click="saveAnswers">Enregistrer</button>
 
     <InviteModal v-if="user"/>
+
 
   </div>
   <div v-else>
@@ -81,14 +91,13 @@
         return this.$store.getters.userAnswers || {}
       }
     },
-    created: function () {
+    created() {
 
       this.$root.$on('set-selected-answers', (id, answers) => {
-        this.setSelectedAnswers(id, answers)
+        this.setSelectedAnswers(id, answers);
       });
 
       this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
-      this.$store.dispatch('setFormCampaigns');
 
     },
     methods: {
@@ -108,12 +117,35 @@
     watch: {
       '$route'(to, from) {
         this.$store.dispatch('setFormID', {formID: this.$route.params.formID})
-      }
+      },
     }
   }
 </script>
 
 <style scoped>
+  .user-form-progress {
+    border: 0;
+    background: #eee;
+
+    width: 75%;
+    line-height: 1em;
+  }
+
+  .user-form-progress-value {
+    color: #42b983;
+  }
+
+  .user-form-progress::-moz-progress-bar {
+    background: #42b983
+  }
+
+  .user-form-progress::-webkit-progress-bar {
+    background: #eee;
+  }
+
+  .user-form-progress::-webkit-progress-value {
+    background: #42b983
+  }
   .errorMessage {
   }
 </style>
