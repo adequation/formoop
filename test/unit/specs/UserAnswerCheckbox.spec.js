@@ -16,7 +16,7 @@ describe('UserAnswerCheckbox.vue', () => {
   });
 
   it('should have the same number of elem as mock data', () => {
-    const boxes = vm.findAll('input');
+    const boxes = vm.findAll('.user-answer-checkbox');
 
     expect(boxes.length).toBe(5);
 
