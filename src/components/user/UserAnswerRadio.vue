@@ -20,7 +20,7 @@
     name: 'AnswerRadio',
     data () {
       return {
-        selectedAnswers: this.currentUserAnswers || ''
+        selectedAnswers: this.currentUserAnswers || null
       }
     },
     props: {
@@ -53,7 +53,8 @@
     },
     watch:{
       currentUserAnswers: function (val) {
-        this.selectedAnswers = val || ''
+        this.selectedAnswers = val || null;
+        this.setSelectedAnswers();
       }
     }
   }

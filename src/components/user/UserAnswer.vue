@@ -20,7 +20,7 @@
       <div class="delete-answer">
 
         <button v-if="currentUserAnswers ? currentUserAnswers : false" class="delete-answer-button" type="button"
-                @click="deleteAnswer()"><i class="material-icons">delete</i>
+                @click="deleteAnswer"><i class="material-icons">delete</i>
         </button>
 
       </div>

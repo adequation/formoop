@@ -35,7 +35,8 @@
     },
     watch:{
       currentUserAnswers: function (val) {
-        this.selectedAnswers = val || ''
+        this.selectedAnswers = val || null;
+        this.setSelectedAnswers();
       }
     }
   }
