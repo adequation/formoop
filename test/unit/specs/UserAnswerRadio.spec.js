@@ -10,6 +10,14 @@ const mockEntry =
     entryID: 'A1'
   };
 
+const mockEntry2 =
+  {
+    answers: [{text: 'a', id: 'azerty'}, {text: 'b', id: 'b8jazaze'}, {text: 'c', id: 'lazohel'}, {text: 'd', id: 'kjazelk'}, {text: 'e', id: 'ljhazlk'}],
+    entryID: 'A2',
+    currentUserAnswers: 'b8jazaze'
+  };
+
+
 Firebase.initializeApp(firebaseConfig);
 
 describe('UserAnswerRadio.vue', () => {
@@ -22,9 +30,11 @@ describe('UserAnswerRadio.vue', () => {
 
   it('should have the same number of elements as mock data', () => {
     const radios = vm.findAll('.user-answer-radio');
-
     expect(radios.length).toBe(5);
+  });
 
+  it ('currentUserAnswers should be undefined', () => {
+    expect(vm.props().currentUserAnswers).toBe(undefined);
   });
 
   it('should have options of type "radio"', () => {
@@ -49,17 +59,23 @@ describe('UserAnswerRadio.vue', () => {
     expect(every).toBe(true);
   });
 
-
   it ('should emit when clicked', () => {
-    let options = vm.findAll('input');
+    let options = vm.findAll('.user-answer-radio');
     options.at(0).trigger('click');
     expect(vm.emitted()).toBeTruthy();
   });
 
-  it ('sould e true if clicked', () => {
-    let options = vm.findAll('input');
-    options.at(2).trigger('click');
-    expect(options.at(2).element.checked).toBe(true);
+
+  const vm2 = mount(UserAnswerRadio, {
+    propsData: {
+      ...mockEntry2
+    }
+  });
+
+
+  it ('should be only one selected', () => {
+    let options = vm2.findAll('.user-answer-radio-selected');
+    expect(options.length).toBe(1);
   });
 
 
