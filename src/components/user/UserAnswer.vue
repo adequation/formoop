@@ -75,8 +75,8 @@
         type: Object,
         required: false
       },
-      small: {
-        type: Boolean,
+      display: {
+        type: String,
         required: false
       }
     },

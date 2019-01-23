@@ -7,7 +7,7 @@
 
           <div class="modal-closer">
             <slot name="upper-right">
-              <button class="modal-close-button" @click="$emit('close')">
+              <button class="modal-close-button" @click="$parent.$emit('close')">
                 x
               </button>
             </slot>

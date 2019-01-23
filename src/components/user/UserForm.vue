@@ -34,6 +34,13 @@
 
     </div>
 
+    <div v-else-if="filter === 'grid'">
+
+      <UserEntryGrid :entries="formEntries"
+                     :userAnswers="userAnswers"></UserEntryGrid>
+
+    </div>
+
 
     <div class="user-form-footer">
 
@@ -48,23 +55,16 @@
                :style="{width: Math.floor(Object.keys(userAnswers).length/formEntries.length * 100) + '%'}">
           </div>
 
-
         </div>
 
         <div class="user-form-filter-buttons-wrapper">
-          <button @click="changeFilter('all')" class="user-form-filter-button">
-            <i class="material-icons">view_day</i>
-          </button>
-
-          <button @click="changeFilter('singles')" class="user-form-filter-button">
-            <i class="material-icons">view_headline</i>
-          </button>
-
-          <button @click="changeFilter('grouped')" class="user-form-filter-button">
-            <i class="material-icons">view_agenda</i>
+          <button v-for="f in filters" @click="changeFilter(f.name)"
+                  type="button"
+                  :class="filter===f.name ? 'user-form-filter-button-selected' : 'user-form-filter-button'"
+                  :title=f.description>
+            <i class="material-icons">{{f.icon}}</i>
           </button>
         </div>
-
 
 
         <button @click="saveAnswers">Enregistrer</button>
@@ -88,15 +88,23 @@
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import UserGroupedQuestion from "@/components/user/UserGroupedQuestion";
   import DockingMenu from "@/components/containers/DockingMenu";
+  import UserEntryGrid from "@/components/user/UserEntryGrid";
 
   export default {
     name: 'UserForm',
-    components: {DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
+    components: {UserEntryGrid, DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
     data() {
       return {
         showModal: false,
         selectedAnswers: {},
-        filter: 'all'
+
+        filter: 'all',
+        filters : [
+          {name: 'all',     description: 'Voir tout', icon:'view_day'},
+          {name: 'singles', description: 'Voir non-groupées uniquement', icon:'view_headline'},
+          {name: 'grouped', description: 'Voir groupées uniquement', icon:'view_agenda'},
+          {name: 'grid', description: 'Afficher la grille', icon:'view_module'},
+        ]
       }
     },
     computed: {
@@ -173,6 +181,9 @@
           case 'grouped':
             this.filter = 'grouped';
             break;
+          case 'grid':
+            this.filter = 'grid';
+            break;
           default:
             this.filter = 'all';
             break;
@@ -212,10 +223,11 @@
   .user-form-footer {
     margin: 9em;
   }
+
   .errorMessage {
   }
 
-  .user-form-filter-buttons-wrapper{
+  .user-form-filter-buttons-wrapper {
     margin: 1em 2em 1em 0.2em;
 
     float: right;
@@ -226,11 +238,10 @@
     align-items: center;
   }
 
-  .user-form-filter-button{
+  .user-form-filter-button {
     margin-right: 0.5em;
     padding: 0.5em;
     color: white;
-
     background: #4286f4;
 
     cursor: pointer;
@@ -243,6 +254,24 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .user-form-filter-button-selected {
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #4286f4;
+
+    cursor: pointer;
+    font-size: large;
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    border: 2px solid #ffffff;
   }
 
   .user-form-filter-button:hover {
