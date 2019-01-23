@@ -64,7 +64,7 @@
 <style scoped>
 
   .user-answer-radio{
-    margin: 1em;
+    margin: 0.25em 0.7em 0.25em 0.7em;
 
     cursor: pointer;
     font-size: large;
@@ -85,8 +85,7 @@
   }
 
   .user-answer-radio-selected{
-
-    margin: 1em;
+    margin: 0.25em 0.7em 0.25em 0.7em;
 
     cursor: pointer;
     font-size: large;
