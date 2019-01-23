@@ -3,6 +3,7 @@
     <form>
       <div v-for="(a, i) in answers"
             :key="a.id"
+            id="user-answer-radio"
             :class="['noselect', selectedAnswers === a.id ? 'user-answer-radio-selected' : 'user-answer-radio']"
             @click="onChange(a, $event)">
 
