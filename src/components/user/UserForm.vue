@@ -67,9 +67,13 @@
         </div>
 
 
-        <button @click="saveAnswers">Enregistrer</button>
+        <div class="user-form-utils-buttons-wrapper">
+          <button class="user-form-save-button" @click="saveAnswers" type="button">
+            <i class="material-icons md-36">save</i>
+          </button>
 
-        <InviteModal v-if="user"/>
+          <InviteModal class="user-form-invite-button" v-if="user"/>
+        </div>
 
       </div>
     </DockingMenu>
@@ -99,11 +103,11 @@
         selectedAnswers: {},
 
         filter: 'all',
-        filters : [
-          {name: 'all',     description: 'Voir tout', icon:'view_day'},
-          {name: 'singles', description: 'Voir non-groupées uniquement', icon:'view_headline'},
-          {name: 'grouped', description: 'Voir groupées uniquement', icon:'view_agenda'},
-          {name: 'grid', description: 'Afficher la grille', icon:'view_module'},
+        filters: [
+          {name: 'all', description: 'Voir tout', icon: 'view_day'},
+          {name: 'singles', description: 'Voir non-groupées uniquement', icon: 'view_headline'},
+          {name: 'grouped', description: 'Voir groupées uniquement', icon: 'view_agenda'},
+          {name: 'grid', description: 'Afficher en grille', icon: 'apps'},
         ]
       }
     },
@@ -228,7 +232,18 @@
   }
 
   .user-form-filter-buttons-wrapper {
-    margin: 1em 2em 1em 0.2em;
+    margin: 1em 2em 1em 2em;
+
+    float: left;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .user-form-utils-buttons-wrapper {
+    margin: 1em 2em 1em 2em;
 
     float: right;
 
@@ -275,7 +290,30 @@
   }
 
   .user-form-filter-button:hover {
-    color: white;
     background: #3462ad;
   }
+
+  .user-form-save-button {
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #2d8246;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .user-form-save-button:hover {
+    background: #276a35;
+  }
+
+
 </style>

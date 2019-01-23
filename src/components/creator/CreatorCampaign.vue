@@ -2,6 +2,23 @@
   <div class="creator-campaign-wrapper">
     <input type="text" v-model="name" title="" placeholder="Nom de la campagne"/>
 
+    <transition-group tag="div" name="accordion-fade-slide" mode="out-in">
+      <div
+        v-for="(f, i) in selectedForms"
+        :key="f.id"
+        class="creator-campaign-form-wrapper">
+
+        <div class="creator-campaign-form-selected" @click="removeFormToCampaign(f)">
+          <div class="creator-campaign-content">
+            {{f.title}}
+          </div>
+        </div>
+
+      </div>
+    </transition-group>
+
+
+    <transition-group tag="div" name="accordion-fade-slide" mode="out-in">
     <div
       v-for="(f, i) in filteredForms"
       :key="f.id"
@@ -14,19 +31,10 @@
         </div>
       </div>
     </div>
+    </transition-group>
 
-    <div
-      v-for="(f, i) in selectedForms"
-      :key="f.id"
-      class="creator-campaign-form-wrapper">
 
-      <div class="creator-campaign-form-selected" @click="removeFormToCampaign(f)">
-        <div class="creator-campaign-content">
-          {{f.title}}
-        </div>
-      </div>
 
-    </div>
 
     <button type="button" @click="saveCampaign">Enregistrer la campagne</button>
   </div>
@@ -176,6 +184,22 @@
 
   .creator-campaign-form-wrapper {
     margin: auto;
+  }
+
+  .accordion-fade-slide-enter-active {
+    transition: all 0.5s;
+  }
+
+  .accordion-fade-slide-leave-active {
+    transition: all 0.5s;
+  }
+
+  .accordion-fade-slide-enter {
+    opacity: 0;
+  }
+
+  .accordion-fade-slide-leave-to {
+    opacity: 0;
   }
 
 </style>

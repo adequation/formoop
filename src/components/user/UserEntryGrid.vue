@@ -9,12 +9,12 @@
       </div>
     </div>
 
-    <Modal v-if="focusedEntry" >
+    <Modal v-if="focusedEntry" @close="closeModal">
       <div slot="body">
         <UserFormEntry
-                       :key="focusedEntry.id"
-                       :entry="focusedEntry"
-                       :userAnswers="userAnswers || {}"/>
+          :key="focusedEntry.id"
+          :entry="focusedEntry"
+          :userAnswers="userAnswers || {}"/>
       </div>
     </Modal>
   </div>
@@ -28,9 +28,9 @@
   export default {
     name: "UserEntryGrid",
     components: {Modal, UserFormEntry},
-    data(){
+    data() {
       return {
-        focusedEntry : null
+        focusedEntry: null
       }
     },
     props: {
@@ -80,7 +80,7 @@
         this.focusedEntry = null;
       },
     },
-    created(){
+    created() {
       this.$on('close', () => this.closeModal());
     }
   }
@@ -138,8 +138,8 @@
     transform: scale(1.05);
 
     -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0 0 20px  rgba(0, 0, 0, 0.3);
-    box-shadow: 0 0 20px  rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   }
 
 
