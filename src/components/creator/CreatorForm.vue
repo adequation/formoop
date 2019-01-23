@@ -1,27 +1,33 @@
 <template>
-  <div class="form">
+  <div class="creator-form">
 
-    <h1 class="ghostText" v-bind:class="{ publishedForm: isPublished }">{{formID}}</h1>
+    <h1 class="creator-form-ghost-text" v-bind:class="isPublished ? 'creator-published-form' : ''">{{formID}}</h1>
 
 
-    <input title="" type="text" class="formTitle" v-model="formTitle" :placeholder="formID"/>
+    <input title="" type="text" class="creator-form-title" v-model="formTitle" :placeholder="formID"/>
 
 
     <CreatorFormEntry v-for="(entry, i) in formEntries"
                       :key="entry.id"
                       :entry="entry"
                       :initialyOpened="entry.initialyOpened"
+                      :ref="entry.id"
     />
 
-    <button class='creator-form-button add-simple-entry' type="button" @click="addEntry(false)">Ajouter une question</button>
-    <button class='creator-form-button add-generic-entry' type="button" @click="addEntry(true)">Ajouter une question générique</button>
-
-    <div>
-      <button class='creator-form-button save-form' type="button" @click="saveForm">Enregistrer le formulaire</button>
-
-      <JsonImportModal :form-entries="formEntries" :save-form="saveForm" />
+    <div class="creator-form-footer">
     </div>
 
+    <DockingMenu class="creator-form-bottom-menu">
+      <div slot="body">
+        <button type="button" @click="addEntry(false)">Ajouter une question</button>
+
+        <button type="button" @click="addEntry(true)">Ajouter une question générique</button>
+
+        <button type="button" @click="saveForm">Enregistrer le formulaire</button>
+
+        <JsonImportModal :form-entries="formEntries" :save-form="saveForm" />
+      </div>
+    </DockingMenu>
 
   </div>
 </template>
@@ -34,10 +40,11 @@
   import {saveCreatorFormFB, publishCreatorFormFB} from "@/thunks/creatorForm";
   import {getCreatedFormFromID, nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import JsonImportModal from "@/components/creator/JsonImportModal";
+  import DockingMenu from "@/components/containers/DockingMenu";
 
   export default {
     name: 'CreatorForm',
-    components: {JsonImportModal, CreatorFormEntry},
+    components: {JsonImportModal, CreatorFormEntry, DockingMenu},
     data() {
       return {
         formEntries: [],
@@ -164,7 +171,7 @@
       //when arriving, set the ID in the store from the router
       this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
       this.$store.dispatch('setPublishedForms');
-      this.$store.dispatch('setCreatorID', {formID: null})
+      this.$store.dispatch('setCreatorID', {formID: null});
 
       //emitting of a new entry
       this.$root.$on('add-entry-answer', (id, answer) => {
@@ -174,6 +181,11 @@
       //emitting the type of an entry
       this.$on('set-entry-type', (id, type) => {
         this.setFormEntryType(id, type)
+      });
+
+      //when an entry is mounted
+      this.$root.$on('mounted-entry', (id) => {
+        window.scrollTo(0, document.body.scrollHeight);
       });
 
       //emitting of a new entry option
@@ -243,16 +255,20 @@
 
 <style scoped>
 
-  .form{
+  .creator-form{
     background-color: white;
   }
 
-  .ghostText {
+  .creator-form-ghost-text {
     color: lightgray;
   }
 
-  .publishedForm {
+  .creator-published-form {
     color: steelblue;
+  }
+
+  .creator-form-footer {
+    margin: 9em;
   }
 
 </style>

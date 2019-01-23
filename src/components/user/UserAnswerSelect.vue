@@ -15,7 +15,7 @@
     name: 'AnswerSelect',
     data () {
       return {
-        selectedAnswers: this.currentUserAnswers || '-1'
+        selectedAnswers: this.currentUserAnswers || null
       }
     },
     props: {
@@ -34,16 +34,24 @@
     },
     methods: {
       onChange: function (target) {
-        if (target.value !== -1) {
+        if (target.value !== '-1') {
           this.selectedAnswers = target.value;
-          this.setSelectedAnswers()
         } else {
-          this.selectedAnswers = null
+          this.selectedAnswers = null;
         }
+
+        this.setSelectedAnswers()
       },
 
       setSelectedAnswers: function () {
         this.$root.$emit('set-selected-answers', this.entryID, this.selectedAnswers)
+      }
+    },
+
+    watch:{
+      currentUserAnswers: function (val) {
+        this.selectedAnswers = val || null;
+        this.setSelectedAnswers();
       }
     }
   }

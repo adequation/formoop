@@ -40,7 +40,7 @@
         })
         .sort(null);
 
-      const w = 300, h = 320;
+      const w = 300, h = 300;
 
       const outerRadius = (w / 2) - 10;
       const innerRadius = outerRadius - 8;
@@ -121,8 +121,6 @@
 
       this.updateGraph = function () {
         percent = this.localPercentage;
-
-        console.log(percent);
 
         pathForeground.transition()
           .duration(750)

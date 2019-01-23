@@ -20,7 +20,7 @@
            :class="getClassFromType(block.type)"
            @contextmenu="swapType(block, $event)">
 
-        <input title="" type="text" v-model="block.content" size="7"/>
+        <input title="" type="text" v-model="block.content" size="12"/>
         <button type="button" @click="deleteBlock(block)">✖</button>
 
       </div>

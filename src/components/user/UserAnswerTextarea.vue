@@ -1,6 +1,6 @@
 <template>
   <div>
-    <textarea class="answerTextarea" v-model="selectedAnswers" v-on:input="onChange($event.target)" title="">
+    <textarea class="user-answer-textarea" v-model="selectedAnswers" v-on:input="onChange($event.target)" title="">
       {selectedAnswers}
     </textarea>
   </div>
@@ -32,12 +32,27 @@
       setSelectedAnswers: function () {
         this.$root.$emit('set-selected-answers', this.entryID, this.selectedAnswers)
       }
+    },
+    watch:{
+      currentUserAnswers: function (val) {
+        this.selectedAnswers = val || null;
+        this.setSelectedAnswers();
+      }
     }
   }
 </script>
 
 <style scoped>
-  textarea {
-    resize: none;
+  .user-answer-textarea {
+    resize: vertical;
+    width: 50%;
+    height: 100%;
+
+    overflow: auto;
+
+
+    border: 1px solid #00000055;
+
+    border-radius: 5px;
   }
 </style>

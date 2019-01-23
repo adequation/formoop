@@ -11,7 +11,7 @@
     name: 'UserAnswerText',
     data() {
       return {
-        selectedAnswers: this.currentUserAnswers || ''
+        selectedAnswers: this.currentUserAnswers || null
       }
     },
     props: {
@@ -26,16 +26,30 @@
     },
     methods: {
       onChange: function (target) {
-        this.selectedAnswers = target.value;
+        this.selectedAnswers = target.value || null;
         this.setSelectedAnswers()
       },
+
       setSelectedAnswers: function () {
         this.$root.$emit('set-selected-answers', this.entryID, this.selectedAnswers)
+      }
+    },
+    watch:{
+      currentUserAnswers: function (val) {
+        this.selectedAnswers = val || null;
+        this.setSelectedAnswers();
       }
     }
   }
 </script>
 
 <style scoped>
+  input[type=text] {
+    border: 1px solid #00000030;
+    background: white;
 
+    padding: 0.3em 0.3em 0.3em 0.75em;
+
+    border-radius: 20px;
+  }
 </style>
