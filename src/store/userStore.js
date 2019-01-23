@@ -2,6 +2,7 @@ import Vuex from 'vuex'
 import Vue from 'vue'
 import Firebase from 'firebase'
 import {getAnsweringPath, getPublishedFormFromID, publishedFormsPath} from "@/helpers/firebaseHelpers";
+import {getInvitationsPath} from "../helpers/firebaseHelpers";
 
 Vue.use(Vuex);
 
@@ -10,7 +11,8 @@ export default {
     formEntries: [],
     formID: '',
     formTitle: '',
-    userAnswers: {}
+    userAnswers: {},
+    invitedUsers: [],
   },
   getters: {
     getFormEntries: state => {
@@ -23,6 +25,9 @@ export default {
     },
     getUserFormTitle: state => {
       return state.formTitle
+    },
+    getInvitedUsers: state => {
+      return state.invitedUsers
     },
 
     userAnswers: state => state.userAnswers
@@ -63,6 +68,17 @@ export default {
           else state.userAnswers = {}
         })
     },
+
+    setInvitedUsers: (state) => {
+      Firebase.database().ref(getInvitationsPath(state.formID))
+        .on('value', function (snapshot) {
+          const value = snapshot.val();
+          if (value) {
+            state.invitedUsers = value;
+          }
+          else state.invitedUsers = [];
+        })
+    },
   },
   actions: {
     setFormEntries: (context) => {
@@ -73,6 +89,7 @@ export default {
       context.commit('setFormEntries');
       context.commit('setFormTitle');
       context.commit('setUserAnswers');
+      context.commit('setInvitedUsers');
     },
     setFormTitle: (context) => {
       context.commit('setFormTitle')

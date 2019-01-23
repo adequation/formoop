@@ -6,7 +6,7 @@
 
       <h3 slot="header">Invitations au formulaire {{formTitle}}</h3>
 
-      <div slot="body"> <MailSender :before-body="getInvitationContent()" :after-body="user.email"/> </div>
+      <div slot="body"> <MailSender :before-body="getInvitationContent()" :after-body="user.email" :formID="formID"/> </div>
 
     </Modal>
 

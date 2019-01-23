@@ -41,6 +41,7 @@
 <script>
   import io from 'socket.io-client';
   import {sendMailWithSocket} from "@/helpers/mailHelpers";
+  import {saveFormInvitationsFB} from "@/thunks/invitationsThunks";
 
   export default {
     name: "MailSender",
@@ -64,6 +65,15 @@
         type: String,
         required: false
       },
+      formID: {
+        type: String,
+        required: true
+      }
+    },
+    computed: {
+      invitedUsers () {
+        return this.$store.getters.getInvitedUsers;
+      },
     },
     methods: {
 
@@ -82,8 +92,12 @@
         const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(adress);
       },
-
+      saveInvitations() {
+        saveFormInvitationsFB(this.formID, [...this.invitedUsers, ...this.mailAddresses])
+      },
       sendMail() {
+        // Save invitations on db before sending mails
+        this.saveInvitations();
         sendMailWithSocket(this.socket, {
           from: 'formoop@gmail.com',
           to: this.mailAddresses,
