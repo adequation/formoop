@@ -137,7 +137,7 @@
 <style scoped>
   .user-form-progress-bar {
     border: 0;
-    background: linear-gradient(to right, #42b983, #42b983, #47ce54);
+    background: linear-gradient(to right, #42b983, #47ce54);
 
     height: 0.35em;
   }
