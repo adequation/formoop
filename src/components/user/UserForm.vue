@@ -2,15 +2,37 @@
   <div class="form" v-if="formEntries">
     <h1>{{formTitle}}</h1>
 
-    <UserGroupedQuestion v-for="group in groupedEntries"
-                         :key="group.id"
-                         :group="group"
-                         :userAnswers="userAnswers"/>
+    <div v-if="filter === 'all'">
 
-    <UserFormEntry v-for="entry in singleEntries"
-                   :key="entry.id"
-                   :entry="entry"
-                   :userAnswers="userAnswers || {}"/>
+      <UserGroupedQuestion v-for="group in groupedEntries"
+                           :key="group.id"
+                           :group="group"
+                           :userAnswers="userAnswers"/>
+
+      <UserFormEntry v-for="entry in singleEntries"
+                     :key="entry.id"
+                     :entry="entry"
+                     :userAnswers="userAnswers || {}"/>
+
+    </div>
+
+    <div v-if="filter === 'singles'">
+
+      <UserFormEntry v-for="entry in singleEntries"
+                     :key="entry.id"
+                     :entry="entry"
+                     :userAnswers="userAnswers || {}"/>
+
+    </div>
+
+    <div v-else-if="filter === 'grouped'">
+
+      <UserGroupedQuestion v-for="group in groupedEntries"
+                           :key="group.id"
+                           :group="group"
+                           :userAnswers="userAnswers"/>
+
+    </div>
 
 
     <div class="user-form-footer">
@@ -28,6 +50,22 @@
 
 
         </div>
+
+        <div class="user-form-filter-buttons-wrapper">
+          <button @click="changeFilter('all')" class="user-form-filter-button">
+            <i class="material-icons">view_day</i>
+          </button>
+
+          <button @click="changeFilter('singles')" class="user-form-filter-button">
+            <i class="material-icons">view_headline</i>
+          </button>
+
+          <button @click="changeFilter('grouped')" class="user-form-filter-button">
+            <i class="material-icons">view_agenda</i>
+          </button>
+        </div>
+
+
 
         <button @click="saveAnswers">Enregistrer</button>
 
@@ -57,7 +95,8 @@
     data() {
       return {
         showModal: false,
-        selectedAnswers: {}
+        selectedAnswers: {},
+        filter: 'all'
       }
     },
     computed: {
@@ -124,6 +163,21 @@
           setSelectedAnswersFB(this.formID, this.selectedAnswers, this.user.uid);
 
         else alert("Vous n'êtes pas connecté !");
+      },
+
+      changeFilter(filter) {
+        switch (filter) {
+          case 'singles':
+            this.filter = 'singles';
+            break;
+          case 'grouped':
+            this.filter = 'grouped';
+            break;
+          default:
+            this.filter = 'all';
+            break;
+
+        }
       }
     },
     watch: {
@@ -159,5 +213,40 @@
     margin: 9em;
   }
   .errorMessage {
+  }
+
+  .user-form-filter-buttons-wrapper{
+    margin: 1em 2em 1em 0.2em;
+
+    float: right;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .user-form-filter-button{
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+
+    background: #4286f4;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .user-form-filter-button:hover {
+    color: white;
+    background: #3462ad;
   }
 </style>

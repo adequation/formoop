@@ -2,10 +2,10 @@
   <div class="user-answer-radio-wrapper">
     <form>
       <div v-for="(a, i) in answers"
-            :key="a.id"
-            id="user-answer-radio"
-            :class="['noselect', selectedAnswers === a.id ? 'user-answer-radio-selected' : 'user-answer-radio']"
-            @click="onChange(a, $event)">
+           :key="a.id"
+           id="user-answer-radio"
+           :class="['noselect', selectedAnswers === a.id ? 'user-answer-radio-selected' : 'user-answer-radio']"
+           @click="onChange(a, $event)">
 
         <span class="user-answer-radio-content">
           {{a.text}}
@@ -19,7 +19,7 @@
 <script>
   export default {
     name: 'AnswerRadio',
-    data () {
+    data() {
       return {
         selectedAnswers: this.currentUserAnswers || null
       }
@@ -40,7 +40,7 @@
     },
     methods: {
       onChange: function (answer, e) {
-        if(this.selectedAnswers !== answer.id) this.selectedAnswers = answer.id;
+        if (this.selectedAnswers !== answer.id) this.selectedAnswers = answer.id;
         else this.selectedAnswers = null;
 
         this.setSelectedAnswers();
@@ -52,7 +52,7 @@
         this.$root.$emit('set-selected-answers', this.entryID, this.selectedAnswers)
       }
     },
-    watch:{
+    watch: {
       currentUserAnswers: function (val) {
         this.selectedAnswers = val || null;
         this.setSelectedAnswers();
@@ -63,7 +63,7 @@
 
 <style scoped>
 
-  .user-answer-radio{
+  .user-answer-radio {
     margin: 0.25em 0.7em 0.25em 0.7em;
 
     cursor: pointer;
@@ -79,12 +79,12 @@
     border-radius: 15px;
   }
 
-  .user-answer-radio:hover{
+  .user-answer-radio:hover {
     background: #00000022;
 
   }
 
-  .user-answer-radio-selected{
+  .user-answer-radio-selected {
     margin: 0.25em 0.7em 0.25em 0.7em;
 
     cursor: pointer;
@@ -94,8 +94,7 @@
     border: 1px solid #00000055;
     padding: 0.2em 0.5em 0.1em 0.5em;
 
-    font-weight:600;
-
+    font-weight: 600;
 
     width: auto;
     overflow: hidden;
@@ -104,18 +103,18 @@
     border-radius: 15px;
   }
 
-  .user-answer-radio-selected:hover{
+  .user-answer-radio-selected:hover {
     background: #3462ad;
   }
 
-  .user-answer-radio-content{
+  .user-answer-radio-content {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
 
-  .user-answer-radio-content i{
+  .user-answer-radio-content i {
     margin-right: 0.2em;
   }
 
@@ -124,8 +123,9 @@
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome and Opera */
+    user-select: none;
+    /* Non-prefixed version, currently
+                                     supported by Chrome and Opera */
   }
 
 
