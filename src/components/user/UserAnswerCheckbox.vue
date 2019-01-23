@@ -56,7 +56,8 @@
     },
     watch:{
       currentUserAnswers: function (val) {
-        this.selectedAnswers = val || []
+        this.selectedAnswers = val || [];
+        this.setSelectedAnswers();
       }
     }
   }

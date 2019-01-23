@@ -15,7 +15,7 @@
     name: 'AnswerSelect',
     data () {
       return {
-        selectedAnswers: this.currentUserAnswers || '-1'
+        selectedAnswers: this.currentUserAnswers || null
       }
     },
     props: {
@@ -50,7 +50,8 @@
 
     watch:{
       currentUserAnswers: function (val) {
-        this.selectedAnswers = val || '-1'
+        this.selectedAnswers = val || null;
+        this.setSelectedAnswers();
       }
     }
   }

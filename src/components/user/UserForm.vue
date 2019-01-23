@@ -4,7 +4,8 @@
 
     <UserGroupedQuestion v-for="group in groupedEntries"
                          :key="group.id"
-                         :group="group"/>
+                         :group="group"
+                         :userAnswers="userAnswers"/>
 
     <UserFormEntry v-for="entry in singleEntries"
                    :key="entry.id"
@@ -44,7 +45,7 @@
 
 <script>
   import UserFormEntry from '@/components/user/UserFormEntry'
-  import {deleteUserAnswerFB, setSelectedAnswersFB} from '@/thunks/userFormEntriesThunks'
+  import {setSelectedAnswersFB} from '@/thunks/userFormEntriesThunks'
   import InviteModal from "@/components/general/InviteModal";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import UserGroupedQuestion from "@/components/user/UserGroupedQuestion";
@@ -156,5 +157,7 @@
 
   .user-form-footer {
     margin: 9em;
+  }
+  .errorMessage {
   }
 </style>
