@@ -4,7 +4,7 @@
       <div v-if="!edit">
         <p class="displayName">{{userMetaData.firstName}} {{userMetaData.lastName}}</p>
         <p class="displayCompany">Entreprise {{userMetaData.company }} </p>
-        <p class="mail">Email {{user.email}}</p>
+        <p class="mail">Email {{userMetaData.email}}</p>
 
         <button @click="editProfile">Modifier</button>
       </div>
@@ -38,12 +38,13 @@
         edit: false
       }
     },
+    created: function () {
+      getUserMetaData(nativeFbFunctions.getCurrentUser()).then( (data) => {
+        this.userMetaData = {...data.val()}
+      });
+    },
     computed: {
       user(){
-
-        getUserMetaData(nativeFbFunctions.getCurrentUser()).then( (data) => {
-          this.userMetaData = {...data.val()}
-        });
 
         return nativeFbFunctions.getCurrentUser();
       }

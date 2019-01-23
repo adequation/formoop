@@ -8,7 +8,7 @@
 
       <span><input class="companyName" type="text" placeholder="Entreprise" v-model="userMetaData.company"></span>
 
-      <span><input class="loginInput" type="text" placeholder="Adresse email" v-model="login"/></span>
+      <span><input class="loginInput" type="text" placeholder="Adresse email" v-model="userMetaData.email"/></span>
       <span><input class="passwordInput" type="password" placeholder="Mot de passe" v-model="password"/></span>
     </form>
 
@@ -31,10 +31,10 @@
     name: "SignUp",
     data() {
       return {
-        login: null,
         password: null,
 
         userMetaData: {
+          email: null,
           firstName: null,
           lastName: null,
           company: null,
@@ -44,7 +44,7 @@
     methods: {
       signUp() {
         const router = this.$router;
-        nativeFbFunctions.createUserWithEmailAndPassword(this.login, this.password).then(
+        nativeFbFunctions.createUserWithEmailAndPassword(this.userMetaData.email, this.password).then(
           (user) => {
                 updateUserProfileMetaData(nativeFbFunctions.getCurrentUser(), this.userMetaData)
                 .then(() => {
