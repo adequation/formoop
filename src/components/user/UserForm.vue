@@ -2,6 +2,10 @@
   <div class="form" v-if="formEntries">
     <h1>{{formTitle}}</h1>
 
+    <div class="user-form-section-list-wrapper">
+      <UserSectionList :sections="sections"></UserSectionList>
+    </div>
+
     <div v-if="filter === 'all'">
 
       <UserGroupedQuestion v-for="group in groupedEntries"
@@ -49,31 +53,34 @@
     <DockingMenu class="user-form-menu">
       <div slot="body">
 
-        <div class="user-form-progress-wrapper">
 
-          <div class="user-form-progress-bar"
-               :style="{width: Math.floor(Object.keys(userAnswers).length/formEntries.length * 100) + '%'}">
+        <div class="user-form-progress-bar"
+             :style="{width: Math.floor(Object.keys(userAnswers).length/formEntries.length * 100) + '%'}">
+        </div>
+
+        <div class="user-form-menu-items">
+          <div class="user-form-filter-buttons-wrapper">
+            <button v-for="f in filters" @click="changeFilter(f.name)"
+                    type="button"
+                    :class="filter===f.name ? 'user-form-filter-button-selected' : 'user-form-filter-button'"
+                    :title=f.description>
+              <i class="material-icons">{{f.icon}}</i>
+            </button>
           </div>
 
+          <div class="user-form-search-bar-wrapper">
+            <input type="text" placeholder="Rechercher..." class="user-form-search-bar"/>
+          </div>
+
+          <div class="user-form-utils-buttons-wrapper">
+            <button class="user-form-save-button" @click="saveAnswers" type="button">
+              <i class="material-icons md-36">save</i>
+            </button>
+
+            <InviteModal class="user-form-invite-button" v-if="user"/>
+          </div>
         </div>
 
-        <div class="user-form-filter-buttons-wrapper">
-          <button v-for="f in filters" @click="changeFilter(f.name)"
-                  type="button"
-                  :class="filter===f.name ? 'user-form-filter-button-selected' : 'user-form-filter-button'"
-                  :title=f.description>
-            <i class="material-icons">{{f.icon}}</i>
-          </button>
-        </div>
-
-
-        <div class="user-form-utils-buttons-wrapper">
-          <button class="user-form-save-button" @click="saveAnswers" type="button">
-            <i class="material-icons md-36">save</i>
-          </button>
-
-          <InviteModal class="user-form-invite-button" v-if="user"/>
-        </div>
 
       </div>
     </DockingMenu>
@@ -93,10 +100,11 @@
   import UserGroupedQuestion from "@/components/user/UserGroupedQuestion";
   import DockingMenu from "@/components/containers/DockingMenu";
   import UserEntryGrid from "@/components/user/UserEntryGrid";
+  import UserSectionList from "@/components/user/UserSectionList";
 
   export default {
     name: 'UserForm',
-    components: {UserEntryGrid, DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
+    components: {UserSectionList, UserEntryGrid, DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
     data() {
       return {
         showModal: false,
@@ -108,7 +116,61 @@
           {name: 'singles', description: 'Voir non-groupées uniquement', icon: 'view_headline'},
           {name: 'grouped', description: 'Voir groupées uniquement', icon: 'view_agenda'},
           {name: 'grid', description: 'Afficher en grille', icon: 'apps'},
-        ]
+        ],
+
+
+        sections: [{
+          "id": 0,
+          "name": "AWWWWWWW",
+          "values": [{"name": "full", "value": 0.5868526406419086}, {"name": "empty", "value": 0.41314735935809144}]
+        }, {
+          "id": 1,
+          "name": "B",
+          "values": [{"name": "full", "value": 0.381741027961783}, {"name": "empty", "value": 0.618258972038217}]
+        }, {
+          "id": 2,
+          "name": "C",
+          "values": [{"name": "full", "value": 0.06450726513204086}, {"name": "empty", "value": 0.9354927348679591}]
+        }, {
+          "id": 3,
+          "name": "D",
+          "values": [{"name": "full", "value": 0.5051773806304276}, {"name": "empty", "value": 0.4948226193695724}]
+        }, {
+          "id": 4,
+          "name": "",
+          "values": [{"name": "full", "value": 0.2617021051258418}, {"name": "empty", "value": 0.7382978948741582}]
+        }, {
+          "id": 4,
+          "name": "",
+          "values": [{"name": "full", "value": 0.2617021051258418}, {"name": "empty", "value": 0.7382978948741582}]
+        },
+          {
+            "id": 4,
+            "name": "",
+            "values": [{"name": "full", "value": 0.2617021051258418}, {"name": "empty", "value": 0.7382978948741582}]
+          },
+          {
+            "id": 4,
+            "name": "",
+            "values": [{"name": "full", "value": 0.2617021051258418}, {"name": "empty", "value": 0.7382978948741582}]
+          },
+          {
+            "id": 4,
+            "name": "",
+            "values": [{"name": "full", "value": 0.2617021051258418}, {"name": "empty", "value": 0.7382978948741582}]
+          },
+          {
+            "id": 4,
+            "name": "",
+            "values": [{"name": "full", "value": 0.2617021051258418}, {"name": "empty", "value": 0.7382978948741582}]
+          },
+          {
+            "id": 4,
+            "name": "",
+            "values": [{"name": "full", "value": 0.2617021051258418}, {"name": "empty", "value": 0.7382978948741582}]
+          }]
+
+
       }
     },
     computed: {
@@ -209,19 +271,8 @@
     background: linear-gradient(to right, #42b983, #47ce54);
 
     height: 0.35em;
-  }
-
-  .user-form-progress-wrapper {
-    width: 100%;
-    float: left;
-  }
-
-  .user-form-progress-value {
-
-    font-weight: 600;
-    color: #42b983;
-
-    position: fixed;
+    position: absolute;
+    top: 0;
   }
 
   .user-form-footer {
@@ -231,8 +282,17 @@
   .errorMessage {
   }
 
+  .user-form-menu-items {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 1.5em;
+
+  }
+
   .user-form-filter-buttons-wrapper {
-    margin: 1em 2em 1em 2em;
 
     float: left;
 
@@ -240,17 +300,64 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
+
   }
 
   .user-form-utils-buttons-wrapper {
-    margin: 1em 2em 1em 2em;
 
     float: right;
 
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
+
+  }
+
+  .user-form-search-bar-wrapper {
+    width: auto;
+  }
+
+  .user-form-search-bar {
+    height: 30px;
+
+    line-height: 30px;
+
+    box-sizing: border-box;
+
+    padding: 0 15px 0 30px;
+
+    border: 1px solid #e3e3e3;
+
+    color: #2c3e50;
+
+    outline: none;
+
+    border-radius: 15px;
+
+    margin-right: 10px;
+
+    transition: border-color 0.2s ease;
+
+    background: #fff  8px 5px no-repeat;
+
+    background-size: auto auto;
+
+    background-size: 20px;
+
+    vertical-align: middle !important;
+  }
+
+  .user-form-search-bar-icon {
+   position:absolute; bottom:12px; left:180px; width:10px; height:10px;
+  }
+
+  .user-form-section-list-wrapper {
+    margin: auto;
+
+    padding: 0.5em;
+
+    width: 75%;
   }
 
   .user-form-filter-button {
