@@ -59,10 +59,6 @@
         return this.userAnswers ? !!this.userAnswers[formEntry.id] : false;
       },
 
-      sections2(){
-
-      },
-
       draw() {
         const svg =
           d3.select('#user-section-svg')
@@ -74,7 +70,7 @@
         const arc = d3
           .arc()
           .innerRadius(0)
-          .outerRadius(this.radius / 2 - 1);
+          .outerRadius(this.radius / 2);
 
         const focusedArc = d3
           .arc()

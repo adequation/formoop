@@ -3,12 +3,12 @@
     <h1>{{formTitle}}</h1>
 
     <div class="user-form-section-list-wrapper">
-      <UserSectionList v-if="sections"
+      <UserSectionList v-if="sections.length > 0"
                        :sections="sections" :focusedSection="focusedSection"
                        :formEntries="formEntries" :userAnswers="userAnswers"></UserSectionList>
     </div>
 
-    <div v-if="sectionSearchFilteredFormEntries.length > 0">
+    <div v-if="sortedEntries.length > 0">
       <div v-if="filter === 'all'">
 
         <UserGroupedQuestion v-for="group in groupedEntries"
@@ -43,7 +43,7 @@
 
       <div v-else-if="filter === 'grid'">
 
-        <UserEntryGrid :entries="sectionSearchFilteredFormEntries"
+        <UserEntryGrid :entries="sortedEntries"
                        :userAnswers="userAnswers"></UserEntryGrid>
 
       </div>
@@ -73,6 +73,26 @@
                     :title=f.description>
               <i class="material-icons">{{f.icon}}</i>
             </button>
+
+            <div class="vertical-separator"></div>
+
+            <button v-for="s in sorters" @click="selectedSorter = s"
+                    type="button"
+                    class="user-form-sort-button"
+                    :title="s.description">
+              <i class="material-icons">{{s.icon}}</i>
+            </button>
+
+            <div class="vertical-separator"></div>
+
+
+            <button @click="cleanAllFilters"
+                    type="button"
+                    :class="['user-form-clean-filters-button', !hasFilter ? 'disabled' : '']"
+                    title="Enlever tous les filtres">
+              <i class="material-icons">{{hasFilter ? 'visibility_off' : 'visibility'}}</i>
+            </button>
+
           </div>
 
           <div class="user-form-search-bar-wrapper">
@@ -116,6 +136,7 @@
   import UserEntryGrid from "@/components/user/UserEntryGrid";
   import UserSectionList from "@/components/user/UserSectionList";
   import {getSections} from "@/helpers/sectionsHelpers";
+  import {isAnswered} from "@/helpers/userAnswersHelpers";
 
   export default {
     name: 'UserForm',
@@ -131,6 +152,57 @@
           {name: 'singles', description: 'Voir non-groupées uniquement', icon: 'view_headline'},
           {name: 'grouped', description: 'Voir groupées uniquement', icon: 'view_agenda'},
           {name: 'grid', description: 'Afficher en grille', icon: 'apps'},
+        ],
+
+        selectedSorter: '',
+        sorters: [
+          {
+            name: 'alphabetical',
+            description: 'Filtrer par ordre alphabetique',
+            icon: 'sort_by_alpha',
+            sortingLayer: 0,
+            sort: (a, b) => a.question.title.localeCompare(b.question.title)
+          },
+          {
+            name: 'unalphabetical',
+            description: 'Filtrer par ordre alphabetique inverse',
+            icon: 'sort_by_alpha',
+            sortingLayer: 0,
+            sort: (a, b) => b.question.title.localeCompare(a.question.title)
+          },
+          {
+            name: 'answered',
+            description: 'Avec réponse en premier',
+            icon: 'expand_less',
+            sortingLayer: 1,
+            sort: (a, b) => {
+              const aAnswered = this.hasAnsweredToEntry(a);
+              const bAnswered = this.hasAnsweredToEntry(b);
+
+              if (!aAnswered) {
+                if (!bAnswered) return 0;
+                return 1;
+              }
+              if (!bAnswered) return 0;
+              return 0;
+            }
+          },
+          {
+            name: 'notAnswered',
+            description: 'Sans réponse en premier',
+            icon: 'expand_more',
+            sortingLayer: 1,
+            sort: (a, b) => {
+              const aAnswered = this.hasAnsweredToEntry(a);
+              const bAnswered = this.hasAnsweredToEntry(b);
+              if (aAnswered) {
+                if (bAnswered) return 0;
+                return 1;
+              }
+              if (bAnswered) return 0;
+              return 0;
+            }
+          },
         ],
 
         searchQuery: '',
@@ -151,13 +223,13 @@
       },
 
       singleEntries() {
-        return this.sectionSearchFilteredFormEntries.filter(fe => !fe.grouped);
+        return this.sortedEntries.filter(fe => !fe.grouped);
       },
 
       groupedEntries() {
         const groups = {};
 
-        this.sectionSearchFilteredFormEntries.forEach(fe => {
+        this.sortedEntries.forEach(fe => {
           if (fe.grouped) {
             if (groups[fe.group]) groups[fe.group].entries.push(fe);
 
@@ -173,7 +245,7 @@
       },
 
       sectionFilteredFormEntries() {
-        if(!this.focusedSection) return this.formEntries;
+        if (!this.focusedSection) return this.formEntries;
 
         if (this.formEntries)
           return this.formEntries.filter(fe => fe.section === this.focusedSection);
@@ -187,6 +259,18 @@
               fe.question.title.toLowerCase().includes(t.toLowerCase())
             ));
         else return [];
+      },
+
+      sortedEntries () {
+        //we copy entries before sorting because Vue does not detect array swapping
+        let entries = this.sectionSearchFilteredFormEntries.map(e=>e);
+
+        if(!entries) return [];
+        if(!this.selectedSorter) return entries;
+
+        entries = entries.sort(this.selectedSorter.sort);
+
+        return entries;
       },
 
       searchFilteredFormEntries() {
@@ -216,7 +300,11 @@
 
       sections() {
         return getSections(this.formEntries, this.userAnswers);
-      }
+      },
+
+      hasFilter() {
+        return this.filter !== 'all' || this.searchQuery || this.focusedSection
+      },
 
     },
     created() {
@@ -265,7 +353,24 @@
             this.filter = 'all';
             break;
         }
-      }
+      },
+
+      cleanAllFilters() {
+        this.filter = 'all';
+        this.searchQuery = '';
+        this.focusedSection = null;
+      },
+
+      hasAnsweredToEntry(entry) {
+        if (!this.user) return false;
+
+        const entryAnswers = this.userAnswers[entry.id];
+        if (!entryAnswers) return false;
+
+        const userAnswer = entryAnswers[this.user.uid];
+
+        return !!userAnswer
+      },
     },
     watch: {
       '$route'(to, from) {
@@ -408,6 +513,52 @@
     background: #3462ad;
   }
 
+  .user-form-sort-button {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #fa7d32;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .user-form-sort-button:hover {
+    background: #c86428;
+  }
+
+  .user-form-clean-filters-button {
+    margin-right: 0.5em;
+    margin-left: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: tomato;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .disabled {
+    background: lightslategrey;
+  }
+
   .user-form-save-button {
     margin-right: 0.5em;
     padding: 0.5em;
@@ -430,5 +581,10 @@
     background: #276a35;
   }
 
-
+  .vertical-separator {
+    border-left: 1px solid #00000055;
+    border-right: 1px solid #00000055;
+    height: 60px;
+    top: 10px;
+  }
 </style>
