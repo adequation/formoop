@@ -63,7 +63,7 @@
         formTitle: 'Formulaire sans titre',
         defaultFormTitle: 'Formulaire sans titre',
         showModal: false,
-        newSection: '',
+        newSection: null,
         formSections: []
       }
     },
@@ -123,9 +123,9 @@
       },
 
       addSection() {
-        if(this.formSections.includes(this.newSection)) {this.newSection = ''; return;}
-        this.formSections.push(this.newSection);
-        this.newSection = '';
+        if(this.formSections.includes(this.newSection)) {this.newSection = null; return;}
+        if(this.newSection) this.formSections.push(this.newSection);
+        this.newSection = null;
       },
 
       setFormEntrySection(id, section) {
@@ -145,14 +145,6 @@
         }
         this.formEntries = form.formEntries || [];
         this.formTitle = form.formTitle || this.defaultFormTitle;
-      },
-
-      getSections() {
-        const sections = [];
-        this.formEntries.forEach(e => {
-          if (!sections.includes(e.section) && e.section !== '-1') sections.push(e.section);
-        });
-        return sections;
       },
 
       getFormFromFB(creatorID, formID) {
@@ -270,7 +262,15 @@
 
       creatorID() {
         return this.$store.getters.creatorID;
-      }
+      },
+
+      sections() {
+        const sections = [];
+        this.formEntries.forEach(e => {
+          if (!sections.includes(e.section) && e.section && e.section !== '-1') sections.push(e.section);
+        });
+        return sections;
+      },
     },
     watch: {
       //we watch the route to get the form ID
@@ -287,10 +287,10 @@
       },
 
       formEntries() {
-        const tmp = this.getSections();
+        const tmp = this.sections;
 
         this.formSections.forEach(fs => {
-          if (!tmp.includes(fs) && fs !== '-1') tmp.push(fs);
+          if (!tmp.includes(fs) && fs && fs !== '-1') tmp.push(fs);
         });
         this.formSections = tmp;
 

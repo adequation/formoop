@@ -28,7 +28,7 @@
 
       <CreatorAnswer :answers="entry.answers" :types="types" :type="entry.type" :entryID="entry.id"></CreatorAnswer>
 
-      <select title="" @change="onChangeSection($event.target)">
+      <select title="" class="creator-form-entry-section-select" @change="onChangeSection($event.target)">
         <option value="-1">Aucune</option>
         <option v-for="t in formSections"
                 :key="t"
