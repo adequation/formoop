@@ -2,6 +2,8 @@
   <div class="form" v-if="formEntries">
     <h1>{{formTitle}}</h1>
 
+    <user-invited-users/>
+
     <UserGroupedQuestion v-for="group in groupedEntries"
                          :key="group.id"
                          :group="group"
@@ -50,10 +52,11 @@
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import UserGroupedQuestion from "@/components/user/UserGroupedQuestion";
   import DockingMenu from "@/components/containers/DockingMenu";
+  import UserInvitedUsers from "./UserInvitedUsers";
 
   export default {
     name: 'UserForm',
-    components: {DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
+    components: {UserInvitedUsers, DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
     data() {
       return {
         showModal: false,

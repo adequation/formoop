@@ -93,11 +93,16 @@
         return re.test(adress);
       },
       saveInvitations() {
-        saveFormInvitationsFB(this.formID, [...this.invitedUsers, ...this.mailAddresses])
+        let IU = [...this.invitedUsers];
+        this.mailAddresses = this.mailAddresses.filter(function(elem){
+          return IU.indexOf(elem) < 0;
+        });
+        saveFormInvitationsFB(this.formID, [...IU, ...this.mailAddresses])
       },
       sendMail() {
         // Save invitations on db before sending mails
         this.saveInvitations();
+
         sendMailWithSocket(this.socket, {
           from: 'formoop@gmail.com',
           to: this.mailAddresses,
