@@ -3,46 +3,53 @@
     <h1>{{formTitle}}</h1>
 
     <div class="user-form-section-list-wrapper">
-      <UserSectionList :sections="sections"></UserSectionList>
+      <UserSectionList v-if="sections"
+                       :sections="sections" :focusedSection="focusedSection"
+                       :formEntries="formEntries" :userAnswers="userAnswers"></UserSectionList>
     </div>
 
-    <div v-if="filter === 'all'">
+    <div v-if="sectionSearchFilteredFormEntries.length > 0">
+      <div v-if="filter === 'all'">
 
-      <UserGroupedQuestion v-for="group in groupedEntries"
-                           :key="group.id"
-                           :group="group"
-                           :userAnswers="userAnswers"/>
+        <UserGroupedQuestion v-for="group in groupedEntries"
+                             :key="group.id"
+                             :group="group"
+                             :userAnswers="userAnswers"/>
 
-      <UserFormEntry v-for="entry in singleEntries"
-                     :key="entry.id"
-                     :entry="entry"
-                     :userAnswers="userAnswers || {}"/>
+        <UserFormEntry v-for="entry in singleEntries"
+                       :key="entry.id"
+                       :entry="entry"
+                       :userAnswers="userAnswers || {}"/>
 
+      </div>
+
+      <div v-if="filter === 'singles'">
+
+        <UserFormEntry v-for="entry in singleEntries"
+                       :key="entry.id"
+                       :entry="entry"
+                       :userAnswers="userAnswers || {}"/>
+
+      </div>
+
+      <div v-else-if="filter === 'grouped'">
+
+        <UserGroupedQuestion v-for="group in groupedEntries"
+                             :key="group.id"
+                             :group="group"
+                             :userAnswers="userAnswers"/>
+
+      </div>
+
+      <div v-else-if="filter === 'grid'">
+
+        <UserEntryGrid :entries="sectionSearchFilteredFormEntries"
+                       :userAnswers="userAnswers"></UserEntryGrid>
+
+      </div>
     </div>
-
-    <div v-if="filter === 'singles'">
-
-      <UserFormEntry v-for="entry in singleEntries"
-                     :key="entry.id"
-                     :entry="entry"
-                     :userAnswers="userAnswers || {}"/>
-
-    </div>
-
-    <div v-else-if="filter === 'grouped'">
-
-      <UserGroupedQuestion v-for="group in groupedEntries"
-                           :key="group.id"
-                           :group="group"
-                           :userAnswers="userAnswers"/>
-
-    </div>
-
-    <div v-else-if="filter === 'grid'">
-
-      <UserEntryGrid :entries="formEntries"
-                     :userAnswers="userAnswers"></UserEntryGrid>
-
+    <div v-else>
+      <h2>Aucune question n'a été trouvée...</h2>
     </div>
 
 
@@ -69,7 +76,14 @@
           </div>
 
           <div class="user-form-search-bar-wrapper">
-            <input type="text" placeholder="Rechercher..." class="user-form-search-bar"/>
+            <i class="material-icons" role="button">search</i>
+            <input type="text"
+                   placeholder="Rechercher..."
+                   class="user-form-search-bar"
+                   v-model="searchQuery"/>
+            <button type="button" class="user-form-search-delete-button" @click="searchQuery = ''">
+              <i v-if="searchQuery" class="material-icons" role="button">clear</i>
+            </button>
           </div>
 
           <div class="user-form-utils-buttons-wrapper">
@@ -101,6 +115,7 @@
   import DockingMenu from "@/components/containers/DockingMenu";
   import UserEntryGrid from "@/components/user/UserEntryGrid";
   import UserSectionList from "@/components/user/UserSectionList";
+  import {getSections} from "@/helpers/sectionsHelpers";
 
   export default {
     name: 'UserForm',
@@ -118,74 +133,31 @@
           {name: 'grid', description: 'Afficher en grille', icon: 'apps'},
         ],
 
+        searchQuery: '',
 
-        sections: [{
-          "id": 0,
-          "name": "AWWWWWWW",
-          "values": [{"name": "full", "value": 0.5868526406419086}, {"name": "empty", "value": 0.41314735935809144}]
-        }, {
-          "id": 1,
-          "name": "B",
-          "values": [{"name": "full", "value": 0.381741027961783}, {"name": "empty", "value": 0.618258972038217}]
-        }, {
-          "id": 2,
-          "name": "C",
-          "values": [{"name": "full", "value": 0.06450726513204086}, {"name": "empty", "value": 0.9354927348679591}]
-        }, {
-          "id": 3,
-          "name": "D",
-          "values": [{"name": "full", "value": 0.5051773806304276}, {"name": "empty", "value": 0.4948226193695724}]
-        }, {
-          "id": 4,
-          "name": "",
-          "values": [{"name": "full", "value": 0.2617021051258418}, {"name": "empty", "value": 0.7382978948741582}]
-        }, {
-          "id": 4,
-          "name": "",
-          "values": [{"name": "full", "value": 0.2617021051258418}, {"name": "empty", "value": 0.7382978948741582}]
-        },
-          {
-            "id": 4,
-            "name": "",
-            "values": [{"name": "full", "value": 0.2617021051258418}, {"name": "empty", "value": 0.7382978948741582}]
-          },
-          {
-            "id": 4,
-            "name": "",
-            "values": [{"name": "full", "value": 0.2617021051258418}, {"name": "empty", "value": 0.7382978948741582}]
-          },
-          {
-            "id": 4,
-            "name": "",
-            "values": [{"name": "full", "value": 0.2617021051258418}, {"name": "empty", "value": 0.7382978948741582}]
-          },
-          {
-            "id": 4,
-            "name": "",
-            "values": [{"name": "full", "value": 0.2617021051258418}, {"name": "empty", "value": 0.7382978948741582}]
-          },
-          {
-            "id": 4,
-            "name": "",
-            "values": [{"name": "full", "value": 0.2617021051258418}, {"name": "empty", "value": 0.7382978948741582}]
-          }]
-
+        focusedSection: null,
 
       }
     },
     computed: {
-      singleEntries() {
-        return this.formEntries.filter(fe => !fe.grouped);
-      },
 
       user() {
         return nativeFbFunctions.getCurrentUser();
       },
 
+
+      formEntries() {
+        return this.$store.getters.getFormEntries || []
+      },
+
+      singleEntries() {
+        return this.sectionSearchFilteredFormEntries.filter(fe => !fe.grouped);
+      },
+
       groupedEntries() {
         const groups = {};
 
-        this.formEntries.forEach(fe => {
+        this.sectionSearchFilteredFormEntries.forEach(fe => {
           if (fe.grouped) {
             if (groups[fe.group]) groups[fe.group].entries.push(fe);
 
@@ -200,8 +172,30 @@
         });
       },
 
-      formEntries() {
-        return this.$store.getters.getFormEntries
+      sectionFilteredFormEntries() {
+        if(!this.focusedSection) return this.formEntries;
+
+        if (this.formEntries)
+          return this.formEntries.filter(fe => fe.section === this.focusedSection);
+        else return [];
+      },
+
+      sectionSearchFilteredFormEntries() {
+        if (this.sectionFilteredFormEntries)
+          return this.sectionFilteredFormEntries.filter(fe =>
+            this.searchTokens.every(t =>
+              fe.question.title.toLowerCase().includes(t.toLowerCase())
+            ));
+        else return [];
+      },
+
+      searchFilteredFormEntries() {
+        if (this.formEntries)
+          return this.formEntries.filter(fe =>
+            this.searchTokens.every(t =>
+              fe.question.title.toLowerCase().includes(t.toLowerCase())
+            ));
+        else return [];
       },
 
       formID() {
@@ -214,15 +208,32 @@
 
       userAnswers() {
         return this.$store.getters.userAnswers || {}
+      },
+
+      searchTokens() {
+        return this.searchQuery.split(' ');
+      },
+
+      sections() {
+        return getSections(this.formEntries, this.userAnswers);
       }
+
     },
     created() {
+
+      this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
 
       this.$root.$on('set-selected-answers', (id, answers) => {
         this.setSelectedAnswers(id, answers);
       });
 
-      this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
+      this.$on('section-list-choice', (section) => {
+        if (this.focusedSection === section.id) {
+          this.focusedSection = null;
+          return;
+        }
+        this.focusedSection = section.id;
+      });
 
     },
     methods: {
@@ -253,7 +264,6 @@
           default:
             this.filter = 'all';
             break;
-
         }
       }
     },
@@ -301,7 +311,6 @@
     justify-content: space-between;
     align-items: center;
 
-
   }
 
   .user-form-utils-buttons-wrapper {
@@ -316,40 +325,39 @@
 
   .user-form-search-bar-wrapper {
     width: auto;
-  }
-
-  .user-form-search-bar {
-    height: 30px;
-
-    line-height: 30px;
-
-    box-sizing: border-box;
-
-    padding: 0 15px 0 30px;
-
-    border: 1px solid #e3e3e3;
-
-    color: #2c3e50;
-
-    outline: none;
+    background: #eeeeee;
+    border: 1px solid #00000055;
 
     border-radius: 15px;
 
-    margin-right: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
-    transition: border-color 0.2s ease;
+    padding: 0.1em;
+  }
 
-    background: #fff  8px 5px no-repeat;
+  .user-form-search-bar {
+    background: none;
+    border: none;
+  }
 
-    background-size: auto auto;
+  .user-form-search-delete-button {
+    background: none;
+    border: none;
 
-    background-size: 20px;
+  }
 
-    vertical-align: middle !important;
+  .user-form-search-delete-button:hover {
+    color: tomato;
   }
 
   .user-form-search-bar-icon {
-   position:absolute; bottom:12px; left:180px; width:10px; height:10px;
+    position: absolute;
+    bottom: 12px;
+    left: 180px;
+    width: 10px;
+    height: 10px;
   }
 
   .user-form-section-list-wrapper {
