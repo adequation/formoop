@@ -54,4 +54,20 @@
     text-align: center;
     color: #2c3e50;
   }
+
+  .accordion-fade-slide-enter-active {
+    transition: all 0.5s;
+  }
+
+  .accordion-fade-slide-leave-active {
+    transition: all 0.5s;
+  }
+
+  .accordion-fade-slide-enter {
+    opacity: 0;
+  }
+
+  .accordion-fade-slide-leave-to {
+    opacity: 0;
+  }
 </style>

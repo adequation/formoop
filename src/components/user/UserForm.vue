@@ -9,6 +9,7 @@
     </div>
 
     <div v-if="sortedEntries.length > 0">
+
       <div v-if="filter === 'all'">
 
         <UserGroupedQuestion v-for="group in groupedEntries"

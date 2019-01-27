@@ -1,5 +1,6 @@
 <template>
   <div class="user-entry-grid">
+
     <div v-for="entry in entries"
          :key="entry.id"
          :class="hasAnswered(entry) ? 'user-grid-entry-answered' : 'user-grid-entry'"
@@ -8,6 +9,7 @@
         {{entry.question.title}}
       </div>
     </div>
+
 
     <Modal v-if="focusedEntry" @close="closeModal">
       <div slot="body">

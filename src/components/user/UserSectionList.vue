@@ -8,8 +8,6 @@
 
 <script>
   import * as d3 from "d3";
-  import {getPercentage, getRawPercentage} from "@/helpers/userAnswersHelpers";
-  import {getSections} from "@/helpers/sectionsHelpers";
 
   export default {
     name: "UserSectionList",
@@ -17,7 +15,9 @@
       return {
         circlePadding: 20,
         h: 100,
-        radius: 75
+        radius: 75,
+
+        oldPieData: {}
       }
     },
     props: {
@@ -40,22 +40,30 @@
     },
     methods: {
 
-      colors(sectionID, name, value){
-        if(sectionID === this.focusedSection){
-          if(name === 'full') return '#4286f4';
-          return '#ffffff';
+      arcTween(a, old, arc) {
+        let i = d3.interpolate(old, a);
+        this._current = i(0);
+        return function (t) {
+          return arc(i(t));
         }
+      },
 
-        if(name === 'empty') return '#DDDDDD';
+      colors(sectionID, name, value) {
+        /*if (sectionID === this.focusedSection) {
+          if (name === 'full') return '#4286f4';
+          return '#ffffff';
+        }*/
 
-        if(value > 0.75) return '#42b983';
+        if (name === 'empty') return '#DDDDDD';
 
-        if(value > 0.5) return '#ffd242';
+        if (value >= 0.75) return '#42b983';
+
+        if (value >= 0.3) return '#ff9f1d';
 
         return 'tomato';
       },
 
-      isAnswered(formEntry){
+      isAnswered(formEntry) {
         return this.userAnswers ? !!this.userAnswers[formEntry.id] : false;
       },
 
@@ -89,7 +97,9 @@
           .append("g")
           .attr(
             "transform",
-            (d, i) => `translate(${(i + 1) * this.radius + i * this.circlePadding} , ${this.h / 2})`
+            (d, i) => {
+              return `translate(${(i + 1) * this.radius + i * this.circlePadding} , ${this.h / 2})`;
+            }
           );
 
         const links = pies
@@ -99,7 +109,6 @@
           .attr("y1", 0)
           .attr("x2", this.radius + this.circlePadding)
           .attr("y2", 0);
-
 
         pies
           .selectAll("path")
@@ -135,15 +144,34 @@
         border.append("title").text((d) => d.name);
 
         svg.selectAll('path')
+          .transition()
+          .duration(500)
           .attr("fill", (d, i) => {
-            return this.colors(d.data.sectionID, d.data.name, d.value)
+            return this.colors(d.data.sectionID, d.data.name, this.updatedValue(d))
           })
-          .attr("d", (d, i) => {
-            if (d.data.sectionID === this.focusedSection) return focusedArc(d);
-            return arc(d);
+          .attrTween("d", d => {
+            let newPieData = this.updatedValue(d, pie);
+
+            let arcTweenValue;
+
+            //update the old value
+            if (!this.oldPieData[d.data.sectionID]) this.oldPieData[d.data.sectionID] = {};
+            if (!this.oldPieData[d.data.sectionID][d.data.name])
+              this.oldPieData[d.data.sectionID][d.data.name] = newPieData;
+
+            arcTweenValue = this.arcTween(newPieData, this.oldPieData[d.data.sectionID][d.data.name], arc);
+            if (d.data.sectionID === this.focusedSection)
+              arcTweenValue = this.arcTween(newPieData, this.oldPieData[d.data.sectionID][d.data.name], focusedArc);
+
+            this.oldPieData[d.data.sectionID][d.data.name] = newPieData;
+
+            return arcTweenValue;
           });
 
+
         svg.selectAll('circle')
+          .transition()
+          .duration(500)
           .attr("r", (d) => {
             if (d.id === this.focusedSection) return this.radius / 1.7;
             return this.radius / 2
@@ -157,6 +185,8 @@
           });
 
         svg.selectAll('line')
+          .transition()
+          .duration(500)
           .attr("stroke", d => {
             return 'black'
           })
@@ -168,10 +198,27 @@
 
         svg.selectAll('text')
           .text((d, i) => {
-            if(d.id === this.focusedSection) return d.name.length > 10 ? d.name.substring(0, 9) + "..." : d.name;
+            if (d.id === this.focusedSection) return d.name.length > 10 ? d.name.substring(0, 9) + "..." : d.name;
             return d.name.length > 5 ? d.name.substring(0, 4) + "..." : d.name
           })
 
+      },
+
+      //get around faulty value updating
+
+      updatedValue(d, pie){
+        const newData = this.sections.find(s => s.id === d.data.sectionID);
+        let newPieData;
+        if (newData) {
+          if(pie) {
+            newPieData = pie(newData.values);
+            return newPieData.find(v => v.data.name === d.data.name);
+          }
+
+          return newData.values.find(v => v.name === d.data.name).value;
+        }
+
+        return d;
       }
     },
     mounted() {
@@ -183,9 +230,12 @@
         this.draw();
       },
 
-      sections: function (val) {
-        this.draw();
-      },
+      sections: {
+        handler: function (val) {
+          this.draw()
+        },
+        deep: true
+      }
     }
   }
 </script>
