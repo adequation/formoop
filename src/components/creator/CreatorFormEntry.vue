@@ -28,6 +28,17 @@
 
       <CreatorAnswer :answers="entry.answers" :types="types" :type="entry.type" :entryID="entry.id"></CreatorAnswer>
 
+      <select title="" class="creator-form-entry-section-select" @change="onChangeSection($event.target)">
+        <option value="-1">Aucune</option>
+        <option v-for="t in formSections"
+                :key="t"
+                :name="t"
+                :value="t"
+                :selected="t === entry.section">
+          {{t}}
+        </option>
+      </select>
+
       <button type="button" @click="deleteEntry">Supprimer la question</button>
 
     </form>
@@ -52,6 +63,10 @@
       initialyOpened: {
         type: Boolean,
         required: false
+      },
+      formSections: {
+        type: Array,
+        required: true
       }
     },
     data() {
@@ -72,7 +87,13 @@
         this.setEntryType(target.value);
       },
       setEntryType(type) {
-        this.$parent.$emit('set-entry-type', this.entry.id, type)
+        this.$parent.$emit('set-entry-type', this.entry.id, type);
+      },
+      onChangeSection(target) {
+        this.setEntrySection(target.value);
+      },
+      setEntrySection(section) {
+        this.$parent.$emit('set-form-section', this.entry.id, section);
       },
       deleteEntry() {
         this.$parent.$emit('delete-entry', this.entry.id);

@@ -12,6 +12,7 @@
                       :entry="entry"
                       :initialyOpened="entry.initialyOpened"
                       :ref="entry.id"
+                      :formSections="formSections"
     />
 
     <div class="creator-form-footer">
@@ -23,9 +24,12 @@
 
         <button type="button" @click="addEntry(true)">Ajouter une question générique</button>
 
+        <input title="" type="text" class="creator-section-name" v-model="newSection"/>
+        <button type="button" @click="addSection">Créer une nouvelle Section</button>
+
         <button type="button" @click="saveForm">Enregistrer le formulaire</button>
 
-        <JsonImportModal :form-entries="formEntries" :save-form="saveForm" />
+        <JsonImportModal :form-entries="formEntries" :save-form="saveForm"/>
       </div>
     </DockingMenu>
 
@@ -48,16 +52,19 @@
     data() {
       return {
         formEntries: [],
-        defaultFormEntry: {question:{title: ''},
+        defaultFormEntry: {
+          question: {title: ''},
           type: 'radio',
           answers: [],
-          initialyOpened : true //Opened collapse by default
+          initialyOpened: true //Opened collapse by default
         },
         defaultQuestion: {title: 'Titre de la question'},
         defaultAnswers: [{id: "", text: 'Option 1'}],
         formTitle: 'Formulaire sans titre',
         defaultFormTitle: 'Formulaire sans titre',
-        showModal: false
+        showModal: false,
+        newSection: null,
+        formSections: []
       }
     },
     methods: {
@@ -73,10 +80,10 @@
           ...this.defaultFormEntry,
           question: {...this.defaultQuestion},
           answers: [...this.defaultAnswers.map(a => ({...a, id: uuid.v4()}))],
-          id
+          id,
         };
 
-        if(generic) {
+        if (generic) {
           entry.genericProperty = '';
           entry.generic = true;
           entry.question.blocks = [
@@ -91,7 +98,7 @@
               content: "nom_variable"
             }
           ];
-      }
+        }
 
         //copy default answer array, and generate new option ids
         this.formEntries.push(entry);
@@ -115,8 +122,23 @@
         }
       },
 
-      setForm(form){
-        if(!form) {
+      addSection() {
+        if(this.formSections.includes(this.newSection)) {this.newSection = null; return;}
+        if(this.newSection) this.formSections.push(this.newSection);
+        this.newSection = null;
+      },
+
+      setFormEntrySection(id, section) {
+        const tmp = [...this.formEntries];
+        const fe = tmp.find(e => e.id === id);
+        if (fe) {
+          fe.section = section;
+          this.formEntries = tmp;
+        }
+      },
+
+      setForm(form) {
+        if (!form) {
           this.formEntries = [];
           this.formTitle = this.defaultFormTitle;
           return;
@@ -129,9 +151,9 @@
         Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
           .on('value', (snapshot) => {
             const value = snapshot.val();
-            if(value){
+            if (value) {
               this.setForm({formEntries: value.entries, formTitle: value.title});
-            }else{
+            } else {
               this.setForm(null);
             }
           })
@@ -142,8 +164,9 @@
         this.formEntries = this.formEntries.map((fe, i) => {
           delete fe.initialyOpened; // we remove the default state of the collapse
 
-          return ({...fe,
-            question: {...fe.question, title: (fe.question.title || "Titre de la question "+(i+1))},
+          return ({
+            ...fe,
+            question: {...fe.question, title: (fe.question.title || "Titre de la question " + (i + 1))},
             index: i
           })
         });
@@ -181,6 +204,10 @@
       //emitting the type of an entry
       this.$on('set-entry-type', (id, type) => {
         this.setFormEntryType(id, type)
+      });
+
+      this.$on('set-form-section', (id, section) => {
+        this.setFormEntrySection(id, section)
       });
 
       //when an entry is mounted
@@ -222,19 +249,28 @@
 
       //retreive form
       this.getFormFromFB(this.creatorID, this.formID);
+
     },
     computed: {
       formID() {
         return this.$store.getters.getCreatorFormID
       },
 
-      isPublished(){
+      isPublished() {
         return this.$store.getters.publishedForms.find(pe => pe.id === this.formID)
       },
 
-      creatorID(){
+      creatorID() {
         return this.$store.getters.creatorID;
-      }
+      },
+
+      sections() {
+        const sections = [];
+        this.formEntries.forEach(e => {
+          if (!sections.includes(e.section) && e.section && e.section !== '-1') sections.push(e.section);
+        });
+        return sections;
+      },
     },
     watch: {
       //we watch the route to get the form ID
@@ -248,6 +284,16 @@
 
         this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
 
+      },
+
+      formEntries() {
+        const tmp = this.sections;
+
+        this.formSections.forEach(fs => {
+          if (!tmp.includes(fs) && fs && fs !== '-1') tmp.push(fs);
+        });
+        this.formSections = tmp;
+
       }
     }
   }
@@ -255,7 +301,7 @@
 
 <style scoped>
 
-  .creator-form{
+  .creator-form {
     background-color: white;
   }
 
