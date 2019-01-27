@@ -52,7 +52,7 @@
 
         if(value > 0.5) return '#ffd242';
 
-        if(value > 0.25) return 'tomato';
+        return 'tomato';
       },
 
       isAnswered(formEntry){
