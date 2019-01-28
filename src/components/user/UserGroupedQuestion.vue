@@ -47,10 +47,8 @@
   }
 
   .user-group-entry{
-    background-color: #f6f6f6;
     margin: 0.2em auto !important;
-    border: 1px solid #00000020;
-    width:100% !important;
+    width:auto !important;
   }
 
   .user-grouped-question-container{

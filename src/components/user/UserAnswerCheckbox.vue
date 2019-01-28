@@ -67,7 +67,7 @@
 <style scoped>
 
   .user-answer-checkbox {
-    margin: 1em;
+    margin: 0.25em 0.7em 0.25em 0.7em;
 
     cursor: pointer;
     font-size: large;
@@ -92,8 +92,7 @@
   }
 
   .user-answer-checkbox-selected {
-
-    margin: 1em;
+    margin: 0.25em 0.7em 0.25em 0.7em;
 
     cursor: pointer;
     font-size: large;

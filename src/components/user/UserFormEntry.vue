@@ -7,7 +7,7 @@
       </button>
     </div>
 
-    <UserQuestionTitle :question="entry.question" :small="small"/>
+    <UserQuestionTitle :question="entry.question" display="small"/>
 
     <div class="answered-by-list-wrapper" v-if="showAnswers">
       <div class="answered-by-list" v-if="showAnswers">
@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <UserAnswer :answer="entry.answer" :entryID="entry.id" :userAnswers="userAnswers" :small="small"/>
+    <UserAnswer :answer="entry.answer" :entryID="entry.id" :userAnswers="userAnswers" display="small"/>
   </div>
 </template>
 
@@ -52,8 +52,8 @@
         type: Object,
         required: true
       },
-      small: {
-        type: Boolean,
+      display: {
+        type: String,
         required: false
       }
     },
