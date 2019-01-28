@@ -1,9 +1,12 @@
 <template>
     <Collapse>
 
-      <p slot="header" :showArrow="true">Personnes Invitées</p>
+      <span slot="header" :showArrow="true" @click="updateInvited">Personnes Invitées</span>
       <div slot="body">
-        <p v-for="user in invitedUsers">{{ user }}</p>
+        <div v-for="user in invitedUser">
+          <p v-if="user.firstName && user.lastName">{{ user.firstName }} {{ user.lastName }}</p>
+          <p v-else> {{ user.email }}</p>
+        </div>
       </div>
 
     </Collapse>
@@ -27,6 +30,11 @@
           return this.$store.getters.getInvitedUsers;
         },
       },
+      methods:{
+        updateInvited(){
+          this.invitedUser = this.invitedUsers;
+        }
+      }
     }
 </script>
 

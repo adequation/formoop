@@ -74,10 +74,37 @@ export default {
         .on('value', function (snapshot) {
           const value = snapshot.val();
           if (value) {
-            state.invitedUsers = value;
+            snapshot.val().forEach( function(email, index) {
+              Firebase.database().ref().child('users').orderByChild('metaData/email').equalTo(email)
+                .on('value', function(snapshot) {
+                  if(snapshot.val()){
+                    const value = Object.values(snapshot.val());
+                    console.log(value[0]["metaData"]);
+                    state.invitedUsers[index] = value[0]["metaData"];
+                  }
+                  else{
+                    state.invitedUsers[index] = {email: email}
+                  }
+              })
+            })
           }
           else state.invitedUsers = [];
-        })
+        });
+
+      /*Firebase.database().ref('users').on('value', function(snapshot){
+        const users = Object.values(snapshot.val());
+        Firebase.database().ref(getInvitationsPath(state.formID))
+          .on('value', function (snapshot) {
+            const value = snapshot.val();
+            if (value) {
+              state.invitedUsers = users.filter(function(val){
+                return(value.includes(val["metaData"]["email"]) )
+              });
+            }
+            else state.invitedUsers = [];
+          })
+      })*/
+
     },
   },
   actions: {
