@@ -12,6 +12,7 @@
                       :entry="entry"
                       :initialyOpened="entry.initialyOpened"
                       :ref="entry.id"
+                      :formSections="formSections"
     />
 
     <div class="creator-form-footer">
@@ -19,13 +20,44 @@
 
     <DockingMenu class="creator-form-bottom-menu">
       <div slot="body">
-        <button type="button" @click="addEntry(false)">Ajouter une question</button>
 
-        <button type="button" @click="addEntry(true)">Ajouter une question générique</button>
+        <div class="creator-form-buttons-wrapper">
 
-        <button type="button" @click="saveForm">Enregistrer le formulaire</button>
+          <div class="creator-form-entry-buttons-wrapper">
+            <button type="button" class="creator-form-entry-button"
+                    @click="addEntry(false)" title="Ajouter une question">
+              <i class="material-icons md-36">add_box</i>
+            </button>
 
-        <JsonImportModal :form-entries="formEntries" :save-form="saveForm" />
+            <button type="button" class="creator-form-entry-button"
+                    @click="addEntry(true)" title="Ajouter une question générique">
+              <i class="material-icons md-36">ballot</i>
+            </button>
+
+            <div class="vertical-separator"></div>
+
+
+            <div class="creator-form-sections-buttons-wrapper">
+              <input title="" type="text" placeholder="Nom de la section" class="creator-section-name-input" v-model="newSection"/>
+
+              <button type="button" class="creator-form-entry-button"
+                      @click="addSection" title="Créer une nouvelle Section">
+                <i class="material-icons md-36">create_new_folder</i>
+              </button>
+            </div>
+
+          </div>
+
+          <div class="creator-form-utils-buttons-wrapper">
+            <button type="button" @click="saveForm" class="creator-form-save-button md-36"
+                    title="Enregistrer le formulaire">
+              <i class="material-icons md-36">save</i>
+            </button>
+
+            <JsonImportModal :form-entries="formEntries" :save-form="saveForm"/>
+          </div>
+        </div>
+
       </div>
     </DockingMenu>
 
@@ -48,16 +80,19 @@
     data() {
       return {
         formEntries: [],
-        defaultFormEntry: {question:{title: ''},
+        defaultFormEntry: {
+          question: {title: ''},
           type: 'radio',
           answers: [],
-          initialyOpened : true //Opened collapse by default
+          initialyOpened: true //Opened collapse by default
         },
         defaultQuestion: {title: 'Titre de la question'},
         defaultAnswers: [{id: "", text: 'Option 1'}],
         formTitle: 'Formulaire sans titre',
         defaultFormTitle: 'Formulaire sans titre',
-        showModal: false
+        showModal: false,
+        newSection: null,
+        formSections: []
       }
     },
     methods: {
@@ -73,10 +108,10 @@
           ...this.defaultFormEntry,
           question: {...this.defaultQuestion},
           answers: [...this.defaultAnswers.map(a => ({...a, id: uuid.v4()}))],
-          id
+          id,
         };
 
-        if(generic) {
+        if (generic) {
           entry.genericProperty = '';
           entry.generic = true;
           entry.question.blocks = [
@@ -91,7 +126,7 @@
               content: "nom_variable"
             }
           ];
-      }
+        }
 
         //copy default answer array, and generate new option ids
         this.formEntries.push(entry);
@@ -115,8 +150,26 @@
         }
       },
 
-      setForm(form){
-        if(!form) {
+      addSection() {
+        if (this.formSections.includes(this.newSection)) {
+          this.newSection = null;
+          return;
+        }
+        if (this.newSection) this.formSections.push(this.newSection);
+        this.newSection = null;
+      },
+
+      setFormEntrySection(id, section) {
+        const tmp = [...this.formEntries];
+        const fe = tmp.find(e => e.id === id);
+        if (fe) {
+          fe.section = section;
+          this.formEntries = tmp;
+        }
+      },
+
+      setForm(form) {
+        if (!form) {
           this.formEntries = [];
           this.formTitle = this.defaultFormTitle;
           return;
@@ -129,9 +182,9 @@
         Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
           .on('value', (snapshot) => {
             const value = snapshot.val();
-            if(value){
+            if (value) {
               this.setForm({formEntries: value.entries, formTitle: value.title});
-            }else{
+            } else {
               this.setForm(null);
             }
           })
@@ -142,8 +195,9 @@
         this.formEntries = this.formEntries.map((fe, i) => {
           delete fe.initialyOpened; // we remove the default state of the collapse
 
-          return ({...fe,
-            question: {...fe.question, title: (fe.question.title || "Titre de la question "+(i+1))},
+          return ({
+            ...fe,
+            question: {...fe.question, title: (fe.question.title || "Titre de la question " + (i + 1))},
             index: i
           })
         });
@@ -181,6 +235,10 @@
       //emitting the type of an entry
       this.$on('set-entry-type', (id, type) => {
         this.setFormEntryType(id, type)
+      });
+
+      this.$on('set-form-section', (id, section) => {
+        this.setFormEntrySection(id, section)
       });
 
       //when an entry is mounted
@@ -222,19 +280,28 @@
 
       //retreive form
       this.getFormFromFB(this.creatorID, this.formID);
+
     },
     computed: {
       formID() {
         return this.$store.getters.getCreatorFormID
       },
 
-      isPublished(){
+      isPublished() {
         return this.$store.getters.publishedForms.find(pe => pe.id === this.formID)
       },
 
-      creatorID(){
+      creatorID() {
         return this.$store.getters.creatorID;
-      }
+      },
+
+      sections() {
+        const sections = [];
+        this.formEntries.forEach(e => {
+          if (!sections.includes(e.section) && e.section && e.section !== '-1') sections.push(e.section);
+        });
+        return sections;
+      },
     },
     watch: {
       //we watch the route to get the form ID
@@ -248,6 +315,16 @@
 
         this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
 
+      },
+
+      formEntries() {
+        const tmp = this.sections;
+
+        this.formSections.forEach(fs => {
+          if (!tmp.includes(fs) && fs && fs !== '-1') tmp.push(fs);
+        });
+        this.formSections = tmp;
+
       }
     }
   }
@@ -255,7 +332,7 @@
 
 <style scoped>
 
-  .creator-form{
+  .creator-form {
     background-color: white;
   }
 
@@ -269,6 +346,104 @@
 
   .creator-form-footer {
     margin: 9em;
+  }
+
+  .creator-form-buttons-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 1.5em;
+  }
+
+  .creator-form-entry-button {
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #4286f4;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .creator-form-save-button {
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #2d8246;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .creator-form-save-button:hover {
+    background: #276a35;
+  }
+
+  .creator-form-utils-buttons-wrapper {
+    float: right;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .creator-form-entry-buttons-wrapper {
+    float: left;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .creator-form-sections-buttons-wrapper {
+    margin-left: 0.5em;
+    padding-left: 0.5em;
+    background: #4286f4;
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    border-radius: 7px;
+  }
+
+  .creator-form-sections-buttons-wrapper input {
+    width: 90%;
+    color: #ffffff;
+    border-bottom: 1px solid #00000055;
+  }
+
+
+  .creator-section-name-input {
+    background: none;
+    border: none;
+    width: auto;
+  }
+
+  .vertical-separator {
+    border-left: 1px solid #00000055;
+    border-right: 1px solid #00000055;
+    height: 60px;
+    top: 10px;
   }
 
 </style>

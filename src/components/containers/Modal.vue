@@ -8,7 +8,7 @@
           <div class="modal-closer">
             <slot name="upper-right">
               <button class="modal-close-button" @click="$emit('close')">
-                x
+                <i class="material-icons">close</i>
               </button>
             </slot>
           </div>
@@ -103,5 +103,27 @@
   .modal-leave-active .modal-container {
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
+  }
+
+  .modal-close-button {
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #bbbbbb;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-close-button:hover {
+    background: tomato;
   }
 </style>

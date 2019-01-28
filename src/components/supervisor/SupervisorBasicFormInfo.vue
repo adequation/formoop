@@ -7,9 +7,9 @@
     <SupervisorCirclePacking :userAnswers="userAnswers" :formEntries="formEntries"/>
 
 
-    <p><span class="answer-percentage">{{Number(getPercentage("answered")).toFixed(2)}}%</span>
+    <p><span class="answer-percentage">{{Number(getPercentage("answered", this.formEntries, this.userAnswers)).toFixed(2)}}%</span>
       des questions ont une réponse</p>
-    <p><span class="not-answered-percentage">{{Number(getPercentage("notAnswered")).toFixed(2)}}%</span>
+    <p><span class="not-answered-percentage">{{Number(getPercentage("notAnswered", this.formEntries, this.userAnswers)).toFixed(2)}}%</span>
       des questions n'ont pas de réponse</p>
   </div>
 </template>
@@ -18,6 +18,7 @@
   import SupervisorProgressChart from "@/components/supervisor/SupervisorProgressChart"
   import SupervisorForceDirectedGraph from "@/components/supervisor/SupervisorForceDirectedGraph";
   import SupervisorCirclePacking from "@/components/supervisor/SupervisorCirclePacking";
+  import {filterEntries, isAnswered} from "@/helpers/userAnswersHelpers";
 
   export default {
     name: "SupervisorBasicFormInfo",
@@ -31,26 +32,6 @@
     computed: {
       userAnswers() {
         return this.$store.getters.userAnswers;
-      }
-    },
-    methods: {
-      getPercentage(filterType){
-        return (this.filterEntries(filterType).length / this.formEntries.length) * 100;
-      },
-
-      filterEntries(filterType) {
-        switch (filterType) {
-          case "answered":
-            return this.formEntries.filter(e => this.isAnswered(e));
-          case "notAnswered":
-            return this.formEntries.filter(e => !this.isAnswered(e));
-          case "default":
-            return this.formEntries;
-        }
-      },
-
-      isAnswered(formEntry){
-        return this.userAnswers ? !!this.userAnswers[formEntry.id] : false;
       }
     }
   }
