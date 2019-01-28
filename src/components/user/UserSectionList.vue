@@ -121,7 +121,7 @@
           .append("text")
           .attr("dy", ".35em")
           .style("font-size", function (d) {
-            return (this.radius * 1.35) / 10 + "px";
+            return (this.radius * 1.3) / 10 + "px";
           })
           .attr("text-anchor", "middle")
           .style("font-family", '"Avenir", Helvetica, Arial, sans-serif');
@@ -198,7 +198,7 @@
 
         svg.selectAll('text')
           .text((d, i) => {
-            if (d.id === this.focusedSection) return d.name.length > 10 ? d.name.substring(0, 9) + "..." : d.name;
+            if (d.id === this.focusedSection) return d.name.length > 9 ? d.name.substring(0, 8) + "..." : d.name;
             return d.name.length > 5 ? d.name.substring(0, 4) + "..." : d.name
           })
 

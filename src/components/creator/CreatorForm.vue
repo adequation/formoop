@@ -20,16 +20,44 @@
 
     <DockingMenu class="creator-form-bottom-menu">
       <div slot="body">
-        <button type="button" @click="addEntry(false)">Ajouter une question</button>
 
-        <button type="button" @click="addEntry(true)">Ajouter une question générique</button>
+        <div class="creator-form-buttons-wrapper">
 
-        <input title="" type="text" class="creator-section-name" v-model="newSection"/>
-        <button type="button" @click="addSection">Créer une nouvelle Section</button>
+          <div class="creator-form-entry-buttons-wrapper">
+            <button type="button" class="creator-form-entry-button"
+                    @click="addEntry(false)" title="Ajouter une question">
+              <i class="material-icons md-36">add_box</i>
+            </button>
 
-        <button type="button" @click="saveForm">Enregistrer le formulaire</button>
+            <button type="button" class="creator-form-entry-button"
+                    @click="addEntry(true)" title="Ajouter une question générique">
+              <i class="material-icons md-36">ballot</i>
+            </button>
 
-        <JsonImportModal :form-entries="formEntries" :save-form="saveForm"/>
+            <div class="vertical-separator"></div>
+
+
+            <div class="creator-form-sections-buttons-wrapper">
+              <input title="" type="text" placeholder="Nom de la section" class="creator-section-name-input" v-model="newSection"/>
+
+              <button type="button" class="creator-form-entry-button"
+                      @click="addSection" title="Créer une nouvelle Section">
+                <i class="material-icons md-36">create_new_folder</i>
+              </button>
+            </div>
+
+          </div>
+
+          <div class="creator-form-utils-buttons-wrapper">
+            <button type="button" @click="saveForm" class="creator-form-save-button md-36"
+                    title="Enregistrer le formulaire">
+              <i class="material-icons md-36">save</i>
+            </button>
+
+            <JsonImportModal :form-entries="formEntries" :save-form="saveForm"/>
+          </div>
+        </div>
+
       </div>
     </DockingMenu>
 
@@ -123,8 +151,11 @@
       },
 
       addSection() {
-        if(this.formSections.includes(this.newSection)) {this.newSection = null; return;}
-        if(this.newSection) this.formSections.push(this.newSection);
+        if (this.formSections.includes(this.newSection)) {
+          this.newSection = null;
+          return;
+        }
+        if (this.newSection) this.formSections.push(this.newSection);
         this.newSection = null;
       },
 
@@ -315,6 +346,104 @@
 
   .creator-form-footer {
     margin: 9em;
+  }
+
+  .creator-form-buttons-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 1.5em;
+  }
+
+  .creator-form-entry-button {
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #4286f4;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .creator-form-save-button {
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #2d8246;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .creator-form-save-button:hover {
+    background: #276a35;
+  }
+
+  .creator-form-utils-buttons-wrapper {
+    float: right;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .creator-form-entry-buttons-wrapper {
+    float: left;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .creator-form-sections-buttons-wrapper {
+    margin-left: 0.5em;
+    padding-left: 0.5em;
+    background: #4286f4;
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    border-radius: 7px;
+  }
+
+  .creator-form-sections-buttons-wrapper input {
+    width: 90%;
+    color: #ffffff;
+    border-bottom: 1px solid #00000055;
+  }
+
+
+  .creator-section-name-input {
+    background: none;
+    border: none;
+    width: auto;
+  }
+
+  .vertical-separator {
+    border-left: 1px solid #00000055;
+    border-right: 1px solid #00000055;
+    height: 60px;
+    top: 10px;
   }
 
 </style>

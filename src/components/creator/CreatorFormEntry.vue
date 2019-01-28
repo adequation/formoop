@@ -10,6 +10,19 @@
 
       <div>
 
+        <div class="creator-form-entry-section-select">
+          <select title="" @change="onChangeSection($event.target)">
+            <option value="-1">Aucune</option>
+            <option v-for="t in formSections"
+                    :key="t"
+                    :name="t"
+                    :value="t"
+                    :selected="t === entry.section">
+              {{t}}
+            </option>
+          </select>
+        </div>
+
         <CreatorGenericQuestionBlock v-if="entry.generic" :entry="entry"/>
         <input v-else title="" type="text" class="questionTitle" v-model="entry.question.title"
                placeholder="Titre de la question"/>
@@ -27,17 +40,6 @@
       </div>
 
       <CreatorAnswer :answers="entry.answers" :types="types" :type="entry.type" :entryID="entry.id"></CreatorAnswer>
-
-      <select title="" class="creator-form-entry-section-select" @change="onChangeSection($event.target)">
-        <option value="-1">Aucune</option>
-        <option v-for="t in formSections"
-                :key="t"
-                :name="t"
-                :value="t"
-                :selected="t === entry.section">
-          {{t}}
-        </option>
-      </select>
 
       <button type="button" @click="deleteEntry">Supprimer la question</button>
 
@@ -119,6 +121,11 @@
 
   .form-entry-content {
 
+  }
+
+  .creator-form-entry-section-select{
+    float: left;
+    position: absolute;
   }
 
 </style>

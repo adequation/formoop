@@ -1,7 +1,8 @@
 <template>
   <div class="json-import-modal">
 
-    <button type="button" @click="publishForm">Publier le formulaire</button>
+    <button type="button" class="creator-form-save-button"
+            @click="publishForm"><i class="material-icons md-36">send</i></button>
 
     <Modal v-if="showModal" @close="closeModal">
 
@@ -213,5 +214,22 @@
 </script>
 
 <style scoped>
+  .creator-form-save-button {
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #2d8246;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
 
 </style>
