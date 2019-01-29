@@ -2,8 +2,6 @@
   <div class="form" v-if="formEntries">
     <h1>{{formTitle}}</h1>
 
-    <user-invited-users/>
-
     <div class="user-form-section-list-wrapper">
       <UserSectionList v-if="sections.length > 0"
                        :sections="sections" :focusedSection="focusedSection"
@@ -144,7 +142,7 @@
 
   export default {
     name: 'UserForm',
-    components: {UserSectionList, UserEntryGrid,UserInvitedUsers, DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
+    components: {UserSectionList, UserEntryGrid, DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
     data() {
       return {
         showModal: false,

@@ -8,7 +8,10 @@
 
       <h3 slot="header">Invitations au formulaire {{formTitle}}</h3>
 
-      <div slot="body"> <MailSender :before-body="getInvitationContent()" :after-body="user.email" :formID="formID"/> </div>
+      <div slot="body">
+        <MailSender :before-body="getInvitationContent()" :after-body="user.email" :formID="formID"/>
+        <user-invited-users/>
+      </div>
 
     </Modal>
 
@@ -22,10 +25,11 @@
   import {getInvitationText} from "@/helpers/mailHelpers";
   import * as Firebase from "firebase";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
+  import UserInvitedUsers from "../user/UserInvitedUsers";
 
   export default {
     name: "InviteModal",
-    components: {MailSender, Modal},
+    components: {UserInvitedUsers, MailSender, Modal},
     data() {
       return {
         showModal: false,

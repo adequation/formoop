@@ -1,7 +1,7 @@
 <template>
     <Collapse>
 
-      <span slot="header" :showArrow="true" @click="updateInvited">Personnes Invitées</span>
+      <p slot="header" :showArrow="true" @click="updateInvited">Personnes Invitées</p>
       <div slot="body">
         <div v-for="user in invitedUser">
           <p v-if="user.firstName && user.lastName">{{ user.firstName }} {{ user.lastName }}</p>
