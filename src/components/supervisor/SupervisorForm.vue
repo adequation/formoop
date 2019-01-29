@@ -27,7 +27,8 @@
       }
     },
     created: function () {
-      this.$store.dispatch('setFormID', {formID: this.$route.params.formID})
+      this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
+      this.$store.dispatch('setUser')
     },
     watch: {
       '$route' (to, from) {
