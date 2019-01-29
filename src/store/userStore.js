@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
 import Firebase from 'firebase'
-import {getAnsweringPath, getPublishedFormFromID, publishedFormsPath} from "@/helpers/firebaseHelpers";
+import {getAnsweringPath, getPublishedFormFromID, publishedFormsPath, userPath} from "@/helpers/firebaseHelpers";
 
 Vue.use(Vuex);
 
@@ -10,7 +10,8 @@ export default {
     formEntries: [],
     formID: '',
     formTitle: '',
-    userAnswers: {}
+    userAnswers: {},
+    invitedUsers: {}
   },
   getters: {
     getFormEntries: state => {
@@ -19,13 +20,19 @@ export default {
         : state.formEntries;
     },
     getUserFormID: state => {
-      return state.formID
+      return state.formID;
     },
     getUserFormTitle: state => {
-      return state.formTitle
+      return state.formTitle;
     },
 
-    userAnswers: state => state.userAnswers
+    invitedUsers: state => {
+      return state.invitedUsers;
+    },
+
+    userAnswers : state => {
+      return state.userAnswers;
+    }
   },
   mutations: {
     setFormEntries: (state) => {
@@ -55,31 +62,66 @@ export default {
 
     setUserAnswers: (state) => {
       Firebase.database().ref(getAnsweringPath(state.formID))
-        .on('value', function (snapshot) {
+        .on('value', (snapshot) => {
           const value = snapshot.val();
           if (value) {
             state.userAnswers = value;
           }
           else state.userAnswers = {}
-        })
+        });
     },
-  },
-  actions: {
-    setFormEntries: (context) => {
-      context.commit('setFormEntries')
-    },
-    setFormID: (context, {formID}) => {
-      context.commit('setFormID', {formID});
-      context.commit('setFormEntries');
-      context.commit('setFormTitle');
-      context.commit('setUserAnswers');
-    },
-    setFormTitle: (context) => {
-      context.commit('setFormTitle')
-    },
-    setUserAnswers: (context) => {
-      context.commit('setUserAnswers')
-    },
-  }
 
+    setInvitedUsers: (state) => {
+      Firebase.database().ref(userPath)
+        .on('value', function (snapshot) {
+          const value = snapshot.val();
+
+          if (value) {
+            const users = {};
+
+            Object.keys(state.userAnswers).forEach(entryID => {
+              const userIDs = state.userAnswers[entryID];
+
+              if (userIDs) Object.keys(userIDs).forEach(id => {
+                if(!users[id]) users[id] = value[id];
+              });
+            });
+
+            state.invitedUsers = {...users};
+            console.log(JSON.stringify('answers', state.userAnswers));
+            console.log(JSON.stringify('users', state.invitedUsers))
+          }
+
+          else state.invitedUsers = {};
+
+        });
+    }
+  },
+    actions: {
+      setFormEntries: (context) => {
+        context.commit('setFormEntries')
+      },
+
+      setFormID: (context, {formID}) => {
+        context.commit('setFormID', {formID});
+        context.commit('setFormEntries');
+        context.commit('setFormTitle');
+        context.commit('setUserAnswers');
+        context.commit('setInvitedUsers');
+      },
+
+      setFormTitle: (context) => {
+        context.commit('setFormTitle')
+      },
+
+      setUserAnswers: (context) => {
+        context.commit('setUserAnswers');
+        context.commit('setInvitedUsers');
+      },
+
+      setInvitedUsers: (context) => {
+        context.commit('setInvitedUsers');
+      },
+
+    }
 }

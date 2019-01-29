@@ -15,7 +15,7 @@
         <div class="answered-by-list-item" v-for="(userID,i) in Object.keys(otherUserAnswers)">
 
           <p>
-            <span class="user-name-text">{{userID}}</span>
+            <span class="user-name-text">{{getUserName(userID)}}</span>
             :
             <span class="user-answer-text">{{answerText(otherUserAnswers[userID])}}</span>
           </p>
@@ -87,9 +87,26 @@
         });
 
         return otherAnswers;
-      }
+      },
+
+      invitedUsers() {
+        return this.$store.getters.invitedUsers;
+      },
     },
     methods: {
+
+      getUserName(userID){
+        const user = this.invitedUsers[userID];
+      if(!user) return 'Anonyme';
+
+      const metadata = user.metadata;
+
+      if(!metadata) return 'Anonyme';
+
+      return metadata.firstName.concat(' ').concat(metadata.lastName);
+
+      },
+
       switchAnswersView() {
         if (Object.keys(this.otherUserAnswers).length > 0)
           this.showAnswers = !this.showAnswers;
