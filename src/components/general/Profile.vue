@@ -10,9 +10,12 @@
       </div>
       <div v-else>
 
-        <p>Prénom <input class="firstNameInput" type="text" placeholder="Prénom" v-model="userMetadata.firstName" v-on:keydown="keyHandler"/></p>
-        <p>Nom <input class="lastNameInput" type="text" placeholder="Nom" v-model="userMetadata.lastName" v-on:keydown="keyHandler"/></p>
-        <p>Entreprise<input class="companyInput" type="text" placeholder="Entreprise" v-model="userMetadata.company" ></p>
+        <p>Prénom <input class="firstNameInput" type="text" placeholder="Prénom" v-model="userMetadata.firstName"
+                         v-on:keydown="keyHandler"/></p>
+        <p>Nom <input class="lastNameInput" type="text" placeholder="Nom" v-model="userMetadata.lastName"
+                      v-on:keydown="keyHandler"/></p>
+        <p>Entreprise<input class="companyInput" type="text" placeholder="Entreprise" v-model="userMetadata.company">
+        </p>
 
         <button @click="updateProfile">Sauvegarder</button>
         <button @click="editProfile">Annuler</button>
@@ -43,7 +46,7 @@
 
     },
     computed: {
-      user(){
+      user() {
         return this.$store.getters.user || nativeFbFunctions.getCurrentUser();
       },
     },
@@ -54,20 +57,20 @@
         updateUserProfileMetadata(
           this.user,
           this.userMetadata)
-        .then(() => {
+          .then(() => {
 
-          this.editProfile();
+            this.editProfile();
 
-          this.saving = false;
+            this.saving = false;
 
-        }).catch((err) => console.log(err));
+          }).catch((err) => console.log(err));
 
         this.saving = true;
 
       },
 
       editProfile() {
-        if (!this.edit){
+        if (!this.edit) {
           const Metadata = {...this.user};
           delete Metadata.uid;
           this.userMetadata = Metadata;
@@ -75,8 +78,13 @@
         this.edit = !this.edit;
       },
 
-      keyHandler(event){
-        if(event.key === ' ') event.preventDefault();
+      keyHandler(event) {
+        if (event.key === ' ') event.preventDefault();
+      }
+    },
+    watch: {
+      '$route'(to, from) {
+        this.$store.dispatch("setUser")
       }
     }
   }

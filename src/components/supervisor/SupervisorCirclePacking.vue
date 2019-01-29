@@ -11,8 +11,8 @@
     name: "SupervisorCirclePacking",
     data() {
       return {
-        w: this.width  || 500,
-        h: this.height || 500,
+        w: this.width  || 750,
+        h: this.height || 750,
 
         format: d3.format(",d"),
       }
@@ -25,6 +25,10 @@
       formEntries: {
         type: Array,
         required: true
+      },
+      users:{
+        type: Object,
+        required: false
       },
       width: {
         type: Number,
@@ -107,7 +111,16 @@
 
         });
 
-        users = Object.keys(allUsers).map(userID => allUsers[userID]);
+        users = Object.keys(allUsers).map(userID => {
+          const user = this.users[userID];
+          let name = '';
+
+          if(user)
+            name = user.metadata.firstName + ' ' + user.metadata.lastName;
+
+
+          return ({...allUsers[userID], name})
+        });
 
         users.forEach(u => {
           chartUsers.push({id: u.id, name: u.name || u.id})

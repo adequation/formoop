@@ -1,15 +1,15 @@
 <template>
   <div>
-    <SupervisorProgressChart :percentage="getPercentage('answered')"/>
+    <SupervisorProgressChart :percentage="getPercentageValue('answered', this.formEntries, this.userAnswers)"/>
 
-    <SupervisorForceDirectedGraph :userAnswers="userAnswers" :formEntries="formEntries"/>
+    <SupervisorForceDirectedGraph :userAnswers="userAnswers" :formEntries="formEntries" :users="invitedUsers"/>
 
-    <SupervisorCirclePacking :userAnswers="userAnswers" :formEntries="formEntries"/>
+    <SupervisorCirclePacking :userAnswers="userAnswers" :formEntries="formEntries" :users="invitedUsers"/>
 
 
-    <p><span class="answer-percentage">{{Number(getPercentage("answered", this.formEntries, this.userAnswers)).toFixed(2)}}%</span>
+    <p><span class="answer-percentage">{{Number(getPercentageValue("answered", this.formEntries, this.userAnswers)).toFixed(2)}}%</span>
       des questions ont une réponse</p>
-    <p><span class="not-answered-percentage">{{Number(getPercentage("notAnswered", this.formEntries, this.userAnswers)).toFixed(2)}}%</span>
+    <p><span class="not-answered-percentage">{{Number(getPercentageValue("notAnswered", this.formEntries, this.userAnswers)).toFixed(2)}}%</span>
       des questions n'ont pas de réponse</p>
   </div>
 </template>
@@ -18,7 +18,7 @@
   import SupervisorProgressChart from "@/components/supervisor/SupervisorProgressChart"
   import SupervisorForceDirectedGraph from "@/components/supervisor/SupervisorForceDirectedGraph";
   import SupervisorCirclePacking from "@/components/supervisor/SupervisorCirclePacking";
-  import {filterEntries, isAnswered} from "@/helpers/userAnswersHelpers";
+  import {getPercentage, isAnswered} from "@/helpers/userAnswersHelpers";
 
   export default {
     name: "SupervisorBasicFormInfo",
@@ -29,9 +29,21 @@
         required: true
       }
     },
+    created(){
+      this.$store.dispatch("setInvitedUsers")
+    },
     computed: {
       userAnswers() {
         return this.$store.getters.userAnswers;
+      },
+
+      invitedUsers() {
+        return this.$store.getters.invitedUsers;
+      }
+    },
+    methods: {
+      getPercentageValue(filterType, entries, answers){
+        return getPercentage(filterType, entries, answers);
       }
     }
   }

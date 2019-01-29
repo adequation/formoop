@@ -111,6 +111,10 @@ export default {
       context.commit('setUser');
       context.commit('setUserMetadata')
     },
+
+    setUserMetadata: (context) => {
+      context.commit('setUserMetadata')
+    }
   }
 }
 

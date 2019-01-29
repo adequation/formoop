@@ -88,8 +88,6 @@ export default {
             });
 
             state.invitedUsers = {...users};
-            console.log(JSON.stringify('answers', state.userAnswers));
-            console.log(JSON.stringify('users', state.invitedUsers))
           }
 
           else state.invitedUsers = {};
