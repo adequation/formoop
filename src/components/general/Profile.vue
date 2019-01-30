@@ -2,17 +2,20 @@
   <div>
     <div v-if="!saving">
       <div v-if="!edit">
-        <p class="displayName">{{userMetaData.firstName}} {{userMetaData.lastName}}</p>
-        <p class="displayCompany">Entreprise {{userMetaData.company }} </p>
-        <p class="mail">Email {{userMetaData.email}}</p>
+        <p class="displayName">{{user.firstName}} {{user.lastName}}</p>
+        <p class="displayCompany">Entreprise {{user.company }} </p>
+        <p class="mail">Email {{user.email}}</p>
 
         <button @click="editProfile">Modifier</button>
       </div>
       <div v-else>
 
-        <p>Prénom <input class="firstNameInput" type="text" placeholder="Prénom" v-model="userMetaData.firstName" v-on:keydown="keyHandler"/></p>
-        <p>Nom <input class="lastNameInput" type="text" placeholder="Nom" v-model="userMetaData.lastName" v-on:keydown="keyHandler"/></p>
-        <p>Entreprise<input class="companyInput" type="text" placeholder="Entreprise" v-model="userMetaData.company" ></p>
+        <p>Prénom <input class="firstNameInput" type="text" placeholder="Prénom" v-model="userMetadata.firstName"
+                         v-on:keydown="keyHandler"/></p>
+        <p>Nom <input class="lastNameInput" type="text" placeholder="Nom" v-model="userMetadata.lastName"
+                      v-on:keydown="keyHandler"/></p>
+        <p>Entreprise<input class="companyInput" type="text" placeholder="Entreprise" v-model="userMetadata.company">
+        </p>
 
         <button @click="updateProfile">Sauvegarder</button>
         <button @click="editProfile">Annuler</button>
@@ -25,60 +28,63 @@
 </template>
 
 <script>
-  import {updateUserProfileDisplayName, getUserMetaData, updateUserProfileMetaData} from "@/thunks/userAccountThunks";
+  import {updateUserProfileDisplayName, updateUserProfileMetadata} from "@/thunks/userAccountThunks";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
   export default {
     name: "Profile",
     data() {
       return {
-        userMetaData:{},
+
+        userMetadata: {},
 
         saving: false,
         edit: false
       }
     },
     created: function () {
-      getUserMetaData(nativeFbFunctions.getCurrentUser()).then( (data) => {
-        this.userMetaData = {...data.val()}
-      });
+
     },
     computed: {
-      user(){
-
-        return nativeFbFunctions.getCurrentUser();
-      }
+      user() {
+        return this.$store.getters.user || nativeFbFunctions.getCurrentUser();
+      },
     },
     methods: {
 
       updateProfile() {
 
-        updateUserProfileMetaData(
+        updateUserProfileMetadata(
           this.user,
-          this.userMetaData)
-        .then(() => {
-            getUserMetaData(nativeFbFunctions.getCurrentUser()).then( (data) => {
-              this.userMetaData = {...data.val()}
-            });
-          this.editProfile();
+          this.userMetadata)
+          .then(() => {
 
-          this.saving = false;
+            this.editProfile();
 
-        }).catch((err) => console.log(err));
+            this.saving = false;
+
+          }).catch((err) => console.log(err));
 
         this.saving = true;
 
       },
 
       editProfile() {
-        if (this.edit)
-          getUserMetaData(nativeFbFunctions.getCurrentUser()).then( (data) => {
-            this.userMetaData = {...data.val()}});
+        if (!this.edit) {
+          const Metadata = {...this.user};
+          delete Metadata.uid;
+          this.userMetadata = Metadata;
+        }
         this.edit = !this.edit;
       },
 
-      keyHandler(event){
-        if(event.key === ' ') event.preventDefault();
+      keyHandler(event) {
+        if (event.key === ' ') event.preventDefault();
+      }
+    },
+    watch: {
+      '$route'(to, from) {
+        this.$store.dispatch("setUser")
       }
     }
   }

@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
 import Firebase from 'firebase'
-import {getAnsweringPath, getPublishedFormFromID, publishedFormsPath} from "@/helpers/firebaseHelpers";
+import {getAnsweringPath, getPublishedFormFromID, publishedFormsPath,  userPath} from "@/helpers/firebaseHelpers";
 import {getInvitationsPath} from "../helpers/firebaseHelpers";
 
 Vue.use(Vuex);
@@ -21,16 +21,22 @@ export default {
         : state.formEntries;
     },
     getUserFormID: state => {
-      return state.formID
+      return state.formID;
     },
     getUserFormTitle: state => {
-      return state.formTitle
+      return state.formTitle;
+    },
+
+    invitedUsers: state => {
+      return state.invitedUsers;
     },
     getInvitedUsers: state => {
       return state.invitedUsers
     },
 
-    userAnswers: state => state.userAnswers
+    userAnswers : state => {
+      return state.userAnswers;
+    }
   },
   mutations: {
     setFormEntries: (state) => {
@@ -60,13 +66,13 @@ export default {
 
     setUserAnswers: (state) => {
       Firebase.database().ref(getAnsweringPath(state.formID))
-        .on('value', function (snapshot) {
+        .on('value', (snapshot) => {
           const value = snapshot.val();
           if (value) {
             state.userAnswers = value;
           }
           else state.userAnswers = {}
-        })
+        });
     },
 
     setInvitedUsers: (state) => {
@@ -123,6 +129,9 @@ export default {
     },
     setUserAnswers: (context) => {
       context.commit('setUserAnswers')
+    },
+    setInvitedUsers: (context) => {
+      context.commit('setInvitedUsers');
     },
   }
 

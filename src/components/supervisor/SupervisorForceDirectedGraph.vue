@@ -28,6 +28,10 @@
         type: Array,
         required: true
       },
+      users:{
+        type: Object,
+        required: false
+      },
       width: {
         type: Number,
         required: false
@@ -96,7 +100,16 @@
 
         });
 
-        users = Object.keys(allUsers).map(userID => allUsers[userID]);
+        users = Object.keys(allUsers).map(userID => {
+          const user = this.users[userID];
+          let name = '';
+
+          if(user)
+          name = user.metadata.firstName + ' ' + user.metadata.lastName;
+
+
+          return ({...allUsers[userID], name})
+        });
 
 
         entries.forEach(e => {
@@ -129,7 +142,7 @@
         users.forEach(u => {
           nodes.push({
             id: u.id,
-            text: '',
+            text: u.name || '',
             radius: this.userNodeRadius,
             group: "User"
           });
@@ -187,7 +200,7 @@
 
       const svg = d3.select("#force-graph-svg")
         .append("svg")
-        .attr('width', this.w)
+        .attr('width', "100%")
         .attr('height', this.h)
         .attr("viewBox", [-this.w / 2, -this.h / 2, this.w, this.h]);
 

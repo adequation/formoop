@@ -10,13 +10,13 @@ export function updateUserProfileDisplayName(user, firstName, lastName){
   return updateUserProfile(user, {displayName});
 }
 
-export const updateUserProfileMetaData = (user, userData) => {
-    return Firebase.database().ref(getUser(user.uid).concat('/metaData/'))
+export const updateUserProfileMetadata = (user, userData) => {
+    return Firebase.database().ref(getUser(user.uid).concat('/metadata/'))
       .set(userData)
 };
 
-export function getUserMetaData(user){
-  return Firebase.database().ref(getUser(user.uid).concat('/metaData'))
+  export function getUserMetadata(userID){
+  return Firebase.database().ref(getUser(userID).concat('/metadata'))
     .once('value', function (snapshot) {
       return snapshot.val()
     })

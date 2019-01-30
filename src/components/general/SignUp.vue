@@ -3,12 +3,12 @@
     <h1>Inscription</h1>
 
     <form>
-      <span><input class="firstNameInput" type="text" placeholder="Prénom" v-model="userMetaData.firstName" v-on:keydown="keyHandler"/></span>
-      <span><input class="lastNameInput" type="text" placeholder="Nom" v-model="userMetaData.lastName" v-on:keydown="keyHandler"/></span>
+      <span><input class="firstNameInput" type="text" placeholder="Prénom" v-model="userMetadata.firstName" v-on:keydown="keyHandler"/></span>
+      <span><input class="lastNameInput" type="text" placeholder="Nom" v-model="userMetadata.lastName" v-on:keydown="keyHandler"/></span>
 
-      <span><input class="companyName" type="text" placeholder="Entreprise" v-model="userMetaData.company"></span>
+      <span><input class="companyName" type="text" placeholder="Entreprise" v-model="userMetadata.company"></span>
 
-      <span><input class="loginInput" type="text" placeholder="Adresse email" v-model="userMetaData.email"/></span>
+      <span><input class="loginInput" type="text" placeholder="Adresse email" v-model="userMetadata.email"/></span>
       <span><input class="passwordInput" type="password" placeholder="Mot de passe" v-model="password"/></span>
     </form>
 
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-  import { updateUserProfileDisplayName, updateUserProfileMetaData } from '@/thunks/userAccountThunks'
+  import { updateUserProfileDisplayName, updateUserProfileMetadata } from '@/thunks/userAccountThunks'
   import {handleError} from "@/helpers/loginErrorHandlingHelpers";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
@@ -33,7 +33,7 @@
       return {
         password: null,
 
-        userMetaData: {
+        userMetadata: {
           email: null,
           firstName: null,
           lastName: null,
@@ -44,9 +44,9 @@
     methods: {
       signUp() {
         const router = this.$router;
-        nativeFbFunctions.createUserWithEmailAndPassword(this.userMetaData.email, this.password).then(
+        nativeFbFunctions.createUserWithEmailAndPassword(this.userMetadata.email, this.password).then(
           (user) => {
-                updateUserProfileMetaData(nativeFbFunctions.getCurrentUser(), this.userMetaData)
+                updateUserProfileMetadata(nativeFbFunctions.getCurrentUser(), this.userMetadata)
                 .then(() => {
                   this.$router.replace("/home");
                 })
@@ -57,7 +57,6 @@
           },
           function (err) {
             alert(handleError(err));
-
           }
         );
       },

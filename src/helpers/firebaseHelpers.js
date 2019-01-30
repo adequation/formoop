@@ -1,4 +1,6 @@
 //// GENERAL
+import {getUserMetadata} from "@/thunks/userAccountThunks";
+
 export const nativeFbFunctions = {
 
   getCurrentUser: () => Firebase.auth().currentUser,

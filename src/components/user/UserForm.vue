@@ -378,6 +378,11 @@
       '$route'(to, from) {
         this.$store.dispatch('setFormID', {formID: this.$route.params.formID})
       },
+
+      userAnswers(){
+        this.$store.dispatch('setInvitedUsers')
+
+      }
     }
   }
 </script>
