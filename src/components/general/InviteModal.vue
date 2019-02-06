@@ -10,7 +10,6 @@
 
       <div slot="body">
         <MailSender :before-body="getInvitationContent()" :after-body="user.email" :formID="formID"/>
-        <user-invited-users/>
       </div>
 
     </Modal>
