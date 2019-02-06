@@ -23,6 +23,8 @@
           </select>
         </div>
 
+        <input class="creator-form-entry-requirement" title="" type="checkbox" @change="onChangeRequirement($event.target)" v-model="entry.required"> Question obligatoire ?
+
         <CreatorGenericQuestionBlock v-if="entry.generic" :entry="entry"/>
         <input v-else title="" type="text" class="questionTitle" v-model="entry.question.title"
                placeholder="Titre de la question"/>
@@ -96,6 +98,12 @@
       },
       setEntrySection(section) {
         this.$parent.$emit('set-form-section', this.entry.id, section);
+      },
+      onChangeRequirement(target){
+        this.setEntryRequirement(target.checked);
+      },
+      setEntryRequirement(requirement){
+        this.$parent.$emit('set-entry-requirement', this.entry.id, requirement);
       },
       deleteEntry() {
         this.$parent.$emit('delete-entry', this.entry.id);
