@@ -10,7 +10,6 @@ const mockEntry =
     entryID: 'A1'
   };
 
-Firebase.initializeApp(firebaseConfig);
 
 describe('UserAnswerRadio.vue', () => {
   const vm = mount(UserAnswerRadio, {
