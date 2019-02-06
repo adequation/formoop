@@ -22,13 +22,11 @@
   import Modal from "@/components/containers/Modal";
   import {getFormURL} from "@/helpers/rooterHelpers";
   import {getInvitationText} from "@/helpers/mailHelpers";
-  import * as Firebase from "firebase";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
-  import UserInvitedUsers from "../user/UserInvitedUsers";
 
   export default {
     name: "InviteModal",
-    components: {UserInvitedUsers, MailSender, Modal},
+    components: {MailSender, Modal},
     data() {
       return {
         showModal: false,
