@@ -42,9 +42,6 @@
         edit: false
       }
     },
-    created: function () {
-
-    },
     computed: {
       user() {
         return this.$store.getters.user || nativeFbFunctions.getCurrentUser();

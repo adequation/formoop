@@ -31,12 +31,14 @@
       }
     },
     methods: {
+      redirect(path){
+        this.$router.replace(path);
+      },
       signIn() {
-        const router = this.$router;
 
         nativeFbFunctions.signInWithEmailAndPassword(this.login, this.password).then(
           (user) => {
-            this.$router.replace("/home");
+            this.redirect('/home');
           },
           function (err) {
             alert(handleError(err));

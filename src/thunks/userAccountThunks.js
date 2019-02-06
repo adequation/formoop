@@ -10,7 +10,7 @@ export function updateUserProfileDisplayName(user, firstName, lastName){
   return updateUserProfile(user, {displayName});
 }
 
-export const updateUserProfileMetadata = (user, userData) => {
+export function updateUserProfileMetadata(user, userData) {
     return Firebase.database().ref(getUser(user.uid).concat('/metadata/'))
       .set(userData)
 };

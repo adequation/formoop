@@ -1,26 +1,47 @@
 import Profile from '@/components/general/Profile';
 import {mount} from "@vue/test-utils";
 import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
+import Vuex from 'vuex'
+import Vue from 'vue'
 
 const mockedUser = {
-  uid:          'abcdefgh123',
-  email:        'mock@mocked.com',
-  displayName:  'mock mocked'
+  uid: 'abcdefgh123',
+  email: 'mock@mocked.com',
+  displayName: 'mock mocked'
 };
+
+
+Vue.use(Vuex);
 
 describe('Profile.vue', () => {
 
+  let state;
+  let getters;
+  let store;
+
+
+  getters = {
+    user: () => mockedUser
+  };
+
+  store = new Vuex.Store({
+    getters
+  });
+
+
   //Overrides the current connected user
-  nativeFbFunctions.getCurrentUser = jest.fn(() => (mockedUser));
+  //nativeFbFunctions.getCurrentUser = jest.fn(() => (mockedUser));
 
   const vmSaving = mount(Profile, {
-
+    store
   });
 
   vmSaving.setData({
-    firstName:'Jhon',
-    lastName:'Doe',
-    saving:true,
+    userMetadata: {
+      firstName: 'Jhon',
+      lastName: 'Doe',
+    },
+    saving: true,
     edit: true
   });
 
@@ -33,12 +54,14 @@ describe('Profile.vue', () => {
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const vmEdition = mount(Profile, {
-
+    store
   });
 
   vmEdition.setData({
-    firstName:'Jhon',
-    lastName:'Doe',
+    userMetadata: {
+      firstName: 'Jhon',
+      lastName: 'Doe',
+    },
     saving: false,
     edit: true
   });
@@ -50,7 +73,7 @@ describe('Profile.vue', () => {
 
     for (let i = 0; i < inputs.length; ++i) {
       atLeastOneTextInput = atLeastOneTextInput || inputs.at(i).element.type === 'text';
-      if(atLeastOneTextInput) break;
+      if (atLeastOneTextInput) break;
     }
 
     expect(atLeastOneTextInput).toBe(true);
@@ -59,12 +82,14 @@ describe('Profile.vue', () => {
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const vmNoEdition = mount(Profile, {
-
+    store
   });
 
   vmNoEdition.setData({
-    firstName:'Jhon',
-    lastName:'Doe',
+    userMetadata: {
+      firstName: 'Jhon',
+      lastName: 'Doe',
+    },
     saving: false,
     edit: false
   });

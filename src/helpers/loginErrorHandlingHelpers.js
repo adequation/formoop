@@ -4,7 +4,6 @@ export const weakPasswordMessage = "Le mot de passe doit contenir plus de 6 cara
 export const userNotFoundMessage = "L'adresse mail ou le mot de passe est incorrect";
 
 export function handleError(error) {
-  console.log(error);
   let errorMessage = '';
   switch (error.code) {
     case 'auth/invalid-email':
