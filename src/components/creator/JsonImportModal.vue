@@ -4,8 +4,7 @@
     <button type="button" class="creator-form-save-button"
             @click="publishForm"><i class="material-icons md-36">send</i></button>
 
-    <Modal v-if="showModal" @close="closeModal">
-
+    <Modal v-if="showJsonImportModal" @close="closeModal">
       <h1 slot="header">Publication du formulaire</h1>
 
       <div slot="body">
@@ -36,8 +35,9 @@
         </div>
 
       </div>
-
     </Modal>
+
+    <EntryPointModal :show-modal="showEntryPointModal" @close="closeEntryPointModal"/>
 
   </div>
 </template>
@@ -47,13 +47,15 @@
   import JsonParser from "@/components/general/JsonParser";
   import {publishCreatorFormFB, publishGenericFormsFB, saveFormCampaignFB} from "@/thunks/creatorForm";
   import * as uuid from "uuid";
+  import EntryPointModal from "./EntryPointModal";
 
   export default {
     name: "JsonImportModal",
-    components: {Modal, JsonParser},
+    components: {EntryPointModal, Modal, JsonParser},
     data() {
       return {
-        showModal: false,
+        showJsonImportModal: false,
+        showEntryPointModal: false,
         importedEntities: {},
         publishable: false,
         errors: false,
@@ -90,7 +92,13 @@
 
     methods: {
       closeModal() {
-        this.showModal = false;
+        this.showJsonImportModal = false;
+        this.publishable = false;
+        this.errors = false;
+      },
+
+      closeEntryPointModal() {
+        this.showEntryPointModal = false;
         this.publishable = false;
         this.errors = false;
       },
@@ -130,12 +138,12 @@
         this.saveForm();
 
         if (this.formContainsGenericQuestion()) {
-          this.showModal = true;
+          this.showJsonImportModal = true;
         } else {
           console.log("publi");
           publishCreatorFormFB(this.creatorID, this.formID);
+          this.showEntryPointModal = true;
         }
-
       },
 
       generateAndPublishForms() {

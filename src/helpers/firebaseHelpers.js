@@ -45,6 +45,8 @@ export const getEntryAnsweringPath = (formID, entryID, userID) =>
 
 export const getInvitationsPath = (formID) => getPublishedFormFromID(formID).concat('/invitedUsers/');
 
+export const getEntryPointPath = (formID) => getPublishedFormFromID(formID).concat('/entryPoint/');
+
 ///// CAMPAIGNS
 
 export const campaignPath = '/formCampaigns/';
