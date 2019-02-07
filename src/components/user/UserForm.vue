@@ -1,6 +1,7 @@
 <template>
   <div class="form" v-if="formEntries">
     <h1>{{formTitle}}</h1>
+    <h2>{{user ? user.name : 'Non connecté'}}</h2>
 
     <div class="user-form-section-list-wrapper">
       <UserSectionList v-if="sections.length > 0"
@@ -138,6 +139,7 @@
   import UserSectionList from "@/components/user/UserSectionList";
   import {getSections} from "@/helpers/sectionsHelpers";
   import {isAnswered} from "@/helpers/userAnswersHelpers";
+  import {decodeEmailToken} from "@/helpers/accountHelpers";
 
   export default {
     name: 'UserForm',
@@ -215,9 +217,8 @@
     computed: {
 
       user() {
-        return nativeFbFunctions.getCurrentUser();
+        return this.$store.getters.user;
       },
-
 
       formEntries() {
         return this.$store.getters.getFormEntries || []
@@ -284,11 +285,11 @@
       },
 
       formID() {
-        return this.$store.getters.getUserFormID
+        return this.$store.getters.getFormID
       },
 
       formTitle() {
-        return this.$store.getters.getUserFormTitle
+        return this.$store.getters.getFormTitle
       },
 
       userAnswers() {
@@ -311,6 +312,8 @@
     created() {
 
       this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
+      this.$store.dispatch('setUser', {userID: this.$route.params.userID});
+
 
       this.$root.$on('set-selected-answers', (id, answers) => {
         this.setSelectedAnswers(id, answers);
@@ -334,7 +337,7 @@
 
       saveAnswers() {
         if (this.user)
-          setSelectedAnswersFB(this.formID, this.selectedAnswers, this.user.uid);
+          setSelectedAnswersFB(this.formID, this.selectedAnswers, this.user.id);
 
         else alert("Vous n'êtes pas connecté !");
       },
@@ -375,12 +378,12 @@
     },
     watch: {
       '$route'(to, from) {
-        this.$store.dispatch('setFormID', {formID: this.$route.params.formID})
+        this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
+        this.$store.dispatch('setUser', {userID: this.$route.params.userID});
       },
 
       userAnswers(){
         this.$store.dispatch('setInvitedUsers')
-
       }
     }
   }

@@ -8,7 +8,7 @@
 
       <h3 slot="header">Invitations au formulaire {{formTitle}}</h3>
 
-      <div slot="body"> <MailSender :before-body="getInvitationContent()" :after-body="user.email"/> </div>
+      <div slot="body"> <MailSender :before-body="getInvitationContent()" :after-body="user.email" :formID="formID"/> </div>
 
     </Modal>
 
@@ -18,9 +18,7 @@
 <script>
   import MailSender from "@/components/general/MailSender";
   import Modal from "@/components/containers/Modal";
-  import {getFormURL} from "@/helpers/rooterHelpers";
   import {getInvitationText} from "@/helpers/mailHelpers";
-  import * as Firebase from "firebase";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
   export default {
@@ -34,13 +32,10 @@
     },
     computed: {
       formTitle() {
-        return this.$store.getters.getUserFormTitle
+        return this.$store.getters.getFormTitle
       },
       formID() {
-        return this.$store.getters.getUserFormID
-      },
-      formURL() {
-        return getFormURL(this.formID, window);
+        return this.$store.getters.getFormID
       },
       user(){
         return nativeFbFunctions.getCurrentUser();
@@ -48,7 +43,7 @@
     },
     methods:{
       getInvitationContent(){
-        return getInvitationText(this.formTitle, this.user.displayName, this.formURL)
+        return getInvitationText(this.formTitle, this.user.displayName)
       }
     }
   }

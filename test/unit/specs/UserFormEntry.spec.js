@@ -2,6 +2,28 @@ import Vue from 'vue'
 import UserFormEntry from '@/components/user/UserFormEntry'
 import {mount} from "@vue/test-utils";
 import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
+import Vuex from "vuex";
+
+const mockedUser = {
+  id: 'abcdefgh123',
+  email: 'mock@mocked.com',
+  displayName: 'mock mocked'
+};
+
+
+Vue.use(Vuex);
+
+let getters;
+let store;
+
+
+getters = {
+  user: () => mockedUser
+};
+
+store = new Vuex.Store({
+  getters
+});
 
 const mockEntry =
   {
@@ -10,12 +32,6 @@ const mockEntry =
     id: 'Q1',
     alreadyAnswered: false,
   };
-
-const mockedUser = {
-  uid:          'abcdefgh123',
-  email:        'mock@mocked.com',
-  displayName:  'mock mocked'
-};
 
 describe('UserFormEntry.vue', () => {
 
@@ -26,7 +42,8 @@ describe('UserFormEntry.vue', () => {
     propsData: {
       entry : mockEntry,
       userAnswers : {}
-    }
+    },
+    store
   });
 
   it('title should be same as mock', () => {

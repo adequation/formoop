@@ -40,7 +40,9 @@
 
 <script>
   import io from 'socket.io-client';
-  import {sendMailWithSocket} from "@/helpers/mailHelpers";
+  import {getFormUrlWithInvite, getFormUrlWithToken, sendMailWithSocket} from "@/helpers/mailHelpers";
+  import {inviteUser} from "@/thunks/userAccountThunks";
+  import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helpers/accountHelpers";
 
   export default {
     name: "MailSender",
@@ -64,6 +66,10 @@
         type: String,
         required: false
       },
+      formID: {
+        type: String,
+        required: true
+      },
     },
     methods: {
 
@@ -84,11 +90,28 @@
       },
 
       sendMail() {
-        sendMailWithSocket(this.socket, {
-          from: 'formoop@gmail.com',
-          to: this.mailAddresses,
-          html: (this.beforeBody || '') + '<br/><br/>' + (this.mailContent || '') + '<br/><br/>' + (this.afterBody || ''),
-          subject: this.mailSubject
+        //inviteUser();
+
+        this.mailAddresses.forEach(emailAdress => {
+
+          const userID = getUserIdFromEmail(emailAdress);
+          inviteUser(userID, this.formID, {
+            email : emailAdress,
+            id: userID,
+            name: getNameFromEmail(emailAdress),
+            company: getDomainFromEmail(emailAdress)
+          });
+
+          sendMailWithSocket(this.socket, {
+            from: 'formoop@gmail.com',
+            to: emailAdress,
+            html: (this.beforeBody || '')
+              + '<br/><br/>'
+              + (this.mailContent || '')
+              + '<br/><br/>'
+              + getFormUrlWithInvite(emailAdress, this.formID, window),
+            subject: this.mailSubject
+          });
         });
 
         this.currentMailAdress  = '';

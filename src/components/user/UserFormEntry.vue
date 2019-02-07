@@ -1,10 +1,13 @@
 <template>
-  <div :class="hasAnswered ? 'user-form-entry-answered' : 'user-form-entry'">
+  <div :class="hasAnswers && user ? 'user-form-entry-answered' : 'user-form-entry'">
 
-    <div :class="showAnswers || Object.keys(otherUserAnswers).length <= 0 ? 'answered-by-opened' : 'answered-by'">
-      <button type="button" @click="switchAnswersView" title="Voir les réponses">
+    <div :class="['answered-by-wrapper', user && hasAnswers ?
+                (showAnswers ? 'answered-by-opened' : 'answered-by') : 'answered-by-disabled' ]">
+
+      <button type="button" @click="switchAnswersView" title="Voir les réponses" :disabled="!user">
         {{currentEntryAnswers ? Object.keys(currentEntryAnswers).length : ''}} <i class="material-icons md-18">face</i>
       </button>
+
     </div>
 
     <UserQuestionTitle :question="entry.question" display="small"/>
@@ -59,7 +62,7 @@
     },
     computed: {
       user() {
-        return nativeFbFunctions.getCurrentUser();
+        return this.$store.getters.user;
       },
 
       currentEntryAnswers() {
@@ -70,18 +73,22 @@
         if (!this.user) return {};
 
 
-        return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.uid] : {};
+        return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.id] : {};
       },
 
       hasAnswered() {
-        return !!this.currentUserAnswers;
+        return this.user ? !!this.currentUserAnswers : false;
+      },
+
+      hasAnswers() {
+        return Object.keys(this.currentEntryAnswers).length > 0;
       },
 
       otherUserAnswers() {
         if (!this.user) return {};
 
         const otherAnswers = {};
-        const currentUserID = this.user.uid;
+        const currentUserID = this.user.id;
         Object.keys(this.currentEntryAnswers).map(userID => {
           if (userID !== currentUserID) otherAnswers[userID] = this.currentEntryAnswers[userID]
         });
@@ -95,16 +102,11 @@
     },
     methods: {
 
-      getUserName(userID){
+      getUserName(userID) {
         const user = this.invitedUsers[userID];
-      if(!user) return 'Anonyme';
+        if (!user) return 'Anonyme';
 
-      const metadata = user.metadata;
-
-      if(!metadata) return 'Anonyme';
-
-      return metadata.firstName.concat(' ').concat(metadata.lastName);
-
+        return user.name;
       },
 
       switchAnswersView() {
@@ -161,18 +163,6 @@
     border-left: 7px solid #42b983;
   }
 
-  .answered-by {
-    float: left;
-    margin: 1em;
-    position: absolute;
-  }
-
-  .answered-by-opened {
-    float: left;
-    margin: 1em;
-    position: absolute;
-  }
-
   .answered-by-list-wrapper {
     position: absolute;
     color: white;
@@ -193,7 +183,7 @@
 
   .answered-by-list-wrapper > div {
     border-radius: 5px;
-    background: #fa7d32;
+    background: #2d8246;
     font-size: 12px;
     padding: 20px !important;
     display: inline-block;
@@ -212,10 +202,16 @@
     width: 0;
     height: 0;
     border: 13px solid transparent;
-    border-bottom-color: #fa7d32;
+    border-bottom-color: #2d8246;
     border-top: 0;
     margin-left: -13px;
     margin-top: -13px;
+  }
+
+  .answered-by-wrapper {
+    float: left;
+    margin: 1em;
+    position: absolute;
   }
 
   .answered-by button {
@@ -246,14 +242,33 @@
     align-items: center;
 
     font-size: large;
-    background: #fa7d32;
+    background: #2d8246;
     border: none;
 
     border-radius: 15px;
   }
 
   .answered-by-opened button:hover {
-    background: #c86428;
+    background: #2d8246;
+  }
+
+  .answered-by-disabled button {
+    color: #fff;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: large;
+    background: #aaaaaa;
+    border: none;
+
+    border-radius: 15px;
+  }
+
+  .answered-by-disabled button:hover {
+    background: #969696;
   }
 
 </style>
