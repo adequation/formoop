@@ -22,3 +22,8 @@ export function getDomainFromEmail(emailAdress){
   const  domain   = emailAdress.substring(emailAdress.lastIndexOf("@")+1, emailAdress.lastIndexOf('.'));
   return domain.replace(/\./g, ' ')
 }
+
+export function getShortName(name){
+  const shortName = name.substring(0, name.lastIndexOf(' '));
+  return shortName || name;
+}

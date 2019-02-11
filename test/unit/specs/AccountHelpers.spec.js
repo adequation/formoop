@@ -2,7 +2,7 @@ import {
   decodeEmailToken,
   generateEmailToken,
   getDomainFromEmail,
-  getNameFromEmail,
+  getNameFromEmail, getShortName,
   getUserIdFromEmail
 } from "@/helpers/accountHelpers";
 
@@ -54,6 +54,20 @@ describe('accountHelpers.js', () => {
     const expected   = generateEmailToken(mockAdress);
 
     expect(getUserIdFromEmail(mockAdress)).toEqual(expected);
+  });
+
+  it('Should return the name spliced on spaces', () => {
+    const mockName  = 'mock man';
+    const expected  = 'mock';
+
+    expect(getShortName(mockName)).toEqual(expected);
+  });
+
+  it('Should return the name if there is no spaces', () => {
+    const mockName  = 'mockman';
+    const expected  = 'mockman';
+
+    expect(getShortName(mockName)).toEqual(expected);
   });
 });
 

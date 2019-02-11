@@ -1,7 +1,7 @@
 <template>
   <div class="mail-sender">
 
-    <form class="mail-form">
+    <form class="mail-form" v-if="!selectedUser">
 
       <span>
         <input class="mail-addresses-input"
@@ -28,12 +28,35 @@
         <textarea class="mail-content-textarea"
                   title=""
                   placeholder="Contenu du mail (facultatif)"
-                  v-model="mailContent"></textarea>
+                  v-model="mailContent"
+                  rows="5"
+                  cols="25"></textarea>
+
+        <button @click="sendMail" class="send-mail-button" title="Envoyer !">
+          <i class="material-icons md-36">send</i>
+        </button>
+
       </div>
+
 
     </form>
 
-    <button @click="sendMail">Envoyer</button>
+    <div v-else>
+      <h2>Envoyer un message à {{selectedUser.name}}</h2>
+
+      <textarea class="mail-content-textarea"
+                title=""
+                placeholder="Contenu du mail (facultatif)"
+                v-model="mailContent"
+                rows="5"
+                cols="25"></textarea>
+
+      <button @click="sendMailToUser" class="send-mail-button" title="Envoyer !">
+        <i class="material-icons md-36">send</i>
+      </button>
+
+    </div>
+
 
   </div>
 </template>
@@ -70,6 +93,14 @@
         type: String,
         required: true
       },
+      selectedUser: {
+        type: Object,
+        required: false
+      },
+      sender: {
+        type: Object,
+        required: true
+      }
     },
     methods: {
 
@@ -90,7 +121,6 @@
       },
 
       sendMail() {
-        //inviteUser();
 
         this.mailAddresses.forEach(emailAdress => {
 
@@ -118,6 +148,31 @@
         this.mailAddresses      = [];
         this.mailSubject        = '';
         this.mailContent        = '';
+      },
+
+      sendMailToUser() {
+        console.log(this.selectedUser)
+        console.log(this.sender)
+          sendMailWithSocket(this.socket, {
+            from: 'formoop@gmail.com',
+            to: this.selectedUser.email,
+            html: `<strong>${this.sender.name} (${this.sender.email})</strong> vous à envoyé un message à travers Formoop !`
+              + '<br/><br/>'
+              + '<div style="background: lightgray;">'
+              + '<br/>'
+              + this.mailContent
+              + '<br/><br/>'
+              + '</div>'
+              + '<br/><br/>'
+              + 'Ca se passe par ici : '
+              + getFormUrlWithInvite(this.selectedUser.email, this.formID, window),
+            subject: `Message de ${this.sender.name}`
+          });
+
+        this.currentMailAdress  = '';
+        this.mailAddresses      = [];
+        this.mailSubject        = '';
+        this.mailContent        = '';
       }
     },
     created() {
@@ -137,14 +192,23 @@
   }
 
   textarea {
-    font-size: .8rem;
-    letter-spacing: 1px;
-  }
-  textarea {
-    padding: 10px;
-    line-height: 1.5;
+    border: 1px solid #00000033;
     border-radius: 5px;
-    border: 1px solid #ccc;
-    box-shadow: 1px 1px 1px #999;
+  }
+
+  .send-mail-button {
+    padding: 0.5em;
+    color: #4286f4;
+    background: none;
+
+    cursor: pointer;
+    font-size: large;
+
+    border: none;
+  }
+
+
+  .send-mail-button:hover {
+    color: #3462ad;
   }
 </style>
