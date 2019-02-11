@@ -10,7 +10,6 @@ import SupervisorDashboard from '@/components/supervisor/SupervisorDashboard'
 import PublishedForms from '@/components/general/PublishedForms'
 import FormCampaign from '@/components/general/FormCampaign'
 import CreatorCampaign from '@/components/creator/CreatorCampaign'
-import Connect from '@/components/user/Connect'
 
 import Firebase from 'firebase';
 
@@ -125,15 +124,6 @@ const router = new Router({
         any: false
       }
     },
-    {
-      path: '/connect',
-      name: 'connect',
-      component: Connect,
-      meta: {
-        requiresAuth: false,
-        any: true
-      }
-    }
 
   ]
 });
