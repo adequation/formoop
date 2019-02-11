@@ -16,9 +16,6 @@ export function getSections(formEntries, userAnswers) {
     sectionGrouped[fe.section].push(fe)
   });
 
-  //there is no section
-  if(!allSections) return [];
-
   //we get the percentage and build the pies
   Object.keys(sectionGrouped).forEach(section => {
     const percentage = getRawPercentage("answered", sectionGrouped[section], userAnswers);

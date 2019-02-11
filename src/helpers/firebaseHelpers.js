@@ -20,7 +20,6 @@ export const userPath = '/users/';
 export const getUser = (userID) => userPath.concat().concat(userID);
 
 
-
 ///// CREATED FORMS
 
 import * as Firebase from "firebase";

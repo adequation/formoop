@@ -1,6 +1,12 @@
-import {decodeEmailToken, generateEmailToken, getDomainFromEmail, getNameFromEmail} from "@/helpers/accountHelpers";
+import {
+  decodeEmailToken,
+  generateEmailToken,
+  getDomainFromEmail,
+  getNameFromEmail,
+  getUserIdFromEmail
+} from "@/helpers/accountHelpers";
 
-describe('AccountHelpers.js', () => {
+describe('accountHelpers.js', () => {
   it('Should encode an adress', () => {
     const mockAdress  = 'mock@mocking.com';
     const expected    = 'bW9ja0Btb2NraW5nLmNvbQ==';
@@ -41,6 +47,13 @@ describe('AccountHelpers.js', () => {
     const expected   = 'mock mock mock-mock';
 
     expect(getDomainFromEmail(mockAdress)).toEqual(expected);
+  });
+
+  it('Should get the same result as encoding an email adress', () => {
+    const mockAdress  = 'mock@mock.mock.mock-mock.com';
+    const expected   = generateEmailToken(mockAdress);
+
+    expect(getUserIdFromEmail(mockAdress)).toEqual(expected);
   });
 });
 
