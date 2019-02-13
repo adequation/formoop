@@ -3,7 +3,7 @@
 
     <div v-for="entry in entries"
          :key="entry.id"
-         :class="hasAnswered(entry) ? 'user-grid-entry-answered' : 'user-grid-entry'"
+         :class="hasAnswers(entry) ? 'user-grid-entry-answered' : 'user-grid-entry'"
          @click="focusedEntry = entry">
       <div class="user-grid-entry-content">
         {{entry.question.title}}
@@ -59,11 +59,11 @@
         if (!this.user) return {};
 
 
-        return this.currentEntryAnswers(entry) ? this.currentEntryAnswers(entry)[this.user.uid] : {};
+        return this.currentEntryAnswers(entry) ? this.currentEntryAnswers(entry)[this.user.id] : {};
       },
 
-      hasAnswered(entry) {
-        return !!this.currentUserAnswers(entry);
+      hasAnswers(entry) {
+        return Object.keys(this.currentEntryAnswers(entry)).length > 0;
       },
 
       otherUserAnswers() {
