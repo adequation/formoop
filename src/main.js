@@ -24,7 +24,6 @@ Firebase.auth().onAuthStateChanged(() => {
       template: '<App/>',
       created () {
         this.$store.dispatch('setFormID', {formID: null});
-        this.$store.dispatch('setUser');
 
       }
     });

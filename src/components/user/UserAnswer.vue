@@ -1,6 +1,6 @@
 <template>
   <div class="user-answer">
-    <div v-if="(user) || (currentUserAnswers ? Object.keys(currentUserAnswers).length <= 0 : true)">
+    <div>
       <!-- && invited !-->
       <div v-if="answer.type === 'textarea'">
         <UserAnswerTextarea :entryID="entryID" :currentUserAnswers="currentUserAnswers"/>
@@ -25,12 +25,6 @@
 
       </div>
     </div>
-    <div v-else-if="(!user) && (currentEntryAnswers ? !Object.keys(currentEntryAnswers).length <= 0 : true)"
-         class="already-answered">
-      <h3>Cette question a déjà une réponse</h3>
-    </div>
-    <div v-else>
-    </div>
   </div>
 
 </template>
@@ -51,7 +45,7 @@
     components: {UserAnswerText, UserAnswerTextarea, UserAnswerRadio, UserAnswerCheckbox, UserAnswerSelect},
     computed: {
       user() {
-        return nativeFbFunctions.getCurrentUser();
+        return this.$store.getters.user;
       },
       currentEntryAnswers() {
         return this.userAnswers[this.entryID] || {};
@@ -59,8 +53,8 @@
       currentUserAnswers() {
         if (!this.user) return null;
 
-        return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.uid] : {};
-      }
+        return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.id] : {};
+      },
     },
     props: {
       answer: {
@@ -82,7 +76,7 @@
     },
     methods: {
       deleteAnswer() {
-        deleteUserAnswerFB(this.$store.getters.getUserFormID, this.entryID, this.user.uid);
+        deleteUserAnswerFB(this.$store.getters.getFormID, this.entryID, this.user.id);
       }
     }
   }

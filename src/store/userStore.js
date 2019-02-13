@@ -1,7 +1,13 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
 import Firebase from 'firebase'
-import {getAnsweringPath, getPublishedFormFromID, publishedFormsPath, userPath} from "@/helpers/firebaseHelpers";
+import {
+  getAnsweringPath,
+  getPublishedFormFromID,
+  getPublishedFormUserPath, getPublishedFormUsersPath,
+  publishedFormsPath,
+  userPath
+} from "@/helpers/firebaseHelpers";
 
 Vue.use(Vuex);
 
@@ -11,7 +17,8 @@ export default {
     formID: '',
     formTitle: '',
     userAnswers: {},
-    invitedUsers: {}
+    invitedUsers: {},
+    user: null
   },
   getters: {
     getFormEntries: state => {
@@ -19,10 +26,12 @@ export default {
         state.formEntries.map(fe => ({...fe, usersAnswers: fe.usersAnswers || {}}))
         : state.formEntries;
     },
-    getUserFormID: state => {
+
+    getFormID: state => {
       return state.formID;
     },
-    getUserFormTitle: state => {
+
+    getFormTitle: state => {
       return state.formTitle;
     },
 
@@ -32,7 +41,9 @@ export default {
 
     userAnswers : state => {
       return state.userAnswers;
-    }
+    },
+
+    user : state => state.user
   },
   mutations: {
     setFormEntries: (state) => {
@@ -72,28 +83,31 @@ export default {
     },
 
     setInvitedUsers: (state) => {
-      Firebase.database().ref(userPath)
+      Firebase.database().ref(getPublishedFormUsersPath(state.formID))
         .on('value', function (snapshot) {
           const value = snapshot.val();
 
           if (value) {
-            const users = {};
-
-            Object.keys(state.userAnswers).forEach(entryID => {
-              const userIDs = state.userAnswers[entryID];
-
-              if (userIDs) Object.keys(userIDs).forEach(id => {
-                if(!users[id]) users[id] = value[id];
-              });
-            });
-
-            state.invitedUsers = {...users};
+            state.invitedUsers = value;
           }
 
           else state.invitedUsers = {};
 
         });
-    }
+    },
+
+    setUser: (state, {userID}) => {
+      state.userID = userID;
+      Firebase.database().ref(getPublishedFormUserPath(state.formID, state.userID))
+        .on('value', (snapshot) => {
+          const value = snapshot.val();
+          if (value) {
+            state.user = value;
+          } else {
+            state.user = null;
+          }
+        })
+    },
   },
     actions: {
       setFormEntries: (context) => {
@@ -119,6 +133,10 @@ export default {
 
       setInvitedUsers: (context) => {
         context.commit('setInvitedUsers');
+      },
+
+      setUser: (context, {userID}) => {
+        context.commit('setUser', {userID});
       },
 
     }
