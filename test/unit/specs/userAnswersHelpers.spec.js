@@ -1,11 +1,11 @@
 import {
   answerAmount, answerArray,
   coesion,
-  cohesion,
+  cohesion, conflictedEntries,
   filterEntries, getEntryAnswers,
   getPercentage,
   getRawPercentage,
-  isAnswered, isEntryInConflict, sameAnswers, sameAnswersArray
+  isAnswered, isEntryInConflict, sameAnswers, sameAnswersArray, userAnswerGroup
 } from "@/helpers/userAnswersHelpers";
 import {getEntryAnsweringPath} from "@/helpers/firebaseHelpers";
 
@@ -186,8 +186,8 @@ describe('userAnswersHelpers.js', () => {
 
   it('Different entry answers should be in conflict', () => {
 
-    expect(isEntryInConflict('entry4', mockedConflictAnswers)).toEqual(false);
-    expect(isEntryInConflict('entry6', mockedConflictAnswers)).toEqual(false);
+    expect(isEntryInConflict('entry4', mockedConflictAnswers)).toEqual(true);
+    expect(isEntryInConflict('entry6', mockedConflictAnswers)).toEqual(true);
   });
 
   const entry1 = mockedEntries.find(e => e.id === 'entry1');
@@ -242,6 +242,28 @@ describe('userAnswersHelpers.js', () => {
     expect(answerArrayE6.length === expectedAnswerArrayE6.length).toEqual(true);
     expect(answerArrayE6.every(a => expectedAnswerArrayE6.includes(a))).toEqual(true);
 
+  });
+
+  it('Should get the correct answer group', ()=> {
+    const userAnswerGroupE1 = userAnswerGroup('entry1', mockedConflictAnswers);
+    const userAnswerGroupE4 = userAnswerGroup('entry4', mockedConflictAnswers);
+    const userAnswerGroupE6 = userAnswerGroup('entry6', mockedConflictAnswers);
+
+    const expectedAnswerArrayE1 = {a: ['user1', 'user2', 'user3', 'user4']};
+    const expectedAnswerArrayE4 = {b: ['user2', 'user3'], c: ['user1']};
+    const expectedAnswerArrayE6 = {a: ['user1', 'user2', 'user3'], b:['user1', 'user2', 'user3'], c:['user2', 'user3']};
+
+    expect(userAnswerGroupE1).toEqual(expectedAnswerArrayE1);
+    expect(userAnswerGroupE4).toEqual(expectedAnswerArrayE4);
+    expect(userAnswerGroupE6).toEqual(expectedAnswerArrayE6);
+  });
+
+  it('Should get all the conflicted entries', ()=> {
+    const conflicted = conflictedEntries(mockedConflictAnswers);
+    const expectedConflictedEntries = ['entry4', 'entry6'];
+
+    expect(conflicted.length === expectedConflictedEntries.length).toEqual(true);
+    expect(conflicted.every(e => expectedConflictedEntries.includes(e))).toEqual(true);
   });
 
   //coesion testing

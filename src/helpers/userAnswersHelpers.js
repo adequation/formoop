@@ -47,11 +47,11 @@ export function isEntryInConflict(entryID, userAnswers){
   const entryAnswers = getEntryAnswers(entryID, userAnswers);
   if(!entryAnswers) return false;
 
-  const answersArray = Object.keys(userAnswers).map(userID => userAnswers[userID]);
+  const answersArray = Object.keys(entryAnswers).map(userID => entryAnswers[userID]);
 
   //checking one user is enough
   const firstAnswer = answersArray[0];
-  return answersArray.every(a => sameAnswers(a, firstAnswer));
+  return !answersArray.every(a => sameAnswers(a, firstAnswer));
 }
 
 //return the ID of all the entries in conflict
@@ -85,7 +85,21 @@ export function answerArray(entry, userAnswers) {
 
 //return the answers, split into a "group"
 export function userAnswerGroup(entryID, userAnswers){
+  const entryAnswers = getEntryAnswers(entryID, userAnswers);
 
+  const group = {};
+
+  Object.keys(entryAnswers).forEach(userID => {
+    const userAnswer = entryAnswers[userID];
+
+    if(Array.isArray(userAnswer)) userAnswer.forEach(a => {
+      group[a] ? group[a].push(userID) : group[a] = [userID];
+    });
+
+    else group[userAnswer] ? group[userAnswer].push(userID) : group[userAnswer] = [userID];
+  });
+
+  return group;
 }
 
 //return a percentage of the answers' "homogeneity"
