@@ -5,31 +5,25 @@
                 (showAnswers ? 'answered-by-opened' : 'answered-by') : 'answered-by-disabled' ]">
 
       <button type="button" @click="switchAnswersView" title="Voir les réponses" :disabled="!user">
-        {{currentEntryAnswers ? Object.keys(currentEntryAnswers).length : ''}} <i class="material-icons md-18">face</i>
+        <div class="answered-by-content" v-if="!showAnswers">{{currentEntryAnswers ? Object.keys(currentEntryAnswers).length : ''}} <i class="material-icons md-18">face</i></div>
+        <div class="answered-by-content" v-else><i class="material-icons md-18">close</i></div>
       </button>
 
     </div>
 
-    <UserQuestionTitle :question="entry.question" display="small"/>
+    <UserQuestionTitle :question="entry.question"/>
 
-    <div class="answered-by-list-wrapper" v-if="showAnswers">
-      <div class="answered-by-list" v-if="showAnswers">
 
-        <div class="answered-by-list-item" v-for="(userID,i) in Object.keys(otherUserAnswers)">
-
-          <p>
-            <span class="user-name-text">{{getUserName(userID)}}</span>
-            :
-            <span class="user-answer-text">{{answerText(otherUserAnswers[userID])}}</span>
-          </p>
-
-          <hr v-if="i < Object.keys(otherUserAnswers).length-1" class="user-answer-text-separator"/>
-        </div>
-
-      </div>
+    <div v-if="showAnswers">
+      <UserEntryAnswersDetails
+                               :entry="entry"
+                               :userAnswers="userAnswers"></UserEntryAnswersDetails>
     </div>
 
-    <UserAnswer :answer="entry.answer" :entryID="entry.id" :userAnswers="userAnswers" display="small"/>
+    <div v-else>
+      <UserAnswer :answer="entry.answer" :entryID="entry.id" :userAnswers="userAnswers" display="small"/>
+    </div>
+
   </div>
 </template>
 
@@ -37,10 +31,11 @@
   import UserQuestionTitle from '@/components/user/UserQuestionTitle'
   import UserAnswer from '@/components/user/UserAnswer'
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
+  import UserEntryAnswersDetails from "@/components/user/UserEntryAnswersDetails";
 
   export default {
     name: 'FormEntry',
-    components: {UserAnswer, UserQuestionTitle},
+    components: {UserEntryAnswersDetails, UserAnswer, UserQuestionTitle},
     data() {
       return {
         showAnswers: false
@@ -110,8 +105,8 @@
       },
 
       switchAnswersView() {
-        if (Object.keys(this.otherUserAnswers).length > 0)
-          this.showAnswers = !this.showAnswers;
+        if (this.hasAnswers)
+        this.showAnswers = !this.showAnswers;
       },
 
       answerText(userAnswer) {
@@ -214,6 +209,13 @@
     position: absolute;
   }
 
+  .answered-by-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   .answered-by button {
     color: #fff;
 
@@ -242,7 +244,7 @@
     align-items: center;
 
     font-size: large;
-    background: #2d8246;
+    background: #42b983;
     border: none;
 
     border-radius: 15px;

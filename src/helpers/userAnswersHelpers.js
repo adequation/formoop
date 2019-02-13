@@ -23,7 +23,7 @@ export function getPercentage(filterType, formEntries, userAnswers){
 
 //return the answer of a single entry
 export function getEntryAnswers(entryID, userAnswers){
-  return userAnswers[entryID];
+  return userAnswers[entryID] ? userAnswers[entryID] : {};
 }
 
 //check if 2 answers are the same
@@ -45,7 +45,6 @@ export function sameAnswersArray(a,b) {
 //Check if an entry is in conflict
 export function isEntryInConflict(entryID, userAnswers){
   const entryAnswers = getEntryAnswers(entryID, userAnswers);
-  if(!entryAnswers) return false;
 
   const answersArray = Object.keys(entryAnswers).map(userID => entryAnswers[userID]);
 
