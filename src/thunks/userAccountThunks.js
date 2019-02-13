@@ -1,5 +1,5 @@
 import * as Firebase from 'firebase'
-import {getPublishedFormFromID, getPublishedFormUserPath, getPublishedFormEntryPointPath, getUser} from "@/helpers/firebaseHelpers";
+import {getPublishedFormFromID, getPublishedFormUserPath, getPublishedFormEntryPointUserPath, getUser} from "@/helpers/firebaseHelpers";
 
 export function updateUserProfile(user, data) {
   return user.updateProfile(data);
@@ -32,7 +32,7 @@ export function inviteUser(userID, formID, metadata) {
 }
 
 export function inviteEntryPoint(userID, formID, metadata){
-  const ref = Firebase.database().ref(getPublishedFormEntryPointPath(formID, userID));
+  const ref = Firebase.database().ref(getPublishedFormEntryPointUserPath(formID, userID));
   return ref.once('value', (snapshot) => {
     if( snapshot.val() === null){
       ref.set(metadata);

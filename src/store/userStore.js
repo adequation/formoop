@@ -6,7 +6,8 @@ import {
   getPublishedFormFromID,
   getPublishedFormUserPath, getPublishedFormUsersPath,
   publishedFormsPath,
-  userPath
+  userPath,
+  getPublishedFormEntryPointPath
 } from "@/helpers/firebaseHelpers";
 
 Vue.use(Vuex);
@@ -18,6 +19,7 @@ export default {
     formTitle: '',
     userAnswers: {},
     invitedUsers: {},
+    entryPoint: null,
     user: null
   },
   getters: {
@@ -41,6 +43,10 @@ export default {
 
     userAnswers : state => {
       return state.userAnswers;
+    },
+
+    entryPoint : state => {
+      return state.entryPoint;
     },
 
     user : state => state.user
@@ -108,6 +114,19 @@ export default {
           }
         })
     },
+
+    setEntryPoint: (state) => {
+      Firebase.database().ref(getPublishedFormEntryPointPath(state.formID))
+        .on('value', (snapshot) => {
+          const value = snapshot.val();
+          if(value){
+            state.entryPoint = value;
+          }
+          else{
+            state.entryPoint = null;
+          }
+        })
+    }
   },
     actions: {
       setFormEntries: (context) => {

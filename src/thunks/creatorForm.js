@@ -197,6 +197,8 @@ export const publishCreatorFormFB = (creatorID, formID) => {
 };
 
 
+/////////////// GENERATE ////
+
 //Only generate
 const writeGeneratedCreatorFormFB = (creatorID, form) => {
   return Firebase.database().ref(getCreatedFormFromID(creatorID, form.id))

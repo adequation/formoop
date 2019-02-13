@@ -114,6 +114,8 @@
             </button>
 
             <InviteModal class="user-form-invite-button" v-if="user"/>
+
+            <user-close-form class="user-form-close-button" v-if="isEntryPoint" />
           </div>
         </div>
 
@@ -140,10 +142,13 @@
   import {getSections} from "@/helpers/sectionsHelpers";
   import {isAnswered} from "@/helpers/userAnswersHelpers";
   import {decodeEmailToken} from "@/helpers/accountHelpers";
+  import UserCloseForm from "./UserCloseForm";
 
   export default {
     name: 'UserForm',
-    components: {UserSectionList, UserEntryGrid, DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
+    components: {
+      UserCloseForm,
+      UserSectionList, UserEntryGrid, DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
     data() {
       return {
         showModal: false,
@@ -226,6 +231,10 @@
 
       singleEntries() {
         return this.sortedEntries.filter(fe => !fe.grouped);
+      },
+
+      isEntryPoint(){
+        return this.$store.getters.user === this.$store.getters.entryPoint;
       },
 
       groupedEntries() {
