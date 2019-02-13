@@ -6,7 +6,6 @@ import CreatorForm from '@/components/creator/CreatorForm'
 import SignUp from '@/components/general/SignUp'
 import SignIn from '@/components/general/SignIn'
 import CreatorHome from '@/components/creator/CreatorHome'
-import SupervisorForm from '@/components/supervisor/SupervisorForm'
 import SupervisorDashboard from '@/components/supervisor/SupervisorDashboard'
 import PublishedForms from '@/components/general/PublishedForms'
 import FormCampaign from '@/components/general/FormCampaign'
@@ -108,9 +107,9 @@ const router = new Router({
       }
     },
     {
-      path: '/supervisor/:formID',
-      name: 'supervisorForm',
-      component: SupervisorForm,
+      path: '/answer/:formID/:userID',
+      name: 'userFormWithID',
+      component: UserForm,
       meta: {
         requiresAuth: false,
         any: true
@@ -124,7 +123,7 @@ const router = new Router({
         requiresAuth: true,
         any: false
       }
-    }
+    },
 
   ]
 });

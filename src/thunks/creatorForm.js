@@ -22,9 +22,6 @@ export const setFormsCampaignFB = (campaignID, forms) => {
   return Firebase.database().ref(campaignPath.concat(campaignID).concat('/forms')).once('value', (snapshot) => {
     const campaigns = snapshot.val() || []; //we get the current campaign forms
 
-    console.log("campaignFBSetcamp", campaigns);
-    console.log("campaignFBSetforms", forms);
-
     forms.forEach(f => {
       const formIndex = campaigns.find(cf => cf.id === f.id);
 

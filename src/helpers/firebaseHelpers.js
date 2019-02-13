@@ -19,6 +19,7 @@ export const userPath = '/users/';
 
 export const getUser = (userID) => userPath.concat().concat(userID);
 
+
 ///// CREATED FORMS
 
 import * as Firebase from "firebase";
@@ -30,9 +31,12 @@ export const getCreatedForms = (creatorID) => '/users/'.concat(creatorID).concat
 
 ///// PUBLISHED FORMS
 
-export const getPublishedFormFromID = (formID) => publishingPath.concat(formID);
+export const getPublishedFormFromID   = (formID) => publishingPath.concat(formID);
+export const getPublishedFormUserPath = (formID, userID) => getPublishedFormFromID(formID).concat(getUser(userID));
 
 export const publishingPath = '/publishedForms/';
+
+export const getPublishedFormUsersPath = (formID) => getPublishedFormFromID(formID).concat(userPath);
 
 ///// ANSWERING
 

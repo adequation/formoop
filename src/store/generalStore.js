@@ -11,18 +11,11 @@ export default {
     publishedForms: [],
     formCampaigns: [],
     currentCampaign: null,
-    userID: '',
-    userEmail:'',
-    userMetadata: {}
   },
   getters: {
     publishedForms:   state => state.publishedForms,
     formCampaigns:    state => state.formCampaigns,
     currentCampaign:  state => state.currentCampaign,
-    user:             state => ({uid: state.userID, email: state.userEmail, ...state.userMetadata}),
-    userID:           state => state.userID,
-    userEmail:        state => state.userEmail,
-    userMetadata:     state => state.userMetadata
   },
   mutations: {
     setPublishedForms: (state) => {
@@ -76,24 +69,6 @@ export default {
         })
     },
 
-    setUser: (state) => {
-      const user      = nativeFbFunctions.getCurrentUser();
-      state.userID    = user.uid;
-      state.userEmail = user.email;
-    },
-
-    setUserMetadata: (state) => {
-      if(state.userID)
-      Firebase.database().ref(getUser(state.userID).concat('/metadata'))
-        .on('value', (snapshot) => {
-          const value = snapshot.val();
-          if (value) {
-            state.userMetadata = value;
-          } else {
-            state.userMetadata = {};
-          }
-        })
-    }
   },
   actions: {
     setPublishedForms: (context) => {
@@ -107,14 +82,6 @@ export default {
       context.commit('setCurrentCampaign', {campaignID});
       context.commit('setFormCampaigns');
     },
-    setUser: (context) => {
-      context.commit('setUser');
-      context.commit('setUserMetadata')
-    },
-
-    setUserMetadata: (context) => {
-      context.commit('setUserMetadata')
-    }
   }
 }
 

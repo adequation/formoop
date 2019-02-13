@@ -84,7 +84,9 @@
         Object.keys(this.userAnswers).forEach(entryID => {
 
           Object.keys(this.userAnswers[entryID]).forEach(userID => {
-            if (!allUsers[userID]) allUsers[userID] = {id: userID, answers: []};
+            if (!allUsers[userID]) {
+              allUsers[userID] = {id: userID, name: 'Anonyme', ...this.users[userID], answers: []}
+            }
 
             const userAnswersIDs = this.userAnswers[entryID][userID];
             if (userAnswersIDs) {
@@ -101,14 +103,7 @@
         });
 
         users = Object.keys(allUsers).map(userID => {
-          const user = this.users[userID];
-          let name = '';
-
-          if(user)
-          name = user.metadata.firstName + ' ' + user.metadata.lastName;
-
-
-          return ({...allUsers[userID], name})
+          return {...allUsers[userID]}
         });
 
 

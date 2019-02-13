@@ -8,14 +8,14 @@ export function filterEntries(filterType, formEntries, userAnswers) {
       return formEntries.filter(e => isAnswered(e, userAnswers));
     case "notAnswered":
       return formEntries.filter(e => !isAnswered(e, userAnswers));
-    case "default":
+    default:
       return formEntries;
   }
 }
 
-export function getRawPercentage(filterType, formEntries, userAnswers){
+export let getRawPercentage = (filterType, formEntries, userAnswers) => {
   return (filterEntries(filterType, formEntries, userAnswers).length / formEntries.length);
-}
+};
 
 export function getPercentage(filterType, formEntries, userAnswers){
   return getRawPercentage(filterType, formEntries, userAnswers) * 100;
