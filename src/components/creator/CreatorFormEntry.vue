@@ -2,28 +2,39 @@
   <Collapse class="form-entry" :initialy-opened="initialyOpened" :showArrow="true">
 
     <div slot="header">
-      <h3 class="form-entry-title" v-if="entry.generic">{{getGenericTitle(entry.question.blocks)}}</h3>
-      <h3 class="form-entry-title" v-else>{{entry.question.title}}</h3>
+      <h3 class="form-entry-title" v-if="entry.generic">{{getGenericTitle(entry.question.blocks)}}
+        <span v-if="entry.required" class="form-entry-required">*</span>
+      </h3>
+      <h3 class="form-entry-title" v-else>{{entry.question.title}}
+        <span v-if="entry.required" class="form-entry-required">*</span>
+      </h3>
     </div>
 
     <form slot="body" class="form-entry-content">
 
       <div>
 
-        <div class="creator-form-entry-section-select">
-          <select title="" @change="onChangeSection($event.target)">
-            <option value="-1">Aucune</option>
-            <option v-for="t in formSections"
-                    :key="t"
-                    :name="t"
-                    :value="t"
-                    :selected="t === entry.section">
-              {{t}}
-            </option>
-          </select>
+        <div class="creator-form-entry-tools-wrapper">
+          <div class="creator-form-entry-section-select">
+            <select title="" @change="onChangeSection($event.target)">
+              <option value="-1">Aucune</option>
+              <option v-for="t in formSections"
+                      :key="t"
+                      :name="t"
+                      :value="t"
+                      :selected="t === entry.section">
+                {{t}}
+              </option>
+            </select>
+          </div>
+
+          <button type="button"
+                  :class="['creator-form-entry-requirement', entry.required ? 'creator-form-entry-required' : 'creator-form-entry-not-required']"
+                  title="Rendre obligatoire"
+                  @click="onChangeRequirement">*
+          </button>
         </div>
 
-        <input class="creator-form-entry-requirement" title="" type="checkbox" @change="onChangeRequirement($event.target)" v-model="entry.required"> Question obligatoire ?
 
         <CreatorGenericQuestionBlock v-if="entry.generic" :entry="entry"/>
         <input v-else title="" type="text" class="questionTitle" v-model="entry.question.title"
@@ -99,10 +110,10 @@
       setEntrySection(section) {
         this.$parent.$emit('set-form-section', this.entry.id, section);
       },
-      onChangeRequirement(target){
-        this.setEntryRequirement(target.checked);
+      onChangeRequirement() {
+        this.setEntryRequirement(!this.entry.required);
       },
-      setEntryRequirement(requirement){
+      setEntryRequirement(requirement) {
         this.$parent.$emit('set-entry-requirement', this.entry.id, requirement);
       },
       deleteEntry() {
@@ -131,9 +142,48 @@
 
   }
 
-  .creator-form-entry-section-select{
-    float: left;
-    position: absolute;
+  .creator-form-entry-tools-wrapper {
+    width: auto;
+
+    padding-left: 2em;
+    padding-right: 2em;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .creator-form-entry-requirement {
+    background: none;
+    border: none;
+  }
+
+  .form-entry-required {
+    color: tomato;
+    font-weight: bold;
+    font-size: 30px;
+  }
+
+  .creator-form-entry-required {
+    color: tomato;
+    font-weight: bold;
+    font-size: 60px;
+  }
+
+  .creator-form-entry-required:hover {
+    color: #dc472f;
+  }
+
+  .creator-form-entry-not-required {
+    color: lightslategrey;
+    font-weight: bold;
+    font-size: 60px;
+  }
+
+  .creator-form-entry-not-required:hover {
+    color: #5f6c7a;
+
   }
 
 </style>

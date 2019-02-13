@@ -173,7 +173,6 @@
         const fe = tmp.find(e => e.id === id);
         if (fe) {
           fe.required = requirement;
-          console.log(JSON.stringify(fe));
           this.formEntries = tmp;
         }
       },
