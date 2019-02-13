@@ -54,7 +54,7 @@
               <i class="material-icons md-36">save</i>
             </button>
 
-            <JsonImportModal :form-entries="formEntries" :save-form="saveForm"/>
+            <CreatorPublication :form-entries="formEntries" :save-form="saveForm"/>
           </div>
         </div>
 
@@ -71,12 +71,12 @@
   import * as Firebase from "firebase";
   import {saveCreatorFormFB, publishCreatorFormFB} from "@/thunks/creatorForm";
   import {getCreatedFormFromID, nativeFbFunctions} from "@/helpers/firebaseHelpers";
-  import JsonImportModal from "@/components/creator/JsonImportModal";
+  import CreatorPublication from "@/components/creator/CreatorPublication";
   import DockingMenu from "@/components/containers/DockingMenu";
 
   export default {
     name: 'CreatorForm',
-    components: {JsonImportModal, CreatorFormEntry, DockingMenu},
+    components: {CreatorPublication, CreatorFormEntry, DockingMenu},
     data() {
       return {
         formEntries: [],

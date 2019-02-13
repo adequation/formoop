@@ -8,13 +8,13 @@
                type="email"
                placeholder="Adresses email"
                v-model="currentMailAdress"/>
-        <button @click="addAdressToPool"> + </button>
+        <button type="button" @click="addAdressToPool"> + </button>
       </span>
 
       <div v-for="(a,i) in mailAddresses">
         <span>
           <p>{{a}}
-          <button @click="deleteAdress(i)"> x </button>
+          <button type="button" @click="deleteAdress(i)"> x </button>
           </p>
         </span>
       </div>
@@ -32,7 +32,7 @@
                   rows="5"
                   cols="25"></textarea>
 
-        <button @click="sendMail" class="send-mail-button" title="Envoyer !">
+        <button type="button" @click="sendMail" class="send-mail-button" title="Envoyer !">
           <i class="material-icons md-36">send</i>
         </button>
 
@@ -64,7 +64,7 @@
 <script>
   import io from 'socket.io-client';
   import {getFormUrlWithInvite, getFormUrlWithToken, sendMailWithSocket} from "@/helpers/mailHelpers";
-  import {inviteUser} from "@/thunks/userAccountThunks";
+  import {inviteUser, inviteEntryPoint} from "@/thunks/userAccountThunks";
   import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helpers/accountHelpers";
 
   export default {
@@ -100,6 +100,10 @@
       sender: {
         type: Object,
         required: true
+      },
+      callBack: {
+        type: Function,
+        required: false,
       }
     },
     methods: {
@@ -124,13 +128,13 @@
 
         this.mailAddresses.forEach(emailAdress => {
 
-          const userID = getUserIdFromEmail(emailAdress);
-          inviteUser(userID, this.formID, {
-            email : emailAdress,
-            id: userID,
-            name: getNameFromEmail(emailAdress),
-            company: getDomainFromEmail(emailAdress)
-          });
+            const userID = getUserIdFromEmail(emailAdress);
+              this.callBack({userID, formID: this.formID, metadata: {
+                  email : emailAdress,
+                  id: userID,
+                  name: getNameFromEmail(emailAdress),
+                  company: getDomainFromEmail(emailAdress)
+                }});
 
           sendMailWithSocket(this.socket, {
             from: 'formoop@gmail.com',

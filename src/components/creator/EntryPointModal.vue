@@ -3,7 +3,7 @@
     <h3 slot="header">Inviter le Point d'entré</h3>
 
     <div slot="body">
-      <MailSender :before-body="getInvitationContent()" :after-body="user.email" :formID="formID" :entry-point="true"/>
+      <MailSender :before-body="getInvitationContent()" :call-back="inviteEntry" :is-entry-point="true" :sender="{name: user.displayName ,email: user.email}" :formID="formID"/>
     </div>
 
   </Modal>
@@ -15,6 +15,7 @@
   import {getFormURL} from "@/helpers/rooterHelpers";
   import MailSender from "../general/MailSender";
   import Modal from "../containers/Modal";
+  import {inviteEntryPoint, inviteUser} from "../../thunks/userAccountThunks";
 
     export default {
       name: "EntryPointModal",
@@ -27,10 +28,10 @@
       },
       computed: {
         formTitle() {
-          return this.$store.getters.getUserFormTitle
+          return this.$store.getters.getFormTitle
         },
         formID() {
-          return this.$store.getters.getUserFormID
+          return this.$store.getters.getFormID
         },
         formURL() {
           return getFormURL(this.formID, window);
@@ -40,8 +41,9 @@
         }
       },
       methods: {
-        publish(){
-          this.$emit('publish')
+        inviteEntry({userID, formID, metadata}){
+          inviteUser(userID, formID, metadata);
+          inviteEntryPoint(userID, formID, metadata);
         },
         closeModal(){
           this.$emit('close');

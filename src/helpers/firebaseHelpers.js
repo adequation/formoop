@@ -33,7 +33,7 @@ export const getCreatedForms = (creatorID) => '/users/'.concat(creatorID).concat
 
 export const getPublishedFormFromID   = (formID) => publishingPath.concat(formID);
 export const getPublishedFormUserPath = (formID, userID) => getPublishedFormFromID(formID).concat(getUser(userID));
-
+export const getPublishedFormEntryPointPath = (formID, userID) => getPublishedFormFromID(formID).concat('/entryPoint/').concat(userID);
 export const publishingPath = '/publishedForms/';
 
 export const getPublishedFormUsersPath = (formID) => getPublishedFormFromID(formID).concat(userPath);
@@ -45,11 +45,6 @@ export const getAnsweringPath = (formID) => getPublishedFormFromID(formID).conca
 export const getEntryAnsweringPath = (formID, entryID, userID) =>
   getAnsweringPath(formID).concat(entryID).concat('/').concat(userID);
 
-///// INVITATIONS
-
-export const getInvitationsPath = (formID) => getPublishedFormFromID(formID).concat('/invitedUsers/');
-
-export const getEntryPointPath = (formID) => getPublishedFormFromID(formID).concat('/entryPoint/');
 
 ///// CAMPAIGNS
 

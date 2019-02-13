@@ -1,11 +1,8 @@
 <template>
   <div class="json-import-modal">
 
-    <button type="button" class="creator-form-save-button"
-            @click="publishForm"><i class="material-icons md-36">send</i></button>
-
-    <Modal v-if="showJsonImportModal" @close="closeModal">
-      <h1 slot="header">Publication du formulaire</h1>
+    <Modal v-if="showModal" @close="closeModal">
+      <h1 slot="header">Génération du formulaire</h1>
 
       <div slot="body">
         <p>Fichier de génération :
@@ -27,7 +24,7 @@
             <input v-if="newPublishingCampaign" type="text" title="" v-model="newPublishingCampaignName"/>
           </p>
 
-          <button type="button" @click="generateAndPublishForms">Publier !</button>
+          <button type="button" @click="generateAndPublishForms">Générer !</button>
         </div>
 
         <div v-else-if="!publishable && errors">
@@ -36,8 +33,6 @@
 
       </div>
     </Modal>
-
-    <EntryPointModal :show-modal="showEntryPointModal" @close="closeEntryPointModal"/>
 
   </div>
 </template>
@@ -48,14 +43,16 @@
   import {publishCreatorFormFB, publishGenericFormsFB, saveFormCampaignFB} from "@/thunks/creatorForm";
   import * as uuid from "uuid";
   import EntryPointModal from "./EntryPointModal";
+  import {inviteUser} from "@/thunks/userAccountThunks";
+  import {nativeFbFunctions} from "../../helpers/firebaseHelpers";
+  import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helpers/accountHelpers";
+  import {generateGenericFormsFB} from "../../thunks/creatorForm";
 
   export default {
     name: "JsonImportModal",
     components: {EntryPointModal, Modal, JsonParser},
     data() {
       return {
-        showJsonImportModal: false,
-        showEntryPointModal: false,
         importedEntities: {},
         publishable: false,
         errors: false,
@@ -74,33 +71,32 @@
         type: Function,
         required: true
       },
+      showModal: {
+        type: Boolean,
+        required: true,
+      }
     },
 
     computed: {
       formCampaigns() {
         return this.$store.getters.formCampaigns;
       },
-
       formID() {
         return this.$store.getters.getCreatorFormID
       },
-
       creatorID() {
         return this.$store.getters.creatorID;
+      },
+      user(){
+        return nativeFbFunctions.getCurrentUser();
       }
     },
 
     methods: {
       closeModal() {
-        this.showJsonImportModal = false;
         this.publishable = false;
         this.errors = false;
-      },
-
-      closeEntryPointModal() {
-        this.showEntryPointModal = false;
-        this.publishable = false;
-        this.errors = false;
+        this.$emit('close');
       },
 
       onCampaignChange: function (target) {
@@ -119,31 +115,8 @@
         }
       },
 
-      formContainsGenericQuestion() {
-        let containsGenericQuestion = false;
-
-        this.formEntries.forEach(fe => {
-          if (fe.generic) containsGenericQuestion = true;
-        });
-
-        return containsGenericQuestion;
-      },
-
       getGenericEntries() {
         return this.formEntries.filter(fe => fe.generic);
-      },
-
-      //publish form into firebase
-      publishForm() {
-        this.saveForm();
-
-        if (this.formContainsGenericQuestion()) {
-          this.showJsonImportModal = true;
-        } else {
-          console.log("publi");
-          publishCreatorFormFB(this.creatorID, this.formID);
-          this.showEntryPointModal = true;
-        }
       },
 
       generateAndPublishForms() {
@@ -153,16 +126,16 @@
           if(this.newPublishingCampaign){ // we create a new campaign
             saveFormCampaignFB(this.publishingCampaign, {id: this.publishingCampaign, name:this.newPublishingCampaignName}).then((e) => {
 
-              publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.publishingCampaign);
+              generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.publishingCampaign);
 
             }).catch((e) => {
               console.log(e);
             });
           }else{ //we use an existing campaign
-            publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.publishingCampaign);
+            generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.publishingCampaign);
           }
         }else{ // no campaigns
-          publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities);
+          generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities);
         }
 
         this.closeModal();
@@ -222,22 +195,5 @@
 </script>
 
 <style scoped>
-  .creator-form-save-button {
-    margin-right: 0.5em;
-    padding: 0.5em;
-    color: white;
-    background: #2d8246;
-
-    cursor: pointer;
-    font-size: large;
-    border: none;
-
-    border-radius: 5px;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
 
 </style>

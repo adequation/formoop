@@ -33,7 +33,8 @@
                       :before-body="getInvitationContent()" :after-body="user.email"
                       :formID="formID"
                       :sender="user"
-                      :selectedUser="selectedUser"/>
+                      :selectedUser="selectedUser"
+                      :call-back="inviteUsers"/>
 
         </div>
 
@@ -77,6 +78,9 @@
       }
     },
     methods: {
+      inviteUsers({userID, formID, metadata}){
+        inviteUser(userID, formID, metadata);
+      },
       getInvitationContent() {
         return getInvitationText(this.formTitle, this.user.name)
       },
