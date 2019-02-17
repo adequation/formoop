@@ -8,11 +8,30 @@
 
       <div slot="body">
 
-        <div>
+        <div v-if="isAllAnswered">
           <h3>Attention vous allez fermer le sondage, il sera impossible de modifier ou ajouter des réponses après cette action.</h3>
           <h3>Etes vous sûr de vouloir clore le sondage ?</h3>
 
           <span><button class="button-refuse-close" type="button" @click="showModal = false">NON</button><button class="button-accept-close" type="button" @click="closeForm">OUI</button></span>
+        </div>
+
+        <div v-else>
+          <div v-if="!seccondVerif">
+            <h2>Il reste des rponse importantes auxquelles vous n'avez pas encore répondu</h2>
+            <h3>Etes vous sûr de vouloir clore le sondage ?</h3>
+
+            <span><button class="button-refuse-close" type="button" @click="showModal = false">NON</button><button class="button-accept-close" type="button" @click="seccondVerif = true">OUI</button></span>
+
+          </div>
+          <div v-else>
+            <h2>Il reste des rponse importantes auxquelles vous n'avez pas encore répondu</h2>
+            <h3>Il sera impossible de modifier ou ajouter des réponses après cette action.</h3>
+            <h3>Etes vous vraiment sûr de vouloir clore le sondage ?</h3>
+
+            <span><button class="button-refuse-close" type="button" @click="showModal = false">NON</button><button class="button-accept-close" type="button" @click="closeForm">OUI</button></span>
+
+          </div>
+
         </div>
 
       </div>
@@ -32,10 +51,14 @@
       data(){
         return {
           showModal: false,
+          seccondVerif: false,
         }
       },
       computed:{
-
+        isAllAnswered(){
+          let requiredEntries = this.$store.getters.getFormEntries.filter(entry => entry.required !== true);
+          return requiredEntries.every(entry => Object.keys(this.$store.getters.userAnswers).includes(entry.id));
+        }
       },
       methods: {
         closeForm() {
