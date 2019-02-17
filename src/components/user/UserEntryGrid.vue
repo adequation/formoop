@@ -3,7 +3,7 @@
 
     <div v-for="entry in entries"
          :key="entry.id"
-         :class="hasAnswers(entry) ? 'user-grid-entry-answered' : 'user-grid-entry'"
+         :class="inConflict(entry) ? 'user-grid-entry-conflicted' : hasAnswers(entry) ? 'user-grid-entry-answered' : 'user-grid-entry'"
          @click="focusedEntry = entry">
       <div class="user-grid-entry-content">
         {{entry.question.title}}
@@ -26,6 +26,7 @@
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import Modal from "@/components/containers/Modal";
   import UserFormEntry from "@/components/user/UserFormEntry";
+  import {isEntryInConflict} from "@/helpers/userAnswersHelpers";
 
   export default {
     name: "UserEntryGrid",
@@ -60,6 +61,10 @@
 
 
         return this.currentEntryAnswers(entry) ? this.currentEntryAnswers(entry)[this.user.id] : {};
+      },
+
+      inConflict(entry){
+        return isEntryInConflict(entry.id, this.userAnswers);
       },
 
       hasAnswers(entry) {
@@ -133,6 +138,14 @@
 
     border-left: 7px #42b983 solid;
 
+    transition: transform .2s;
+  }
+
+  .user-grid-entry-conflicted {
+    margin: 2px;
+    background-color: #f5d8ce;
+
+    border-left: 7px solid tomato;
     transition: transform .2s;
   }
 

@@ -1,7 +1,7 @@
 <template>
-  <div :class="hasAnswers && user ? 'user-form-entry-answered' : 'user-form-entry'">
+  <div :class="inConflict ? 'user-form-entry-conflicted' : hasAnswers && user ? 'user-form-entry-answered' : 'user-form-entry'">
 
-    <div :class="['answered-by-wrapper', user && hasAnswers ?
+    <div :class="['answered-by-wrapper', inConflict ? 'answered-by-conflict' : user && hasAnswers ?
                 (showAnswers ? 'answered-by-opened' : 'answered-by') : 'answered-by-disabled' ]">
 
       <button type="button" @click="switchAnswersView" title="Voir les réponses" :disabled="!user">
@@ -32,6 +32,7 @@
   import UserAnswer from '@/components/user/UserAnswer'
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import UserEntryAnswersDetails from "@/components/user/UserEntryAnswersDetails";
+  import {isEntryInConflict} from "@/helpers/userAnswersHelpers";
 
   export default {
     name: 'FormEntry',
@@ -71,8 +72,8 @@
         return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.id] : {};
       },
 
-      hasAnswered() {
-        return this.user ? !!this.currentUserAnswers : false;
+      inConflict(){
+        return isEntryInConflict(this.entry.id, this.userAnswers);
       },
 
       hasAnswers() {
@@ -158,6 +159,16 @@
     border-left: 7px solid #42b983;
   }
 
+  .user-form-entry-conflicted {
+    background-color: #f5d8ce;
+
+    margin: 0.5em auto;
+    padding: 0.5em;
+    width: 75%;
+
+    border-left: 7px solid tomato;
+  }
+
   .answered-by-list-wrapper {
     position: absolute;
     color: white;
@@ -233,6 +244,25 @@
 
   .answered-by button:hover {
     background: #2d8246;
+  }
+
+  .answered-by-conflict button {
+    color: #fff;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: large;
+    background: tomato;
+    border: none;
+
+    border-radius: 15px;
+  }
+
+  .answered-by-conflict button:hover {
+    background: #e24536;
   }
 
   .answered-by-opened button {

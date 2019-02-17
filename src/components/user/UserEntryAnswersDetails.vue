@@ -18,9 +18,6 @@
         </tr>
       </table>
 
-      <div>
-        {{`${Math.round(cohesionPercentage*100)}% de cohesion`}}
-      </div>
     </div>
 
     <div class="user-answer-table-wrapper" v-else>
