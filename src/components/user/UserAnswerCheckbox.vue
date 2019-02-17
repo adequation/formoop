@@ -31,11 +31,16 @@
       currentUserAnswers: {
         type: Array,
         required: false
+      },
+      currentSelectedAnswers: {
+        type: Array,
+        required: false
       }
     },
     data() {
       return {
-        selectedAnswers: this.currentUserAnswers || []
+        selectedAnswers: this.currentSelectedAnswers ? [...this.currentSelectedAnswers] :
+          (this.currentUserAnswers ? [...this.currentUserAnswers] : [])
       }
     },
     methods: {

@@ -1,11 +1,13 @@
 <template>
-  <div :class="inConflict ? 'user-form-entry-conflicted' : hasAnswers && user ? 'user-form-entry-answered' : 'user-form-entry'">
+  <div
+    :class="inConflict ? 'user-form-entry-conflicted' : hasAnswers && user ? 'user-form-entry-answered' : 'user-form-entry'">
 
     <div :class="['answered-by-wrapper', inConflict ? 'answered-by-conflict' : user && hasAnswers ?
                 (showAnswers ? 'answered-by-opened' : 'answered-by') : 'answered-by-disabled' ]">
 
       <button type="button" @click="switchAnswersView" title="Voir les réponses" :disabled="!user">
-        <div class="answered-by-content" v-if="!showAnswers">{{currentEntryAnswers ? Object.keys(currentEntryAnswers).length : ''}} <i class="material-icons md-18">face</i></div>
+        <div class="answered-by-content" v-if="!showAnswers">{{currentEntryAnswers ?
+          Object.keys(currentEntryAnswers).length : ''}} <i class="material-icons md-18">face</i></div>
         <div class="answered-by-content" v-else><i class="material-icons md-18">close</i></div>
       </button>
 
@@ -14,14 +16,16 @@
     <UserQuestionTitle :question="entry.question"/>
 
 
-    <div v-if="showAnswers">
+    <div v-if="showAnswers && hasAnswers">
       <UserEntryAnswersDetails
-                               :entry="entry"
-                               :userAnswers="userAnswers"></UserEntryAnswersDetails>
+        :entry="entry"
+        :userAnswers="userAnswers"></UserEntryAnswersDetails>
     </div>
 
     <div v-else>
-      <UserAnswer :answer="entry.answer" :entryID="entry.id" :userAnswers="userAnswers" display="small"/>
+      <UserAnswer :answer="entry.answer" :entryID="entry.id" :userAnswers="userAnswers"
+                  :selectedAnswers="selectedAnswers"
+                  display="small"/>
     </div>
 
   </div>
@@ -33,6 +37,7 @@
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import UserEntryAnswersDetails from "@/components/user/UserEntryAnswersDetails";
   import {isEntryInConflict} from "@/helpers/userAnswersHelpers";
+  import {setSelectedAnswerFB} from "@/thunks/userFormEntriesThunks";
 
   export default {
     name: 'FormEntry',
@@ -51,12 +56,17 @@
         type: Object,
         required: true
       },
+      selectedAnswers: {
+        type: Object,
+        required: true
+      },
       display: {
         type: String,
         required: false
       }
     },
     computed: {
+
       user() {
         return this.$store.getters.user;
       },
@@ -72,7 +82,7 @@
         return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.id] : {};
       },
 
-      inConflict(){
+      inConflict() {
         return isEntryInConflict(this.entry.id, this.userAnswers);
       },
 
@@ -98,16 +108,9 @@
     },
     methods: {
 
-      getUserName(userID) {
-        const user = this.invitedUsers[userID];
-        if (!user) return 'Anonyme';
-
-        return user.name;
-      },
-
       switchAnswersView() {
         if (this.hasAnswers)
-        this.showAnswers = !this.showAnswers;
+          this.showAnswers = !this.showAnswers;
       },
 
       answerText(userAnswer) {
@@ -132,7 +135,7 @@
 
         return '';
       }
-    }
+    },
   }
 
   /**/

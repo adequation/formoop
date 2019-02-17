@@ -3,24 +3,39 @@
     <div>
       <!-- && invited !-->
       <div v-if="answer.type === 'textarea'">
-        <UserAnswerTextarea :entryID="entryID" :currentUserAnswers="currentUserAnswers"/>
+        <UserAnswerTextarea :entryID="entryID"
+                            :currentUserAnswers="currentUserAnswers"
+                            :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
       <div v-if="answer.type === 'text'">
-        <UserAnswerText :entryID="entryID" :currentUserAnswers="currentUserAnswers"/>
+        <UserAnswerText :entryID="entryID"
+                        :currentUserAnswers="currentUserAnswers"
+                        :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
       <div v-if="answer.type === 'radio'">
-        <UserAnswerRadio :answers="answer.answers" :entryID="entryID" :currentUserAnswers="currentUserAnswers"/>
+        <UserAnswerRadio :answers="answer.answers"
+                         :entryID="entryID" :currentUserAnswers="currentUserAnswers"
+                         :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
       <div v-if="answer.type === 'checkbox'">
-        <UserAnswerCheckbox :answers="answer.answers" :entryID="entryID" :currentUserAnswers="currentUserAnswers"/>
+        <UserAnswerCheckbox :answers="answer.answers"
+                            :entryID="entryID"
+                            :currentUserAnswers="currentUserAnswers"
+                            :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
       <div v-if="answer.type === 'select'">
-        <UserAnswerSelect :answers="answer.answers" :entryID="entryID" :currentUserAnswers="currentUserAnswers"/>
+        <UserAnswerSelect :answers="answer.answers"
+                          :entryID="entryID"
+                          :currentUserAnswers="currentUserAnswers"
+                          :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
-      <div class="delete-answer">
+      <div class="user-answer-tools">
 
         <button v-if="currentUserAnswers ? currentUserAnswers : false" class="delete-answer-button" type="button"
                 @click="deleteAnswer"><i class="material-icons">delete</i>
+        </button>
+        <button v-if="isUpdated" class="save-answer-button-updated" type="button"
+                @click="saveAnswer"><i :class="['material-icons', isUpdated ? '' : '']">save</i>
         </button>
 
       </div>
@@ -35,10 +50,7 @@
   import UserAnswerRadio from './UserAnswerRadio'
   import UserAnswerCheckbox from './UserAnswerCheckbox'
   import UserAnswerSelect from './UserAnswerSelect'
-  import * as Firebase from "firebase";
-  import {firebaseConfig} from "@/firebaseConfig";
-  import {deleteUserAnswerFB} from "@/thunks/userFormEntriesThunks";
-  import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
+  import {deleteUserAnswerFB, setSelectedAnswerFB} from "@/thunks/userFormEntriesThunks";
 
   export default {
     name: 'UserAnswer',
@@ -47,14 +59,37 @@
       user() {
         return this.$store.getters.user;
       },
+      formID() {
+        return this.$store.getters.getFormID
+      },
       currentEntryAnswers() {
         return this.userAnswers[this.entryID] || {};
       },
+
       currentUserAnswers() {
         if (!this.user) return null;
 
         return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.id] : {};
       },
+
+      selectedUserAnswers(){
+        return this.selectedAnswers[this.entryID];
+      },
+
+      isUpdated(){
+        const userA = this.currentUserAnswers || null;
+
+        if(this.selectedUserAnswers === undefined) return false;
+
+        if(Array.isArray(this.selectedUserAnswers)){
+          if(!Array.isArray(userA)) return this.selectedUserAnswers.length > 0;
+          return userA.length !== this.selectedUserAnswers.length
+            || !this.selectedUserAnswers.every(a => userA.includes(a));
+        }
+
+
+        return userA !== this.selectedUserAnswers;
+      }
     },
     props: {
       answer: {
@@ -69,6 +104,10 @@
         type: Object,
         required: false
       },
+      selectedAnswers: {
+        type: Object,
+        required: true
+      },
       display: {
         type: String,
         required: false
@@ -77,7 +116,14 @@
     methods: {
       deleteAnswer() {
         deleteUserAnswerFB(this.$store.getters.getFormID, this.entryID, this.user.id);
-      }
+      },
+
+      saveAnswer() {
+        if (this.user)
+          setSelectedAnswerFB(this.formID, this.entryID, this.selectedAnswers, this.user.id);
+
+        else alert("Vous n'êtes pas connecté !");
+      },
     }
   }
 </script>
@@ -93,17 +139,61 @@
     color: #42b983;
   }
 
-  .delete-answer {
+  .user-answer-tools {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-items: center;
   }
 
   .delete-answer-button {
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #00000055;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .delete-answer-button:hover {
+    background-color: tomato;
+  }
+
+  .save-answer-button {
     background: none;
     border: none;
     color: #00000055;
   }
 
-  .delete-answer-button:hover {
-    color: rgba(255, 0, 0, 0.75);
+  .save-answer-button-updated {
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #00000055;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .save-answer-button-updated:hover {
+    background-color: #2d8246;
   }
 
 </style>
