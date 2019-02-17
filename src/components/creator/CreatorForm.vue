@@ -168,6 +168,15 @@
         }
       },
 
+      setFormEntryRequirement(id, requirement){
+        const tmp = [...this.formEntries];
+        const fe = tmp.find(e => e.id === id);
+        if (fe) {
+          fe.required = requirement;
+          this.formEntries = tmp;
+        }
+      },
+
       setForm(form) {
         if (!form) {
           this.formEntries = [];
@@ -239,6 +248,10 @@
 
       this.$on('set-form-section', (id, section) => {
         this.setFormEntrySection(id, section)
+      });
+
+      this.$on('set-entry-requirement', (id, requirement) => {
+        this.setFormEntryRequirement(id, requirement)
       });
 
       //when an entry is mounted
