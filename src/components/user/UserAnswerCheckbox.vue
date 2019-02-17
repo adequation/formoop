@@ -39,8 +39,8 @@
     },
     data() {
       return {
-        selectedAnswers: this.currentSelectedAnswers ? [...this.currentSelectedAnswers] :
-          (this.currentUserAnswers ? [...this.currentUserAnswers] : [])
+        selectedAnswers: this.currentSelectedAnswers ? this.currentSelectedAnswers.slice() :
+          (this.currentUserAnswers ? this.currentUserAnswers.slice() : [])
       }
     },
     methods: {
@@ -61,9 +61,10 @@
     },
     watch:{
       currentUserAnswers: function (val) {
-        this.selectedAnswers = val || [];
+        console.log(val)
+        this.selectedAnswers = val ? val.slice() || [] : [];
         this.setSelectedAnswers();
-      }
+      },
     }
   }
 

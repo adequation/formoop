@@ -1,8 +1,8 @@
 <template>
   <div
-    :class="inConflict ? 'user-form-entry-conflicted' : hasAnswers && user ? 'user-form-entry-answered' : 'user-form-entry'">
+    :class="inConflict && user ? 'user-form-entry-conflicted' : hasAnswers && user ? 'user-form-entry-answered' : 'user-form-entry'">
 
-    <div :class="['answered-by-wrapper', inConflict ? 'answered-by-conflict' : user && hasAnswers ?
+    <div :class="['answered-by-wrapper', inConflict && user ? 'answered-by-conflict' : user && hasAnswers ?
                 (showAnswers ? 'answered-by-opened' : 'answered-by') : 'answered-by-disabled' ]">
 
       <button type="button" @click="switchAnswersView" title="Voir les réponses" :disabled="!user">
@@ -153,7 +153,7 @@
   }
 
   .user-form-entry-answered {
-    background-color: #e1f5eb;
+    background-color: #f6f6f6;
 
     margin: 0.5em auto;
     padding: 0.5em;
@@ -163,7 +163,7 @@
   }
 
   .user-form-entry-conflicted {
-    background-color: #f5d8ce;
+    background-color: #f6f6f6;
 
     margin: 0.5em auto;
     padding: 0.5em;

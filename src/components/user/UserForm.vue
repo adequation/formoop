@@ -175,7 +175,11 @@
             sortingLayer: 0,
             sort: (a, b) => b.question.title.localeCompare(a.question.title)
           },
-          {
+        ],
+
+        /*
+
+        {
             name: 'answered',
             description: 'Avec réponse en premier',
             icon: 'expand_less',
@@ -208,7 +212,8 @@
               return 0;
             }
           },
-        ],
+
+         */
 
         searchQuery: '',
 
