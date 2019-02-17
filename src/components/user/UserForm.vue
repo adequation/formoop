@@ -234,7 +234,7 @@
       },
 
       isEntryPoint(){
-        return this.$store.getters.user === this.$store.getters.entryPoint;
+        return this.$store.getters.entryPoints.filter(e=>e.id === this.user.id).length > 0;
       },
 
       groupedEntries() {

@@ -19,7 +19,7 @@ export default {
     formTitle: '',
     userAnswers: {},
     invitedUsers: {},
-    entryPoint: null,
+    entryPoints: [],
     user: null
   },
   getters: {
@@ -45,8 +45,8 @@ export default {
       return state.userAnswers;
     },
 
-    entryPoint : state => {
-      return state.entryPoint;
+    entryPoints : state => {
+      return state.entryPoints;
     },
 
     user : state => state.user
@@ -120,7 +120,7 @@ export default {
         .on('value', (snapshot) => {
           const value = snapshot.val();
           if(value){
-            state.entryPoint = value;
+            state.entryPoints = Object.keys(value).map(entrypoint => value[entrypoint]);
           }
           else{
             state.entryPoint = null;
@@ -139,6 +139,7 @@ export default {
         context.commit('setFormTitle');
         context.commit('setUserAnswers');
         context.commit('setInvitedUsers');
+        context.commit('setEntryPoint')
       },
 
       setFormTitle: (context) => {
