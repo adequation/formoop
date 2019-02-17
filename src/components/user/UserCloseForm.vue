@@ -17,14 +17,14 @@
 
         <div v-else>
           <div v-if="!seccondVerif">
-            <h2>Il reste des rponse importantes auxquelles vous n'avez pas encore répondu</h2>
+            <h2>Il reste des réponses importantes auxquelles vous n'avez pas encore répondu</h2>
             <h3>Etes vous sûr de vouloir clore le sondage ?</h3>
 
             <span><button class="button-refuse-close" type="button" @click="showModal = false">NON</button><button class="button-accept-close" type="button" @click="seccondVerif = true">OUI</button></span>
 
           </div>
           <div v-else>
-            <h2>Il reste des rponse importantes auxquelles vous n'avez pas encore répondu</h2>
+            <h2>Il reste des réponses importantes auxquelles vous n'avez pas encore répondu</h2>
             <h3>Il sera impossible de modifier ou ajouter des réponses après cette action.</h3>
             <h3>Etes vous vraiment sûr de vouloir clore le sondage ?</h3>
 
