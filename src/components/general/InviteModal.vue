@@ -50,6 +50,7 @@
   import Modal from "@/components/containers/Modal";
   import {getInvitationText, sendMailWithSocket} from "@/helpers/mailHelpers";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
+  import {inviteUser} from "../../thunks/userAccountThunks";
 
   export default {
     name: "InviteModal",
