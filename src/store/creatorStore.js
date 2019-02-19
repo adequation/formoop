@@ -2,6 +2,7 @@ import Vuex from 'vuex'
 import Vue from 'vue'
 import Firebase from 'firebase'
 import {getCreatedForms, nativeFbFunctions} from "@/helpers/firebaseHelpers";
+import {closedPath} from "../helpers/firebaseHelpers";
 
 Vue.use(Vuex);
 
@@ -9,6 +10,7 @@ export default {
   state: {
     formID: '',
     createdForms: [],
+    finishedForms: [],
     creatorID:''
   },
   getters: {
@@ -17,6 +19,9 @@ export default {
     },
     createdForms: state => {
       return state.createdForms
+    },
+    finishedForms: state => {
+      return state.finishedForms
     },
     creatorID: state => state.creatorID
   },
@@ -42,6 +47,19 @@ export default {
 
     setCreatorID: state => {
       state.creatorID = nativeFbFunctions.getCurrentUser().uid;
+    },
+
+    setFinishedForms: (state) => {
+      if(state.creatorID){
+        Firebase.database().ref(closedPath)
+          .on('value', (snapshot) => {
+            const value = snapshot.val();
+            if(value){
+              const forms = Object.keys(value).map(form => value[form]);
+              state.finishedForms = forms.filter(form => state.createdForms.filter(Cform => Cform.id === form.id))
+            }
+          })
+      }
     }
   },
   actions: {
@@ -54,6 +72,7 @@ export default {
     setCreatorID: (context) => {
       context.commit('setCreatorID');
       context.commit('setCreatedForms');
+      context.commit('setFinishedForms')
     }
   }
 }
