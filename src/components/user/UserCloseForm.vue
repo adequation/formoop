@@ -12,15 +12,15 @@
           <h3>Attention vous allez fermer le sondage, il sera impossible de modifier ou ajouter des réponses après cette action.</h3>
           <h3>Etes vous sûr de vouloir clore le sondage ?</h3>
 
-          <span><button class="button-refuse-close" type="button" @click="showModal = false">NON</button><button class="button-accept-close" type="button" @click="closeForm">OUI</button></span>
+          <span><button class="button-refuse-close" type="button" @click="showModal = false">NON</button><button class="button-accept-close" type="button" @click="this.closeForm">OUI</button></span>
         </div>
 
         <div v-else>
-          <div v-if="!seccondVerif">
+          <div v-if="!secondVerif">
             <h2>Il reste des réponses importantes auxquelles vous n'avez pas encore répondu</h2>
             <h3>Etes vous sûr de vouloir clore le sondage ?</h3>
 
-            <span><button class="button-refuse-close" type="button" @click="showModal = false">NON</button><button class="button-accept-close" type="button" @click="seccondVerif = true">OUI</button></span>
+            <span><button class="button-refuse-close" type="button" @click="showModal = false">NON</button><button class="button-accept-close" type="button" @click="secondVerif = true">OUI</button></span>
 
           </div>
           <div v-else>
@@ -28,7 +28,7 @@
             <h3>Il sera impossible de modifier ou ajouter des réponses après cette action.</h3>
             <h3>Etes vous vraiment sûr de vouloir clore le sondage ?</h3>
 
-            <span><button class="button-refuse-close" type="button" @click="showModal = false">NON</button><button class="button-accept-close" type="button" @click="closeForm">OUI</button></span>
+            <span><button class="button-refuse-close" type="button" @click="showModal = false">NON</button><button class="button-accept-close" type="button" @click="this.closeForm">OUI</button></span>
 
           </div>
 
@@ -45,24 +45,33 @@
 
 <script>
     import Modal from "../containers/Modal";
+    import {closePublishedForm} from "../../thunks/closingFormThunks";
     export default {
       name: "UserCloseForm",
       components: {Modal},
       data(){
         return {
           showModal: false,
-          seccondVerif: false,
+          secondVerif: false,
         }
       },
       computed:{
+        formID(){
+          return this.$store.getters.getFormID;
+        },
         isAllAnswered(){
           let requiredEntries = this.$store.getters.getFormEntries.filter(entry => entry.required !== true);
           return requiredEntries.every(entry => Object.keys(this.$store.getters.userAnswers).includes(entry.id));
         }
       },
       methods: {
+        redirect(path){
+          this.$router.replace(path);
+        },
         closeForm() {
-
+          console.log('close');
+          closePublishedForm(this.formID)
+          this.redirect('/home')
         },
       }
     }

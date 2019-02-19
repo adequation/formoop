@@ -39,6 +39,11 @@ export const publishingPath = '/publishedForms/';
 
 export const getPublishedFormUsersPath = (formID) => getPublishedFormFromID(formID).concat(userPath);
 
+///// CLOSED FORMS
+
+export const closedPath = '/closedForms/';
+export const getClosedFormFromID = (formID) => closedPath.concat(formID);
+
 ///// ANSWERING
 
 export const getAnsweringPath = (formID) => getPublishedFormFromID(formID).concat('/usersAnswers/');
