@@ -173,7 +173,6 @@ export const publishGenericFormsFB = (creatorID, formID, entities, campaignID = 
         const createdForms = generateAndPublishForms(value, entities);
 
         if(campaignID){
-          console.log('ccc', campaignID, createdForms);
           setFormsCampaignFB(campaignID,  createdForms);
         }
       }
@@ -294,10 +293,7 @@ const generateForms = (creatorID, creatorForm, entities) => {
 
   Object.keys(entities).forEach(entityKey => {
     const parsedForm = parseGenericFormToCreator(creatorForm, entities[entityKey]);
-    console.log("parsed", creatorID, parsedForm)
     writeGeneratedCreatorFormFB(creatorID, parsedForm);
-
-
 
     createdForms.push({id: parsedForm.id, title: parsedForm.title});
   });
@@ -313,14 +309,10 @@ export const generateGenericFormsFB = (creatorID, formID, entities, campaignID =
     .on('value', function (snapshot) {
       const value = snapshot.val();
 
-      console.log("value before", creatorID, formID, entities, value);
-
       if (value) {
-          console.log("value", creatorID, formID, entities, value);
         const createdForms = generateForms(creatorID, value, entities);
 
         if(campaignID){
-          console.log('ccc', campaignID, createdForms);
           setFormsCampaignFB(campaignID,  createdForms);
         }
       }

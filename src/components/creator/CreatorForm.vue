@@ -1,10 +1,7 @@
 <template>
   <div class="creator-form">
 
-    <h1 class="creator-form-ghost-text" v-bind:class="isPublished ? 'creator-published-form' : ''">{{formID}}</h1>
-
-
-    <input title="" type="text" class="creator-form-title" v-model="formTitle" :placeholder="formID"/>
+    <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
 
 
     <CreatorFormEntry v-for="(entry, i) in formEntries"
@@ -347,14 +344,6 @@
 
   .creator-form {
     background-color: white;
-  }
-
-  .creator-form-ghost-text {
-    color: lightgray;
-  }
-
-  .creator-published-form {
-    color: steelblue;
   }
 
   .creator-form-footer {

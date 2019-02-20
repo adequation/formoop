@@ -23,9 +23,8 @@
         },
       },
       methods: {
-        /**
-         * @return {string}
-         */
+
+        /**  @return {string} */
         JsonConvert(form){
           return "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(form));
         }
