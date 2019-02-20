@@ -16,7 +16,8 @@
         <UserFormEntry
           :key="focusedEntry.id"
           :entry="focusedEntry"
-          :userAnswers="userAnswers || {}"/>
+          :userAnswers="userAnswers || {}"
+          :selectedAnswers="selectedAnswers"/>
       </div>
     </Modal>
   </div>
@@ -42,6 +43,10 @@
         required: true
       },
       userAnswers: {
+        type: Object,
+        required: true
+      },
+      selectedAnswers: {
         type: Object,
         required: true
       },

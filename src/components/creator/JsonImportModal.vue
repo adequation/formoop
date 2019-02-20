@@ -82,7 +82,7 @@
         return this.$store.getters.formCampaigns;
       },
       formID() {
-        return this.$store.getters.getCreatorFormID
+        return this.$store.getters.getCreatorFormID;
       },
       creatorID() {
         return this.$store.getters.creatorID;

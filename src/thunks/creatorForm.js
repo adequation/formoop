@@ -201,6 +201,7 @@ export const publishCreatorFormFB = (creatorID, formID) => {
 
 //Only generate
 const writeGeneratedCreatorFormFB = (creatorID, form) => {
+  console.log("gege", creatorID, form)
   return Firebase.database().ref(getCreatedFormFromID(creatorID, form.id))
     .set(form);
 };
@@ -293,7 +294,10 @@ const generateForms = (creatorID, creatorForm, entities) => {
 
   Object.keys(entities).forEach(entityKey => {
     const parsedForm = parseGenericFormToCreator(creatorForm, entities[entityKey]);
+    console.log("parsed", creatorID, parsedForm)
     writeGeneratedCreatorFormFB(creatorID, parsedForm);
+
+
 
     createdForms.push({id: parsedForm.id, title: parsedForm.title});
   });
@@ -308,7 +312,11 @@ export const generateGenericFormsFB = (creatorID, formID, entities, campaignID =
   return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
     .on('value', function (snapshot) {
       const value = snapshot.val();
+
+      console.log("value before", creatorID, formID, entities, value);
+
       if (value) {
+          console.log("value", creatorID, formID, entities, value);
         const createdForms = generateForms(creatorID, value, entities);
 
         if(campaignID){
