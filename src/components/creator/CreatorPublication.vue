@@ -54,6 +54,7 @@
     },
     methods: {
       publishForm(){
+        this.saveForm();
         if(this.formContainsGenericQuestion()){
           this.showJsonImportModal = true;
         }
@@ -64,7 +65,6 @@
       },
       directPublishForm(){
         console.log("publi");
-        //Publi le formulaire
         publishCreatorFormFB(this.creatorID, this.formID);
         //Ajoute l'admin en user
         const userID = getUserIdFromEmail(this.user.email);

@@ -31,14 +31,10 @@
             <span><button class="button-refuse-close" type="button" @click="showModal = false">NON</button><button class="button-accept-close" type="button" @click="this.closeForm">OUI</button></span>
 
           </div>
-
         </div>
-
       </div>
 
     </Modal>
-
-
   </div>
 
 </template>
