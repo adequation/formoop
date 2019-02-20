@@ -1,8 +1,12 @@
 <template>
 
   <div>
-    <button type="button" class="user-close-form-button"
-            @click="showModal = true"><i class="material-icons md-36">close</i></button>
+    <button type="button"
+            title="Fermer le formulaire"
+            class="user-close-form-button"
+            @click="showModal = true">
+      <i class="material-icons md-36 user-close-form-button-content">email</i>
+    </button>
 
     <Modal v-if="showModal" @close="showModal = false">
 
@@ -12,7 +16,10 @@
           <h3>Attention vous allez fermer le sondage, il sera impossible de modifier ou ajouter des réponses après cette action.</h3>
           <h3>Etes vous sûr de vouloir clore le sondage ?</h3>
 
-          <span><button class="button-refuse-close" type="button" @click="showModal = false">NON</button><button class="button-accept-close" type="button" @click="this.closeForm">OUI</button></span>
+          <span>
+            <button class="button-refuse-close" type="button" @click="showModal = false">NON</button>
+            <button class="button-accept-close" type="button" @click="this.closeForm">OUI</button>
+          </span>
         </div>
 
         <div v-else>
@@ -20,25 +27,27 @@
             <h2>Il reste des réponses importantes auxquelles vous n'avez pas encore répondu</h2>
             <h3>Etes vous sûr de vouloir clore le sondage ?</h3>
 
-            <span><button class="button-refuse-close" type="button" @click="showModal = false">NON</button><button class="button-accept-close" type="button" @click="secondVerif = true">OUI</button></span>
-
+            <span>
+              <button class="button-refuse-close" type="button" @click="showModal = false">NON</button>
+              <button class="button-accept-close" type="button" @click="secondVerif = true">OUI</button>
+            </span>
           </div>
+
           <div v-else>
             <h2>Il reste des réponses importantes auxquelles vous n'avez pas encore répondu</h2>
             <h3>Il sera impossible de modifier ou ajouter des réponses après cette action.</h3>
             <h3>Etes vous vraiment sûr de vouloir clore le sondage ?</h3>
 
-            <span><button class="button-refuse-close" type="button" @click="showModal = false">NON</button><button class="button-accept-close" type="button" @click="this.closeForm">OUI</button></span>
+            <span>
+              <button class="button-refuse-close" type="button" @click="showModal = false">NON</button>
+              <button class="button-accept-close" type="button" @click="this.closeForm">OUI</button>
+            </span>
 
           </div>
-
         </div>
-
       </div>
 
     </Modal>
-
-
   </div>
 
 </template>
@@ -59,8 +68,9 @@
         formID(){
           return this.$store.getters.getFormID;
         },
+
         isAllAnswered(){
-          let requiredEntries = this.$store.getters.getFormEntries.filter(entry => entry.required !== true);
+          let requiredEntries = this.$store.getters.getFormEntries.filter(entry => entry.required);
           return requiredEntries.every(entry => Object.keys(this.$store.getters.userAnswers).includes(entry.id));
         }
       },
@@ -69,8 +79,8 @@
           this.$router.replace(path);
         },
         closeForm() {
-          console.log('close');
-          closePublishedForm(this.formID)
+
+          closePublishedForm(this.formID);
           this.redirect('/home')
         },
       }
@@ -78,5 +88,23 @@
 </script>
 
 <style scoped>
+
+  .user-close-form-button{
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #2d8246;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
 
 </style>

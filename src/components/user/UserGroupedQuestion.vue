@@ -13,7 +13,8 @@
                        :key="entry.id"
                        class="user-group-entry"
                        :userAnswers="userAnswers"
-                       :small="true"/>
+                       :small="true"
+                       :selectedAnswers="selectedAnswers"/>
 
       </div>
     </Collapse>
@@ -33,6 +34,10 @@
         required: true
       },
       userAnswers: {
+        type: Object,
+        required: true
+      },
+      selectedAnswers: {
         type: Object,
         required: true
       },

@@ -16,7 +16,8 @@
         <UserGroupedQuestion v-for="group in groupedEntries"
                              :key="group.id"
                              :group="group"
-                             :userAnswers="userAnswers"/>
+                             :userAnswers="userAnswers"
+                             :selectedAnswers="selectedAnswers"/>
 
         <UserFormEntry v-for="entry in singleEntries"
                        :key="entry.id"
@@ -41,14 +42,18 @@
         <UserGroupedQuestion v-for="group in groupedEntries"
                              :key="group.id"
                              :group="group"
-                             :userAnswers="userAnswers"/>
+                             :userAnswers="userAnswers"
+                             :selectedAnswers="selectedAnswers"/>
 
       </div>
 
       <div v-else-if="filter === 'grid'">
 
         <UserEntryGrid :entries="sortedEntries"
-                       :userAnswers="userAnswers"></UserEntryGrid>
+                       :userAnswers="userAnswers"
+                       :selectedAnswers="selectedAnswers">
+
+        </UserEntryGrid>
 
       </div>
     </div>
@@ -111,13 +116,15 @@
           </div>
 
           <div class="user-form-utils-buttons-wrapper">
+            <user-close-form class="user-form-close-button" v-if="isEntryPoint" />
+
             <button class="user-form-save-button" @click="saveAnswers" type="button">
               <i class="material-icons md-36">save</i>
             </button>
 
             <InviteModal class="user-form-invite-button" v-if="user"/>
 
-            <user-close-form class="user-form-close-button" v-if="isEntryPoint" />
+
           </div>
         </div>
 

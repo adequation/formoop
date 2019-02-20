@@ -59,9 +59,6 @@ describe('SignIn.vue', () => {
 
 
     wrapper.vm.signIn();
-    //expect(stub).toBeCalledWith("/home");
-
-
   });
 
 });
