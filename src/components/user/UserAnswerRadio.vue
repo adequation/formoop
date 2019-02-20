@@ -21,7 +21,7 @@
     name: 'AnswerRadio',
     data() {
       return {
-        selectedAnswers: this.currentUserAnswers || null
+        selectedAnswers: this.currentSelectedAnswers || (this.currentUserAnswers || null)
       }
     },
     props: {
@@ -34,6 +34,10 @@
         required: true
       },
       currentUserAnswers: {
+        type: String,
+        required: false
+      },
+      currentSelectedAnswers: {
         type: String,
         required: false
       }

@@ -1,35 +1,33 @@
 <template>
-  <div :class="hasAnswers && user ? 'user-form-entry-answered' : 'user-form-entry'">
+  <div
+    :class="inConflict && user ? 'user-form-entry-conflicted' : hasAnswers && user ? 'user-form-entry-answered' : 'user-form-entry'">
 
-    <div :class="['answered-by-wrapper', user && hasAnswers ?
+    <div :class="['answered-by-wrapper', inConflict && user ? 'answered-by-conflict' : user && hasAnswers ?
                 (showAnswers ? 'answered-by-opened' : 'answered-by') : 'answered-by-disabled' ]">
 
       <button type="button" @click="switchAnswersView" title="Voir les réponses" :disabled="!user">
-        {{currentEntryAnswers ? Object.keys(currentEntryAnswers).length : ''}} <i class="material-icons md-18">face</i>
+        <div class="answered-by-content" v-if="!showAnswers">{{currentEntryAnswers ?
+          Object.keys(currentEntryAnswers).length : ''}} <i class="material-icons md-18">face</i></div>
+        <div class="answered-by-content" v-else><i class="material-icons md-18">close</i></div>
       </button>
 
     </div>
 
-    <UserQuestionTitle :question="entry.question" display="small"/>
+    <UserQuestionTitle :question="entry.question"/>
 
-    <div class="answered-by-list-wrapper" v-if="showAnswers">
-      <div class="answered-by-list" v-if="showAnswers">
 
-        <div class="answered-by-list-item" v-for="(userID,i) in Object.keys(otherUserAnswers)">
-
-          <p>
-            <span class="user-name-text">{{getUserName(userID)}}</span>
-            :
-            <span class="user-answer-text">{{answerText(otherUserAnswers[userID])}}</span>
-          </p>
-
-          <hr v-if="i < Object.keys(otherUserAnswers).length-1" class="user-answer-text-separator"/>
-        </div>
-
-      </div>
+    <div v-if="showAnswers && hasAnswers">
+      <UserEntryAnswersDetails
+        :entry="entry"
+        :userAnswers="userAnswers"></UserEntryAnswersDetails>
     </div>
 
-    <UserAnswer :answer="entry.answer" :entryID="entry.id" :userAnswers="userAnswers" display="small"/>
+    <div v-else>
+      <UserAnswer :answer="entry.answer" :entryID="entry.id" :userAnswers="userAnswers"
+                  :selectedAnswers="selectedAnswers"
+                  display="small"/>
+    </div>
+
   </div>
 </template>
 
@@ -37,10 +35,13 @@
   import UserQuestionTitle from '@/components/user/UserQuestionTitle'
   import UserAnswer from '@/components/user/UserAnswer'
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
+  import UserEntryAnswersDetails from "@/components/user/UserEntryAnswersDetails";
+  import {isEntryInConflict} from "@/helpers/userAnswersHelpers";
+  import {setSelectedAnswerFB} from "@/thunks/userFormEntriesThunks";
 
   export default {
     name: 'FormEntry',
-    components: {UserAnswer, UserQuestionTitle},
+    components: {UserEntryAnswersDetails, UserAnswer, UserQuestionTitle},
     data() {
       return {
         showAnswers: false
@@ -55,12 +56,17 @@
         type: Object,
         required: true
       },
+      selectedAnswers: {
+        type: Object,
+        required: true
+      },
       display: {
         type: String,
         required: false
       }
     },
     computed: {
+
       user() {
         return this.$store.getters.user;
       },
@@ -76,8 +82,8 @@
         return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.id] : {};
       },
 
-      hasAnswered() {
-        return this.user ? !!this.currentUserAnswers : false;
+      inConflict() {
+        return isEntryInConflict(this.entry.id, this.userAnswers);
       },
 
       hasAnswers() {
@@ -102,15 +108,8 @@
     },
     methods: {
 
-      getUserName(userID) {
-        const user = this.invitedUsers[userID];
-        if (!user) return 'Anonyme';
-
-        return user.name;
-      },
-
       switchAnswersView() {
-        if (Object.keys(this.otherUserAnswers).length > 0)
+        if (this.hasAnswers)
           this.showAnswers = !this.showAnswers;
       },
 
@@ -136,7 +135,7 @@
 
         return '';
       }
-    }
+    },
   }
 
   /**/
@@ -154,13 +153,23 @@
   }
 
   .user-form-entry-answered {
-    background-color: #e1f5eb;
+    background-color: #f6f6f6;
 
     margin: 0.5em auto;
     padding: 0.5em;
     width: 75%;
 
     border-left: 7px solid #42b983;
+  }
+
+  .user-form-entry-conflicted {
+    background-color: #f6f6f6;
+
+    margin: 0.5em auto;
+    padding: 0.5em;
+    width: 75%;
+
+    border-left: 7px solid tomato;
   }
 
   .answered-by-list-wrapper {
@@ -214,6 +223,13 @@
     position: absolute;
   }
 
+  .answered-by-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   .answered-by button {
     color: #fff;
 
@@ -233,6 +249,25 @@
     background: #2d8246;
   }
 
+  .answered-by-conflict button {
+    color: #fff;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: large;
+    background: tomato;
+    border: none;
+
+    border-radius: 15px;
+  }
+
+  .answered-by-conflict button:hover {
+    background: #e24536;
+  }
+
   .answered-by-opened button {
     color: #fff;
 
@@ -242,7 +277,7 @@
     align-items: center;
 
     font-size: large;
-    background: #2d8246;
+    background: #42b983;
     border: none;
 
     border-radius: 15px;
