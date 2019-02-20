@@ -12,6 +12,7 @@ import FormCampaign from '@/components/general/FormCampaign'
 import CreatorCampaign from '@/components/creator/CreatorCampaign'
 
 import Firebase from 'firebase';
+import CreatorClosedForms from "../components/creator/CreatorClosedForms";
 
 Vue.use(Router);
 
@@ -119,6 +120,15 @@ const router = new Router({
       path: '/monitor/:formID',
       name: 'SupervisorDashboard',
       component: SupervisorDashboard,
+      meta: {
+        requiresAuth: true,
+        any: false
+      }
+    },
+    {
+      path: '/closed/',
+      name: 'ClosedForms',
+      component: CreatorClosedForms,
       meta: {
         requiresAuth: true,
         any: false

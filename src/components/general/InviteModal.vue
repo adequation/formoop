@@ -33,7 +33,8 @@
                       :before-body="getInvitationContent()" :after-body="user.email"
                       :formID="formID"
                       :sender="user"
-                      :selectedUser="selectedUser"/>
+                      :selectedUser="selectedUser"
+                      :call-back="inviteUsers"/>
 
         </div>
 
@@ -49,6 +50,7 @@
   import Modal from "@/components/containers/Modal";
   import {getInvitationText, sendMailWithSocket} from "@/helpers/mailHelpers";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
+  import {inviteUser} from "../../thunks/userAccountThunks";
 
   export default {
     name: "InviteModal",
@@ -77,6 +79,9 @@
       }
     },
     methods: {
+      inviteUsers({userID, formID, metadata}){
+        inviteUser(userID, formID, metadata);
+      },
       getInvitationContent() {
         return getInvitationText(this.formTitle, this.user.name)
       },

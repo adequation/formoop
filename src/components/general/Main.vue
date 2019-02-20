@@ -4,6 +4,7 @@
 
     <Profile/>
 
+    <p><router-link to="/closed">Formulaires Finis</router-link></p>
     <p><router-link to="/create">Formulaires créés</router-link></p>
     <p><router-link to="/published">Formulaires en cours</router-link></p>
     <p><router-link to="/campaigns">Campagnes de formulaires</router-link></p>

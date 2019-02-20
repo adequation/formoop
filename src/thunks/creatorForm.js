@@ -40,9 +40,10 @@ export const setFormsCampaignFB = (campaignID, forms) => {
 };
 
 const writePublishedCreatorFormFB = (form) => {
-  return Firebase.database().ref(publishingPath.concat(form.id))
+    return Firebase.database().ref(publishingPath.concat(form.id))
     .set(form);
 };
+
 
 const parseFormToUser = (form) => {
   const parsedForm = {id: form.id, title: form.title};
@@ -127,8 +128,6 @@ const parseGenericFormToUser = (form, entity) => {
   const entriesObject = {};
   form.entries.forEach(e => {
 
-
-
     if (e.generic) {
       if(e.grouped) e.group = uuid.v4();
 
@@ -161,6 +160,8 @@ const generateAndPublishForms = (creatorForm, entities) => {
   return createdForms;
 };
 
+
+
 export const publishGenericFormsFB = (creatorID, formID, entities, campaignID = null) => {
 
   //we fetch the form in firebase
@@ -190,6 +191,130 @@ export const publishCreatorFormFB = (creatorID, formID) => {
       if (value) {
         const parsedForm = parseFormToUser(value);
         writePublishedCreatorFormFB(parsedForm);
+      }
+    });
+
+};
+
+
+/////////////// GENERATE ////
+
+//Only generate
+const writeGeneratedCreatorFormFB = (creatorID, form) => {
+  return Firebase.database().ref(getCreatedFormFromID(creatorID, form.id))
+    .set(form);
+};
+
+//Only Generate
+const parseGenericEntryToCreator = (entry, entity) => {
+  const parsedEntries = [];
+  let parsedEntry = {...entry};
+
+  //we get the desired property
+  const prop = entity[parsedEntry.genericProperty];
+
+  delete parsedEntry.generic;
+
+  //create a question for each property element
+  if (prop.constructor === Array) {
+    prop.map(p => {
+      const question =
+        {
+        title: parsedEntry.question.blocks.map(block => {
+          if (block.type === 'variable') {
+            return p[block.content];
+          }
+          return block.content
+        }).join(' ')
+      };
+
+      parsedEntries.push(
+        {
+          ...parsedEntry,
+          id: uuid.v4(),
+          question: {...question},
+          type: parsedEntry.type,
+          answers: parsedEntry.answers
+        }
+      );
+    })
+  } else {
+    const question = {
+      title: parsedEntry.question.blocks.map(block => {
+        if (block.type === 'variable') {
+          return prop[block.content];
+        }
+        return block.content
+      }).join(' ')
+    };
+
+    parsedEntries.push(
+      {
+        ...parsedEntry,
+        question: {...question},
+        type: parsedEntry.type,
+        answers: parsedEntry.answers
+      }
+    );
+  }
+
+  return parsedEntries;
+};
+
+//Only Generate
+const parseGenericFormToCreator = (form, entity) => {
+  const parsedForm = {id: uuid.v4(), title: form.title};
+
+  //parse entries
+  const entriesObject = {};
+  form.entries.forEach(e => {
+
+    if (e.generic) {
+      if(e.grouped) e.group = uuid.v4();
+
+      const parsedEntries = parseGenericEntryToCreator(e, entity);
+      parsedEntries.forEach(pe => {
+        entriesObject[pe.id] = {...pe};
+      });
+    }
+    else {
+      entriesObject[e.id] = {...e, answers: e.answers, type: e.type};
+    }
+  });
+
+  parsedForm.entries = Object.values(entriesObject);
+
+  return parsedForm;
+};
+
+//Only generated
+const generateForms = (creatorID, creatorForm, entities) => {
+  const createdForms = [];
+
+  Object.keys(entities).forEach(entityKey => {
+    const parsedForm = parseGenericFormToCreator(creatorForm, entities[entityKey]);
+    writeGeneratedCreatorFormFB(creatorID, parsedForm);
+
+    createdForms.push({id: parsedForm.id, title: parsedForm.title});
+  });
+
+  return createdForms;
+};
+
+//Generate only
+export const generateGenericFormsFB = (creatorID, formID, entities, campaignID = null) => {
+  //we fetch the form in firebase
+  //then we save it into user's datas
+  return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
+    .on('value', function (snapshot) {
+      const value = snapshot.val();
+      if (value) {
+        const createdForms = generateForms(creatorID, value, entities);
+
+        if(campaignID){
+          console.log('ccc', campaignID, createdForms);
+          setFormsCampaignFB(campaignID,  createdForms);
+        }
       }
     });
 
