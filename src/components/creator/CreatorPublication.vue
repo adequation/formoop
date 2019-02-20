@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <button type="button" class="creator-form-save-button"
+    <button type="button" class="creator-form-save-button" title="Publier le formulaire"
             @click="publishForm"><i class="material-icons md-36">send</i></button>
 
     <JsonImportModal :show-modal="showJsonImportModal" :form-entries="this.formEntries" :save-form="this.saveForm" @close="closeJsonImportModal"/>
