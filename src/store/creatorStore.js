@@ -55,8 +55,8 @@ export default {
           .on('value', (snapshot) => {
             const value = snapshot.val();
             if(value){
-              const forms = Object.keys(value).map(form => value[form]);
-              state.finishedForms = forms.filter(form => state.createdForms.filter(Cform => Cform.id === form.id))
+              const closedforms = Object.keys(value).map(form => value[form]);
+              state.finishedForms = closedforms.filter(form => !!state.createdForms.find(Cform => Cform.id === form.id))
             }
           })
       }
