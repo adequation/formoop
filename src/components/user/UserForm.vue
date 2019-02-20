@@ -21,7 +21,8 @@
         <UserFormEntry v-for="entry in singleEntries"
                        :key="entry.id"
                        :entry="entry"
-                       :userAnswers="userAnswers || {}"/>
+                       :userAnswers="userAnswers || {}"
+                       :selectedAnswers="selectedAnswers"/>
 
       </div>
 
@@ -30,7 +31,8 @@
         <UserFormEntry v-for="entry in singleEntries"
                        :key="entry.id"
                        :entry="entry"
-                       :userAnswers="userAnswers || {}"/>
+                       :userAnswers="userAnswers || {}"
+                       :selectedAnswers="selectedAnswers"/>
 
       </div>
 
@@ -130,7 +132,7 @@
 
 <script>
   import UserFormEntry from '@/components/user/UserFormEntry'
-  import {setSelectedAnswersFB} from '@/thunks/userFormEntriesThunks'
+  import {setSelectedAnswerFB, setSelectedAnswersFB} from '@/thunks/userFormEntriesThunks'
   import InviteModal from "@/components/general/InviteModal";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import UserGroupedQuestion from "@/components/user/UserGroupedQuestion";
@@ -173,7 +175,11 @@
             sortingLayer: 0,
             sort: (a, b) => b.question.title.localeCompare(a.question.title)
           },
-          {
+        ],
+
+        /*
+
+        {
             name: 'answered',
             description: 'Avec réponse en premier',
             icon: 'expand_less',
@@ -206,7 +212,8 @@
               return 0;
             }
           },
-        ],
+
+         */
 
         searchQuery: '',
 
@@ -263,12 +270,12 @@
         else return [];
       },
 
-      sortedEntries () {
+      sortedEntries() {
         //we copy entries before sorting because Vue does not detect array swapping
-        let entries = this.sectionSearchFilteredFormEntries.map(e=>e);
+        let entries = this.sectionSearchFilteredFormEntries.map(e => e);
 
-        if(!entries) return [];
-        if(!this.selectedSorter) return entries;
+        if (!entries) return [];
+        if (!this.selectedSorter) return entries;
 
         entries = entries.sort(this.selectedSorter.sort);
 
@@ -382,7 +389,7 @@
         this.$store.dispatch('setUser', {userID: this.$route.params.userID});
       },
 
-      userAnswers(){
+      userAnswers() {
         this.$store.dispatch('setInvitedUsers')
       }
     }

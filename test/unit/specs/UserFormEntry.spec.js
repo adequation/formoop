@@ -41,7 +41,8 @@ describe('UserFormEntry.vue', () => {
   const vm = mount(UserFormEntry, {
     propsData: {
       entry : mockEntry,
-      userAnswers : {}
+      userAnswers : {},
+      selectedAnswers : {}
     },
     store
   });

@@ -9,6 +9,11 @@ export const setSelectedAnswersFB = (formID, answers, userID) => {
     })
 };
 
+export const setSelectedAnswerFB = (formID, entryID, answers, userID) => {
+  const userAnswer = answers[entryID];
+  return Firebase.database().ref(getEntryAnsweringPath(formID, entryID, userID)).set(userAnswer);
+};
+
 export const deleteUserAnswerFB = (formID, entryID, userID) => {
   Firebase.database().ref(getEntryAnsweringPath(formID, entryID, userID))
     .remove().then( (e) => {})

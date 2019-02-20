@@ -1,7 +1,7 @@
 <template>
   <div>
     <textarea class="user-answer-textarea" v-model="selectedAnswers" v-on:input="onChange($event.target)" title="">
-      {selectedAnswers}
+      {{selectedAnswers || ''}}
     </textarea>
   </div>
 </template>
@@ -11,7 +11,9 @@
     name: 'UserAnswerTextarea',
     data() {
       return {
-        selectedAnswers: this.currentUserAnswers || ''
+        selectedAnswers: this.currentSelectedAnswers !== null ?
+          this.currentSelectedAnswers || (this.currentUserAnswers || null) :
+          this.currentSelectedAnswers
       }
     },
     props: {
@@ -22,11 +24,15 @@
       currentUserAnswers: {
         type: String,
         required: false
+      },
+      currentSelectedAnswers: {
+        type: String,
+        required: false
       }
     },
     methods: {
       onChange: function (target) {
-        this.selectedAnswers = target.value;
+        this.selectedAnswers = target.value || null;
         this.setSelectedAnswers()
       },
       setSelectedAnswers: function () {

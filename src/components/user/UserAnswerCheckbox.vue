@@ -31,11 +31,16 @@
       currentUserAnswers: {
         type: Array,
         required: false
+      },
+      currentSelectedAnswers: {
+        type: Array,
+        required: false
       }
     },
     data() {
       return {
-        selectedAnswers: this.currentUserAnswers || []
+        selectedAnswers: this.currentSelectedAnswers ? this.currentSelectedAnswers.slice() :
+          (this.currentUserAnswers ? this.currentUserAnswers.slice() : [])
       }
     },
     methods: {
@@ -56,9 +61,10 @@
     },
     watch:{
       currentUserAnswers: function (val) {
-        this.selectedAnswers = val || [];
+        console.log(val)
+        this.selectedAnswers = val ? val.slice() || [] : [];
         this.setSelectedAnswers();
-      }
+      },
     }
   }
 

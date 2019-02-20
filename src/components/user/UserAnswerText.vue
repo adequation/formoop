@@ -11,7 +11,9 @@
     name: 'UserAnswerText',
     data() {
       return {
-        selectedAnswers: this.currentUserAnswers || null
+        selectedAnswers: this.currentSelectedAnswers !== null ?
+          this.currentSelectedAnswers || (this.currentUserAnswers || null) :
+          this.currentSelectedAnswers
       }
     },
     props: {
@@ -20,6 +22,10 @@
         required: true
       },
       currentUserAnswers: {
+        type: String,
+        required: false
+      },
+      currentSelectedAnswers: {
         type: String,
         required: false
       }
