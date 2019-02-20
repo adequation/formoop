@@ -14,7 +14,7 @@
 
         <div v-if="isAllAnswered">
           <h3>Attention vous allez fermer le sondage, il sera impossible de modifier ou ajouter des réponses après cette action.</h3>
-          <h3>Etes vous sûr de vouloir clore le sondage ?</h3>
+          <h3>Êtes vous sûr de vouloir clore le sondage ?</h3>
 
           <span>
             <button class="button-refuse-close" type="button" @click="showModal = false">NON</button>

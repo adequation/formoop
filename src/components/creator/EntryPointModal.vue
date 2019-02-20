@@ -1,6 +1,6 @@
 <template>
   <Modal v-if="showModal" @close="closeModal">
-    <h3 slot="header">Inviter le Point d'entré</h3>
+    <h3 slot="header">Inviter le Point d'entrée</h3>
 
     <div slot="body">
       <MailSender :before-body="getInvitationContent()" :call-back="inviteEntry" :is-entry-point="true" :sender="{name: user.displayName ,email: user.email}" :formID="formID"/>
