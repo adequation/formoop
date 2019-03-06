@@ -40,7 +40,7 @@
 
             <span>
               <button class="button-refuse-close" type="button" @click="showModal = false">NON</button>
-              <button class="button-accept-close" type="button" @click="this.closeForm">OUI</button>
+              <button class="button-accept-close" type="button" @click="closeForm">OUI</button>
             </span>
 
           </div>
@@ -81,7 +81,7 @@
         closeForm() {
 
           closePublishedForm(this.formID);
-          this.redirect('/home')
+          this.redirect('/closedForm')
         },
       }
     }

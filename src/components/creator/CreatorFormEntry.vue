@@ -30,7 +30,7 @@
 
           <button type="button"
                   :class="['creator-form-entry-requirement', entry.required ? 'creator-form-entry-required' : 'creator-form-entry-not-required']"
-                  title="Rendre obligatoire"
+                  title="Rendre important"
                   @click="onChangeRequirement">*
           </button>
         </div>
