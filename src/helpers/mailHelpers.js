@@ -21,6 +21,5 @@ export function getInvitationEntryPointText(formName, userDisplayName, formURL){
   return 'Vous avez été invité '
     .concat('à participer et à animer le formulaire \n ')
     .concat('<strong>' + formName + '</strong>. </br>')
-    .concat('En tant qu\'animateur, vous aurez la responsabilité d\'inviter vos colègues au sondage mais aussi de clore celui-ci une fois terminé. \n')
-    .concat('Rejoignez ici : ');
+    .concat('En tant qu\'animateur, vous aurez la responsabilité d\'inviter vos colègues au sondage mais aussi de clore celui-ci une fois terminé. \n');
 }
