@@ -107,4 +107,8 @@
     align-items: center;
   }
 
+  .user-close-form-button:hover {
+    background: #276a35;
+  }
+
 </style>

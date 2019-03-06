@@ -1,6 +1,6 @@
 <template>
   <div class="invite-modal">
-    <button id="show-modal" class="invite-modal-show-button" @click="showModal = true">
+    <button id="show-modal" class="invite-modal-show-button" @click="showModal = true" title="Inviter au formulaire">
       <i class="material-icons md-36">person</i>
     </button>
 

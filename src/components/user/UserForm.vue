@@ -118,7 +118,7 @@
           <div class="user-form-utils-buttons-wrapper">
             <user-close-form class="user-form-close-button" v-if="isEntryPoint" />
 
-            <button class="user-form-save-button" @click="saveAnswers" type="button">
+            <button class="user-form-save-button" @click="saveAnswers" type="button" title="Enregistrer le formulaire">
               <i class="material-icons md-36">save</i>
             </button>
 
