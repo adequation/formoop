@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="finishedForms.length > 0">
-      <h3>Formulaires finis :</h3>
+      <h3>Formulaires terminés :</h3>
 
       <p v-for="form in finishedForms">
         <a :href="JsonConvert(form)" :download="form.title + '.json'"> {{ form.title }}</a>
@@ -23,9 +23,8 @@
         },
       },
       methods: {
-        /**
-         * @return {string}
-         */
+
+        /**  @return {string} */
         JsonConvert(form){
           return "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.JsonParsing(form), null, 2));
         },

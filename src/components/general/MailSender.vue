@@ -1,31 +1,34 @@
 <template>
-  <div class="mail-sender">
 
-    <form class="mail-form" v-if="!selectedUser">
+    <div class="mail-form" v-if="!selectedUser">
 
-      <span>
+      <div class="mail-addresses-input-wrapper">
         <input class="mail-addresses-input"
                type="email"
-               placeholder="Adresses email"
+               placeholder="Adresse email"
                v-model="currentMailAdress"/>
         <button type="button" @click="addAdressToPool"> + </button>
-      </span>
-
-      <div v-for="(a,i) in mailAddresses">
-        <span>
-          <p>{{a}}
-          <button type="button" @click="deleteAdress(i)"> x </button>
-          </p>
-        </span>
       </div>
 
-      <div>
-        <input class="mail-subject-input" type="text" placeholder="Sujet du mail"
+
+
+      <div class="mail-addresses-input-wrapper">
+        <table class="mail-adress-table">
+          <tr v-for="(a,i) in mailAddresses">
+            <td>{{a}}</td>
+            <td><button type="button" @click="deleteAdress(i)">
+            <i class="material-icons md-18">close</i>
+            </button></td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="mail-body-wrapper">
+        <input class="mail-subject-input"
+               type="text"
+               placeholder="Sujet du mail"
                v-model="mailSubject"/>
-      </div>
-
-      <div>
-        <textarea class="mail-content-textarea"
+        <textarea class="mail-body-input"
                   title=""
                   placeholder="Contenu du mail (facultatif)"
                   v-model="mailContent"
@@ -39,7 +42,7 @@
       </div>
 
 
-    </form>
+    </div>
 
     <div v-else>
       <h2>Envoyer un message à {{selectedUser.name}}</h2>
@@ -58,7 +61,6 @@
     </div>
 
 
-  </div>
 </template>
 
 <script>
@@ -73,7 +75,7 @@
       return {
         currentMailAdress: '',
         mailAddresses: [],
-        mailSubject: '',
+        mailSubject: 'Invitation Formoop',
         mailContent: '',
 
         mailerURL: 'localhost:3000',
@@ -191,14 +193,6 @@
 </script>
 
 <style scoped>
-  div {
-    margin: 1em;
-  }
-
-  textarea {
-    border: 1px solid #00000033;
-    border-radius: 5px;
-  }
 
   .send-mail-button {
     padding: 0.5em;
@@ -211,8 +205,89 @@
     border: none;
   }
 
+  .mail-subject-input {
+    width : 100%;
+    margin-bottom: 0.5em;
+  }
 
   .send-mail-button:hover {
     color: #3462ad;
   }
+
+  .mail-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    overflow: auto;
+    max-height: 500px;
+    min-width: 300px;
+  }
+
+  .mail-addresses-input-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    margin-bottom: 0.5em;
+  }
+
+  .mail-adress-table {
+    overflow-y: scroll;
+    max-width: 50%;
+    max-height: 500px;
+
+    text-align: left;
+    border-collapse: collapse;
+    table-layout:fixed;
+  }
+
+  .mail-adress-table tr:hover {
+    background-color: #eeeeee;
+  }
+
+  .mail-adress-table caption {
+    font-weight: bold;
+    font-size: large;
+  }
+
+  .mail-adress-table td {
+    padding-left: 5px;
+    padding-top: 0.25em;
+    padding-bottom:0.25em;
+
+    width: 200px;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+  }
+
+  .mail-body-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0.5em;
+
+  }
+  .mail-body-input {
+    border: 1px solid #00000033;
+    resize: none;
+    width: 100%;
+  }
+
+  .mail-adress-table button {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+
 </style>

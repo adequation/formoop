@@ -21,7 +21,9 @@
            @contextmenu="swapType(block, $event)">
 
         <input title="" type="text" v-model="block.content" size="12"/>
-        <button type="button" @click="deleteBlock(block)">✖</button>
+        <button type="button" class="generic-question-delete-block"@click="deleteBlock(block)">
+          <i class="material-icons md-18">close</i>
+        </button>
 
       </div>
 
@@ -108,7 +110,7 @@
     width: auto;
     display: inline-block;
     padding: 0.2em 0.5em 0.2em 0.5em;
-    margin: 0 0.1em 0 0.1em;
+    margin: 0.1em;
     font-size: large;
     border-radius: 20px 20px 20px 20px;
   }
@@ -144,6 +146,10 @@
 
   .variable-block-input:focus {
     background-color: rgba(100, 175, 255, 1);
+  }
+
+  .generic-question-block-grouped {
+
   }
 
 </style>

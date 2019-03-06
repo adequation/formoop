@@ -31,10 +31,10 @@
       </div>
       <div class="user-answer-tools">
 
-        <button v-if="currentUserAnswers ? currentUserAnswers : false" class="delete-answer-button" type="button"
+        <button v-if="currentUserAnswers ? currentUserAnswers : false" class="delete-answer-button" type="button" title="Supprimer ma réponse"
                 @click="deleteAnswer"><i class="material-icons">delete</i>
         </button>
-        <button v-if="isUpdated" class="save-answer-button-updated" type="button"
+        <button v-if="isUpdated" class="save-answer-button-updated" type="button"  title="Enregistrer ma réponse"
                 @click="saveAnswer"><i :class="['material-icons', isUpdated ? '' : '']">save</i>
         </button>
 

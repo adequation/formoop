@@ -123,16 +123,16 @@
   }
 
   .invite-wrapper {
-
-
     overflow: hidden;
-
     max-height: 500px;
+    min-width: 300px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
   }
 
-  .mail-sender {
-
-  }
 
   .invited-user-table-wrapper {
     overflow-y: scroll;
@@ -143,7 +143,6 @@
 
     text-align: left;
 
-    float: left;
   }
 
   .invited-user-table caption {
@@ -184,7 +183,6 @@
 
   .invited-user-table tr:hover {
     background-color: #eeeeee;
-
     overflow: auto;
   }
 
