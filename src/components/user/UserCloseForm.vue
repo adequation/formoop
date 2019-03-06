@@ -24,7 +24,7 @@
 
         <div v-else>
           <div v-if="!secondVerif">
-            <h2>Il reste des réponses importantes auxquelles vous n'avez pas encore répondu</h2>
+            <h2>Attention vous allez fermer le formulaire, il sera impossible de modifier ou ajouter des réponses après cette action.</h2>
             <h3>Etes vous sûr de vouloir clore le formulaire ?</h3>
 
             <span>
