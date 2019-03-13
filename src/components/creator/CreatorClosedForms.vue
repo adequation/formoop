@@ -35,7 +35,7 @@
 
           Object.keys(BrutForm.entries).forEach((entrykey) => {
             let answers = [];
-            if(BrutForm.usersAnswers !== undefined) {
+            if(BrutForm.usersAnswers) {
 
                 if (BrutForm.entries[entrykey].type === 'radio' || BrutForm.entries[entrykey].type === 'select') {
                   answers = BrutForm.entries[entrykey].answer.answers;
@@ -66,14 +66,21 @@
                     answers: answers,
                   });
             }
+            else{
+              newEntries.push(
+                {
+                  title: BrutForm.entries[entrykey].question.title,
+                  type: BrutForm.entries[entrykey].type,
+                  answers: answers,
+                }
+              )
+            }
           });
 
           Object.keys(BrutForm.users).forEach((userkey) => {
-
+            let givenAnswers = [];
 
             if (BrutForm.usersAnswers){
-              let givenAnswers = [];
-
               Object.keys(BrutForm.usersAnswers).forEach(formID =>
               Object.keys(BrutForm.usersAnswers[formID]).forEach(userID => {
                 if (userID === userkey)
@@ -108,6 +115,13 @@
               givenAnswers: givenAnswers,
             })
           }
+          else{
+            newUsers.push({
+              email: BrutForm.users[userkey].email,
+              name: BrutForm.users[userkey].name,
+              givenAnswers: givenAnswers,
+            })
+            }
           });
 
           return {
