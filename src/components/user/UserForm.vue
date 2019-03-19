@@ -1,5 +1,9 @@
 <template>
   <div class="form" v-if="formEntries">
+    <div class="user-form-close-button-wrapper">
+      <user-close-form class="user-form-close-button" v-if="isEntryPoint" />
+    </div>
+
     <h1>{{formTitle}}</h1>
     <h2>{{user ? user.name : 'Non connecté'}}</h2>
 
@@ -116,7 +120,6 @@
           </div>
 
           <div class="user-form-utils-buttons-wrapper">
-            <user-close-form class="user-form-close-button" v-if="isEntryPoint" />
 
             <button class="user-form-save-button" @click="saveAnswers" type="button" title="Enregistrer le formulaire">
               <i class="material-icons md-36">save</i>
@@ -124,14 +127,12 @@
 
             <InviteModal class="user-form-invite-button" v-if="user"/>
 
-
           </div>
         </div>
 
 
       </div>
     </DockingMenu>
-
 
   </div>
   <div v-else>
@@ -618,5 +619,12 @@
     border-right: 1px solid #00000055;
     height: 60px;
     top: 10px;
+  }
+
+  .user-form-close-button-wrapper{
+    top:5px;
+    right:0;
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
   }
 </style>

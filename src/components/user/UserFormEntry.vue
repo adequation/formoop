@@ -1,20 +1,23 @@
 <template>
   <div
-    :class="inConflict && user ? 'user-form-entry-conflicted' : hasAnswers && user ? 'user-form-entry-answered' : 'user-form-entry'">
+      :class="['smooth',
+      'user-form-entry',
+      inConflict && user ? 'user-form-entry-conflicted' :
+      hasAnswers && user ? 'user-form-entry-answered' :
+      'user-form-entry-default'
+    ]">
 
-    <div :class="['answered-by-wrapper', inConflict && user ? 'answered-by-conflict' : user && hasAnswers ?
+    <div :class="['smooth', 'answered-by-wrapper', inConflict && user ? 'answered-by-conflict' : user && hasAnswers ?
                 (showAnswers ? 'answered-by-opened' : 'answered-by') : 'answered-by-disabled' ]">
 
       <button type="button" @click="switchAnswersView" title="Voir les réponses" :disabled="!user">
-        <div class="answered-by-content" v-if="!showAnswers">{{currentEntryAnswers ?
-          Object.keys(currentEntryAnswers).length : ''}} <i class="material-icons md-18">face</i></div>
-        <div class="answered-by-content" v-else><i class="material-icons md-18">close</i></div>
+        <div class="answered-by-content" > {{!showAnswers && currentEntryAnswers ?
+          Object.keys(currentEntryAnswers).length : ''}} <i class="material-icons md-18 smooth">{{!showAnswers ? 'face' : 'close'}}</i></div>
       </button>
 
     </div>
 
     <UserQuestionTitle :question="entry.question"/>
-
 
     <div v-if="showAnswers && hasAnswers">
       <UserEntryAnswersDetails
@@ -145,30 +148,28 @@
   .user-form-entry {
     background-color: #f6f6f6;
     margin: 0.5em auto;
-    padding: 0.5em;
+    padding: 0.3em;
 
     width: 75%;
 
     border-left: 7px solid #aaaaaa;
+
+  }
+
+  .user-form-entry:hover {
+
+  }
+
+  .user-form-entry-default {
+    background-color: #f6f6f6;
   }
 
   .user-form-entry-answered {
-    background-color: #f6f6f6;
-
-    margin: 0.5em auto;
-    padding: 0.5em;
-    width: 75%;
 
     border-left: 7px solid #42b983;
   }
 
   .user-form-entry-conflicted {
-    background-color: #f6f6f6;
-
-    margin: 0.5em auto;
-    padding: 0.5em;
-    width: 75%;
-
     border-left: 7px solid tomato;
   }
 
@@ -220,7 +221,6 @@
   .answered-by-wrapper {
     float: left;
     margin: 1em;
-    position: absolute;
   }
 
   .answered-by-content {
@@ -243,6 +243,9 @@
     border: none;
 
     border-radius: 15px;
+
+    box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 0px 0px;
+
   }
 
   .answered-by button:hover {
@@ -262,6 +265,9 @@
     border: none;
 
     border-radius: 15px;
+
+    box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 0px 0px;
+
   }
 
   .answered-by-conflict button:hover {
@@ -281,6 +287,9 @@
     border: none;
 
     border-radius: 15px;
+
+    box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 0px 0px;
+
   }
 
   .answered-by-opened button:hover {
@@ -300,6 +309,9 @@
     border: none;
 
     border-radius: 15px;
+
+    box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 0px 0px;
+
   }
 
   .answered-by-disabled button:hover {

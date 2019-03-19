@@ -1,29 +1,28 @@
 <template>
-  <div class="user-answer">
     <div>
       <!-- && invited !-->
-      <div v-if="answer.type === 'textarea'">
+      <div class="user-answer" v-if="answer.type === 'textarea'">
         <UserAnswerTextarea :entryID="entryID"
                             :currentUserAnswers="currentUserAnswers"
                             :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
-      <div v-if="answer.type === 'text'">
+      <div class="user-answer" v-if="answer.type === 'text'">
         <UserAnswerText :entryID="entryID"
                         :currentUserAnswers="currentUserAnswers"
                         :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
-      <div v-if="answer.type === 'radio'">
+      <div class="user-answer" v-if="answer.type === 'radio'">
         <UserAnswerRadio :answers="answer.answers"
                          :entryID="entryID" :currentUserAnswers="currentUserAnswers"
                          :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
-      <div v-if="answer.type === 'checkbox'">
+      <div class="user-answer" v-if="answer.type === 'checkbox'">
         <UserAnswerCheckbox :answers="answer.answers"
                             :entryID="entryID"
                             :currentUserAnswers="currentUserAnswers"
                             :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
-      <div v-if="answer.type === 'select'">
+      <div class="user-answer" v-if="answer.type === 'select'">
         <UserAnswerSelect :answers="answer.answers"
                           :entryID="entryID"
                           :currentUserAnswers="currentUserAnswers"
@@ -39,7 +38,6 @@
         </button>
 
       </div>
-    </div>
   </div>
 
 </template>
@@ -87,7 +85,6 @@
             || !this.selectedUserAnswers.every(a => userA.includes(a));
         }
 
-
         return userA !== this.selectedUserAnswers;
       }
     },
@@ -131,7 +128,6 @@
 <style scoped>
 
   .user-answer {
-    margin: 1em;
     display: inline;
   }
 
