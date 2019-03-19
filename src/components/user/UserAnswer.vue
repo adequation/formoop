@@ -28,16 +28,7 @@
                           :currentUserAnswers="currentUserAnswers"
                           :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
-      <div class="user-answer-tools">
 
-        <button v-if="currentUserAnswers ? currentUserAnswers : false" class="delete-answer-button" type="button" title="Supprimer ma réponse"
-                @click="deleteAnswer"><i class="material-icons">delete</i>
-        </button>
-        <button v-if="isUpdated" class="save-answer-button-updated" type="button"  title="Enregistrer ma réponse"
-                @click="saveAnswer"><i :class="['material-icons', isUpdated ? '' : '']">save</i>
-        </button>
-
-      </div>
   </div>
 
 </template>
@@ -111,16 +102,7 @@
       }
     },
     methods: {
-      deleteAnswer() {
-        deleteUserAnswerFB(this.$store.getters.getFormID, this.entryID, this.user.id);
-      },
 
-      saveAnswer() {
-        if (this.user)
-          setSelectedAnswerFB(this.formID, this.entryID, this.selectedAnswers, this.user.id);
-
-        else alert("Vous n'êtes pas connecté !");
-      },
     }
   }
 </script>
@@ -136,9 +118,10 @@
   }
 
   .user-answer-tools {
+    float: end;
     display: flex;
     flex-direction: row;
-    justify-content: right;
+    justify-content: flex-end;
     align-items: center;
   }
 

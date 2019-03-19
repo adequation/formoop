@@ -61,7 +61,6 @@
     },
     watch:{
       currentUserAnswers: function (val) {
-        console.log(val)
         this.selectedAnswers = val ? val.slice() || [] : [];
         this.setSelectedAnswers();
       },

@@ -1,8 +1,8 @@
 <template>
   <div class="form" v-if="formEntries">
-    <div class="user-form-close-button-wrapper">
+
       <user-close-form class="user-form-close-button" v-if="isEntryPoint" />
-    </div>
+
 
     <h1>{{formTitle}}</h1>
     <h2>{{user ? user.name : 'Non connecté'}}</h2>
@@ -74,7 +74,7 @@
       <div slot="body">
 
 
-        <div class="user-form-progress-bar"
+        <div class="user-form-progress-bar smooth"
              :style="{width: Math.floor(Object.keys(userAnswers).length/formEntries.length * 100) + '%'}">
         </div>
 
@@ -621,10 +621,5 @@
     top: 10px;
   }
 
-  .user-form-close-button-wrapper{
-    top:5px;
-    right:0;
-    position: -webkit-sticky; /* Safari */
-    position: sticky;
-  }
+
 </style>

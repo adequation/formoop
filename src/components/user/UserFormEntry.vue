@@ -1,18 +1,19 @@
 <template>
   <div
-      :class="['smooth',
+      :class="[
       'user-form-entry',
+      justConflicted ? 'shake' : '',
       inConflict && user ? 'user-form-entry-conflicted' :
       hasAnswers && user ? 'user-form-entry-answered' :
       'user-form-entry-default'
     ]">
 
-    <div :class="['smooth', 'answered-by-wrapper', inConflict && user ? 'answered-by-conflict' : user && hasAnswers ?
+    <div :class="['answered-by-wrapper', inConflict && user ? 'answered-by-conflict' : user && hasAnswers ?
                 (showAnswers ? 'answered-by-opened' : 'answered-by') : 'answered-by-disabled' ]">
 
       <button type="button" @click="switchAnswersView" title="Voir les réponses" :disabled="!user">
         <div class="answered-by-content" > {{!showAnswers && currentEntryAnswers ?
-          Object.keys(currentEntryAnswers).length : ''}} <i class="material-icons md-18 smooth">{{!showAnswers ? 'face' : 'close'}}</i></div>
+          Object.keys(currentEntryAnswers).length : ''}} <i class="material-icons md-18">{{!showAnswers ? 'face' : 'close'}}</i></div>
       </button>
 
     </div>
@@ -31,6 +32,17 @@
                   display="small"/>
     </div>
 
+    <div class="user-answer-tools">
+
+      <button v-if="currentUserAnswers ? currentUserAnswers : false" class="delete-answer-button" type="button" title="Supprimer ma réponse"
+              @click="deleteAnswer"><i class="material-icons">delete</i>
+      </button>
+      <button v-if="isUpdated" class="save-answer-button-updated" type="button"  title="Enregistrer ma réponse"
+              @click="saveAnswer"><i :class="['material-icons', isUpdated ? '' : '']">save</i>
+      </button>
+
+    </div>
+
   </div>
 </template>
 
@@ -40,14 +52,16 @@
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import UserEntryAnswersDetails from "@/components/user/UserEntryAnswersDetails";
   import {isEntryInConflict} from "@/helpers/userAnswersHelpers";
-  import {setSelectedAnswerFB} from "@/thunks/userFormEntriesThunks";
+  import {deleteUserAnswerFB, setSelectedAnswerFB} from "@/thunks/userFormEntriesThunks";
 
   export default {
     name: 'FormEntry',
     components: {UserEntryAnswersDetails, UserAnswer, UserQuestionTitle},
     data() {
       return {
-        showAnswers: false
+        showAnswers: false,
+
+        justConflicted: false
       }
     },
     props: {
@@ -108,6 +122,24 @@
       invitedUsers() {
         return this.$store.getters.invitedUsers;
       },
+
+      selectedUserAnswers(){
+        return this.selectedAnswers[this.entry.id];
+      },
+
+      isUpdated(){
+        const userA = this.currentUserAnswers || null;
+
+        if(this.selectedUserAnswers === undefined) return false;
+
+        if(Array.isArray(this.selectedUserAnswers)){
+          if(!Array.isArray(userA)) return this.selectedUserAnswers.length > 0;
+          return userA.length !== this.selectedUserAnswers.length
+            || !this.selectedUserAnswers.every(a => userA.includes(a));
+        }
+
+        return userA !== this.selectedUserAnswers;
+      }
     },
     methods: {
 
@@ -137,8 +169,25 @@
         }
 
         return '';
-      }
+      },
+
+      deleteAnswer() {
+        deleteUserAnswerFB(this.$store.getters.getFormID, this.entry.id, this.user.id);
+      },
+
+      saveAnswer() {
+        if (this.user)
+          setSelectedAnswerFB(this.$store.getters.getFormID, this.entry.id, this.selectedAnswers, this.user.id);
+
+        else alert("Vous n'êtes pas connecté !");
+      },
     },
+    watch : {
+      inConflict(){
+        this.justConflicted = this.inConflict;
+        setTimeout(() => { this.justConflicted = false; }, 500);
+      }
+    }
   }
 
   /**/
@@ -153,19 +202,13 @@
     width: 75%;
 
     border-left: 7px solid #aaaaaa;
-
   }
 
   .user-form-entry:hover {
 
   }
 
-  .user-form-entry-default {
-    background-color: #f6f6f6;
-  }
-
   .user-form-entry-answered {
-
     border-left: 7px solid #42b983;
   }
 
@@ -221,6 +264,7 @@
   .answered-by-wrapper {
     float: left;
     margin: 1em;
+    position: absolute;
   }
 
   .answered-by-content {
@@ -316,6 +360,64 @@
 
   .answered-by-disabled button:hover {
     background: #969696;
+  }
+
+  .user-answer-tools {
+    float: end;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .delete-answer-button {
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #00000055;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .delete-answer-button:hover {
+    background-color: tomato;
+  }
+
+  .save-answer-button {
+    background: none;
+    border: none;
+    color: #00000055;
+  }
+
+  .save-answer-button-updated {
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #00000055;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .save-answer-button-updated:hover {
+    background-color: #2d8246;
   }
 
 </style>

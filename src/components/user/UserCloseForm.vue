@@ -1,14 +1,17 @@
 <template>
 
   <div>
-    <button type="button"
-            title="Fermer le formulaire"
-            :class="['user-close-form-button', hovered ? 'shake' : '']"
-            @click="clickEvent"
-            @mouseover="hovered = true"
-            @mouseleave="hovered = false">
-      <i class="material-icons md-36 user-close-form-button-content">{{hovered ? 'lock' : 'lock_open'}}</i>
-    </button>
+    <div class="user-form-close-button-wrapper">
+      <button type="button"
+              title="Fermer le formulaire"
+              :class="['user-close-form-button', hovered ? 'shake' : '']"
+              @click="showModal = true;"
+              @mouseover="hovered = true"
+              @mouseleave="hovered = false">
+        <i class="material-icons md-36 user-close-form-button-content">{{hovered ? 'lock' : 'lock_open'}}</i>
+      </button>
+    </div>
+
 
     <Modal v-if="showModal" @close="showModal = false">
 
@@ -50,7 +53,7 @@
       </div>
 
     </Modal>
-  </div>
+    </div>
 
 </template>
 
@@ -87,9 +90,6 @@
           closePublishedForm(this.formID);
           this.redirect('/closedForm')
         },
-        clickEvent() {
-          this.showModal = true;
-        }
       }
     }
 </script>
@@ -116,6 +116,11 @@
 
   .user-close-form-button:hover {
     background: #e24536;
+  }
+
+  .user-form-close-button-wrapper{
+    top:5px;
+    position: fixed;
   }
 
 </style>
