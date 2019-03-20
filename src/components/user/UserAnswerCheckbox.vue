@@ -39,14 +39,13 @@
     },
     data() {
       return {
-        selectedAnswers: this.currentSelectedAnswers ? this.currentSelectedAnswers.slice() :
-          this.currentUserAnswers ? this.currentUserAnswers.slice()
-            : []
+        selectedAnswers: (this.currentUserAnswers || []).slice()
       }
     },
     methods: {
       onChange: function (answer, e) {
-        console.log('change')
+        console.log('changeTab', this.selectedAnswers);
+
         const index = this.selectedAnswers.indexOf(answer.id);
         if (index >= 0) {
           this.selectedAnswers.splice(index, 1)
@@ -59,14 +58,13 @@
       },
 
       setSelectedAnswers: function () {
+        console.log('setTab', this.selectedAnswers);
         this.$root.$emit('set-selected-answers', this.entryID, this.selectedAnswers)
       }
     },
     watch:{
       currentUserAnswers: function (val, old) {
-        console.log('watch', this.selectedAnswers, this.currentUserAnswers, val)
-
-        this.selectedAnswers = val ? val.slice() || [] : [];
+        this.selectedAnswers = (this.currentSelectedAnswers || val || []).slice()
         this.setSelectedAnswers();
       },
     }
@@ -83,7 +81,7 @@
     font-size: large;
     background: white;
     border: 1px solid #00000055;
-    padding: 0.2em 0.3em 0.1em 0.3em;
+    padding: 0.1em 0.3em 0.1em 0.3em;
 
     width: auto;
     overflow: hidden;
@@ -106,12 +104,10 @@
 
     cursor: pointer;
     font-size: large;
-    color: white;
-    background: #4286f4;
-    border: 1px solid #00000055;
-    padding: 0.2em 0.3em 0.1em 0.3em;
-
-    font-weight: 600;
+    background: white;
+    color:  #3C7ADF;
+    border: 2px solid #4286f4;
+    padding: 0.2em 0.3em 0.2em 0.3em;
 
     width: auto;
     overflow: hidden;
@@ -121,7 +117,7 @@
   }
 
   .user-answer-checkbox-selected:hover {
-    background: #3462ad;
+    background: #4286f422;
   }
 
   .user-answer-checkbox-content {

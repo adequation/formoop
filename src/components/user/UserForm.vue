@@ -24,17 +24,17 @@
                              :selectedAnswers="selectedAnswers"/>
 
         <UserFormEntry v-for="entry in singleEntries"
-                       :key="entry.id"
+                       :key="`all_single_${entry.id}`"
                        :entry="entry"
                        :userAnswers="userAnswers || {}"
                        :selectedAnswers="selectedAnswers"/>
 
       </div>
 
-      <div v-if="filter === 'singles'">
+      <div v-else-if="filter === 'singles'">
 
         <UserFormEntry v-for="entry in singleEntries"
-                       :key="entry.id"
+                       :key="`single_${entry.id}`"
                        :entry="entry"
                        :userAnswers="userAnswers || {}"
                        :selectedAnswers="selectedAnswers"/>
@@ -56,7 +56,6 @@
         <UserEntryGrid :entries="sortedEntries"
                        :userAnswers="userAnswers"
                        :selectedAnswers="selectedAnswers">
-
         </UserEntryGrid>
 
       </div>
@@ -356,7 +355,7 @@
       setSelectedAnswers(id, answers) {
         const tmp = {...this.selectedAnswers};
 
-        if(Array.isArray(answers))  tmp[id] = answers.slice();
+        if(Array.isArray(answers))  tmp[id] = answers;
           else tmp[id] = answers;
 
         this.selectedAnswers = tmp;
@@ -408,10 +407,6 @@
         this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
         this.$store.dispatch('setUser', {userID: this.$route.params.userID});
       },
-
-      userAnswers() {
-        this.$store.dispatch('setInvitedUsers')
-      }
     }
   }
 </script>

@@ -61,7 +61,7 @@
       currentUserAnswers() {
         if (!this.user) return null;
 
-        return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.id] : {};
+        return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.id] : null;
       },
 
       selectedUserAnswers(){

@@ -13,7 +13,7 @@
     <Modal v-if="focusedEntry" @close="closeModal">
       <div slot="body">
         <UserFormEntry
-          :key="focusedEntry.id"
+          :key="`grid_${focusedEntry.id}`"
           :entry="focusedEntry"
           :userAnswers="userAnswers || {}"
           :selectedAnswers="selectedAnswers"/>

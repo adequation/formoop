@@ -182,8 +182,9 @@
       },
 
       saveAnswer() {
-        if (this.user)
+        if (this.user){
           setSelectedAnswerFB(this.$store.getters.getFormID, this.entry.id, this.selectedAnswers, this.user.id);
+        }
 
         else alert("Vous n'êtes pas connecté !");
       },

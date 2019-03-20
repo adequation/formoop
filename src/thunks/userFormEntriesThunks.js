@@ -10,6 +10,8 @@ export const setSelectedAnswersFB = (formID, answers, userID) => {
 };
 
 export const setSelectedAnswerFB = (formID, entryID, answers, userID) => {
+  console.log("set-fb", answers)
+
   const userAnswer = answers[entryID];
 
   return Firebase.database().ref(getEntryAnsweringPath(formID, entryID, userID)).set(userAnswer);
