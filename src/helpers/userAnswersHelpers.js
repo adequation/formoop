@@ -114,3 +114,8 @@ export function cohesion(answers){
     (max * (means.length - 1))
   );
 }
+
+//return a the list of entries answered by a user
+export function answeredEntries(userID, userAnswers) {
+  return Object.keys(userAnswers).filter(key => Object.keys(userAnswers[key]).includes(userID));
+}
