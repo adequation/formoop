@@ -120,6 +120,7 @@
 
   .user-form-close-button-wrapper{
     top:5px;
+    right: 0;
     position: fixed;
   }
 
