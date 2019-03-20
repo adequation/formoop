@@ -355,7 +355,10 @@
     methods: {
       setSelectedAnswers(id, answers) {
         const tmp = {...this.selectedAnswers};
-        tmp[id] = answers;
+
+        if(Array.isArray(answers))  tmp[id] = answers.slice();
+          else tmp[id] = answers;
+
         this.selectedAnswers = tmp;
       },
 

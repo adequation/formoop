@@ -40,11 +40,13 @@
     data() {
       return {
         selectedAnswers: this.currentSelectedAnswers ? this.currentSelectedAnswers.slice() :
-          (this.currentUserAnswers ? this.currentUserAnswers.slice() : [])
+          this.currentUserAnswers ? this.currentUserAnswers.slice()
+            : []
       }
     },
     methods: {
       onChange: function (answer, e) {
+        console.log('change')
         const index = this.selectedAnswers.indexOf(answer.id);
         if (index >= 0) {
           this.selectedAnswers.splice(index, 1)
@@ -55,12 +57,15 @@
 
         e.preventDefault();
       },
+
       setSelectedAnswers: function () {
         this.$root.$emit('set-selected-answers', this.entryID, this.selectedAnswers)
       }
     },
     watch:{
-      currentUserAnswers: function (val) {
+      currentUserAnswers: function (val, old) {
+        console.log('watch', this.selectedAnswers, this.currentUserAnswers, val)
+
         this.selectedAnswers = val ? val.slice() || [] : [];
         this.setSelectedAnswers();
       },

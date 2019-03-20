@@ -53,11 +53,14 @@
       },
 
       setSelectedAnswers: function () {
+
         this.$root.$emit('set-selected-answers', this.entryID, this.selectedAnswers)
       }
     },
     watch: {
       currentUserAnswers: function (val) {
+        console.log('watchrad')
+
         this.selectedAnswers = val || null;
         this.setSelectedAnswers();
       }

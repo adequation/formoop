@@ -13,7 +13,8 @@
       </div>
       <div class="user-answer" v-if="answer.type === 'radio'">
         <UserAnswerRadio :answers="answer.answers"
-                         :entryID="entryID" :currentUserAnswers="currentUserAnswers"
+                         :entryID="entryID"
+                         :currentUserAnswers="currentUserAnswers"
                          :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
       <div class="user-answer" v-if="answer.type === 'checkbox'">
@@ -48,9 +49,11 @@
       user() {
         return this.$store.getters.user;
       },
+
       formID() {
         return this.$store.getters.getFormID
       },
+
       currentEntryAnswers() {
         return this.userAnswers[this.entryID] || {};
       },
@@ -64,20 +67,6 @@
       selectedUserAnswers(){
         return this.selectedAnswers[this.entryID];
       },
-
-      isUpdated(){
-        const userA = this.currentUserAnswers || null;
-
-        if(this.selectedUserAnswers === undefined) return false;
-
-        if(Array.isArray(this.selectedUserAnswers)){
-          if(!Array.isArray(userA)) return this.selectedUserAnswers.length > 0;
-          return userA.length !== this.selectedUserAnswers.length
-            || !this.selectedUserAnswers.every(a => userA.includes(a));
-        }
-
-        return userA !== this.selectedUserAnswers;
-      }
     },
     props: {
       answer: {
