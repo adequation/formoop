@@ -21,7 +21,7 @@
     name: 'AnswerRadio',
     data() {
       return {
-        selectedAnswers: this.currentUserAnswers || null
+        selectedAnswers: this.currentSelectedAnswers || (this.currentUserAnswers || null)
       }
     },
     props: {
@@ -58,8 +58,6 @@
     },
     watch: {
       currentUserAnswers: function (val) {
-        console.log('watchrad')
-
         this.selectedAnswers = val || null;
         this.setSelectedAnswers();
       }

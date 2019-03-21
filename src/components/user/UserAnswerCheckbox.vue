@@ -39,13 +39,12 @@
     },
     data() {
       return {
-        selectedAnswers: (this.currentUserAnswers || []).slice()
+        selectedAnswers: this.currentSelectedAnswers ? this.currentSelectedAnswers.slice() :
+          (this.currentUserAnswers ? this.currentUserAnswers.slice() : [])
       }
     },
     methods: {
       onChange: function (answer, e) {
-        console.log('changeTab', this.selectedAnswers);
-
         const index = this.selectedAnswers.indexOf(answer.id);
         if (index >= 0) {
           this.selectedAnswers.splice(index, 1)
@@ -53,19 +52,18 @@
           this.selectedAnswers.push(answer.id)
         }
         this.setSelectedAnswers();
-
         e.preventDefault();
       },
-
       setSelectedAnswers: function () {
-        console.log('setTab', this.selectedAnswers);
         this.$root.$emit('set-selected-answers', this.entryID, this.selectedAnswers)
       }
     },
     watch:{
-      currentUserAnswers: function (val, old) {
-        this.selectedAnswers = (this.currentSelectedAnswers || val || []).slice()
-        this.setSelectedAnswers();
+      currentUserAnswers: function (val) {
+        if(!val || !val.length){
+          this.selectedAnswers =  [];
+          this.setSelectedAnswers();
+        }
       },
     }
   }

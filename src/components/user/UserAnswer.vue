@@ -90,9 +90,6 @@
         required: false
       }
     },
-    methods: {
-
-    }
   }
 </script>
 
