@@ -4,8 +4,8 @@
     <button type="button" class="creator-form-save-button" title="Publier le formulaire"
             @click="publishForm"><i class="material-icons md-36">send</i></button>
 
-    <JsonImportModal :show-modal="showJsonImportModal" :form-entries="this.formEntries" :save-form="this.saveForm" @close="closeJsonImportModal"/>
-    <EntryPointModal :show-modal="showEntryPointModal" @close="closeEntryPointModal"/>
+    <JsonImportModal :show-modal="showJsonImportModal" :form-entries="this.formEntries" :save-form="this.saveForm" :publishing-campaigns="publishingCampaigns" @close="closeJsonImportModal"/>
+    <EntryPointModal :show-modal="showEntryPointModal" @close="closeEntryPointModal" :publishing-campaigns="publishingCampaigns"/>
 
   </div>
 
@@ -37,6 +37,10 @@
         type: Function,
         required: true
       },
+      publishingCampaigns: {
+        type: Array,
+        required: true
+      }
     },
     computed: {
       formCampaigns() {
@@ -61,6 +65,7 @@
         else{
           this.directPublishForm();
           this.showEntryPointModal = true;
+
         }
       },
       directPublishForm(){

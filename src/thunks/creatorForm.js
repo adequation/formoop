@@ -302,7 +302,7 @@ const generateForms = (creatorID, creatorForm, entities) => {
 };
 
 //Generate only
-export const generateGenericFormsFB = (creatorID, formID, entities, campaignID = null) => {
+export const generateGenericFormsFB = (creatorID, formID, entities, publishingCampaigns = []) => {
   //we fetch the form in firebase
   //then we save it into user's datas
   return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
@@ -312,8 +312,8 @@ export const generateGenericFormsFB = (creatorID, formID, entities, campaignID =
       if (value) {
         const createdForms = generateForms(creatorID, value, entities);
 
-        if(campaignID){
-          setFormsCampaignFB(campaignID,  createdForms);
+        if(publishingCampaigns.length > 0 ){
+          publishingCampaigns.forEach(campaignID => setFormsCampaignFB(campaignID,  createdForms) );
         }
       }
     });

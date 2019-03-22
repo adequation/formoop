@@ -4,6 +4,9 @@
     <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
 
 
+
+    <CreatorPublishingCampaignDropdown />
+
     <CreatorFormEntry v-for="(entry, i) in formEntries"
                       :key="entry.id"
                       :entry="entry"
@@ -51,7 +54,7 @@
               <i class="material-icons md-36">save</i>
             </button>
 
-            <CreatorPublication :form-entries="formEntries" :save-form="saveForm"/>
+            <CreatorPublication :form-entries="formEntries" :publishing-campaigns="publishingCampaigns" :save-form="saveForm"/>
           </div>
         </div>
 
@@ -70,10 +73,11 @@
   import {getCreatedFormFromID, nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import CreatorPublication from "@/components/creator/CreatorPublication";
   import DockingMenu from "@/components/containers/DockingMenu";
+  import CreatorPublishingCampaignDropdown from "@/components/creator/CreatorPublishingCampaignDropdown";
 
   export default {
     name: 'CreatorForm',
-    components: {CreatorPublication, CreatorFormEntry, DockingMenu},
+    components: {CreatorPublication, CreatorFormEntry, DockingMenu, CreatorPublishingCampaignDropdown},
     data() {
       return {
         formEntries: [],
@@ -89,7 +93,9 @@
         defaultFormTitle: 'Formulaire sans titre',
         showModal: false,
         newSection: null,
-        formSections: []
+        formSections: [],
+        publishingCampaigns: []
+
       }
     },
     methods: {
@@ -174,6 +180,10 @@
         }
       },
 
+      setFormPublishingCampaign(publishingCampaigns){
+        this.publishingCampaigns = publishingCampaigns;
+      },
+
       setForm(form) {
         if (!form) {
           this.formEntries = [];
@@ -251,6 +261,10 @@
         this.setFormEntryRequirement(id, requirement)
       });
 
+      this.$on('set-publishing-campaign', publishingCampaigns => {
+        this.setFormPublishingCampaign(publishingCampaigns)
+      });
+
       //when an entry is mounted
       this.$root.$on('mounted-entry', (id) => {
         window.scrollTo(0, document.body.scrollHeight);
@@ -290,6 +304,7 @@
 
       //retreive form
       this.getFormFromFB(this.creatorID, this.formID);
+
 
     },
     computed: {

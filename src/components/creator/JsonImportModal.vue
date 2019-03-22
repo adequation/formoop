@@ -13,16 +13,7 @@
 
           <p>Publication et création de {{Object.keys(importedEntities).length}} formulaires</p>
 
-          <p>
-            Publier dans la campagne :
-            <select @change="onCampaignChange($event.target)" title="">
-              <option value="none">Aucune</option>
-              <option value="new">Nouvelle campagne</option>
-              <option v-for="c in formCampaigns" :key="c.id" :value="c.id">{{c.name}}</option>
-            </select>
 
-            <input v-if="newPublishingCampaign" type="text" title="" v-model="newPublishingCampaignName"/>
-          </p>
 
           <button type="button" @click="generateAndPublishForms">Générer !</button>
         </div>
@@ -56,9 +47,6 @@
         importedEntities: {},
         publishable: false,
         errors: false,
-        newPublishingCampaign: false,
-        newPublishingCampaignName: '',
-        publishingCampaign: null
       }
     },
 
@@ -74,6 +62,10 @@
       showModal: {
         type: Boolean,
         required: true,
+      },
+      publishingCampaigns: {
+        type: Array,
+        required: true
       }
     },
 
@@ -99,45 +91,39 @@
         this.$emit('close');
       },
 
-      onCampaignChange: function (target) {
-        if (target.value === 'none') {
-          this.newPublishingCampaign = false;
-          this.publishingCampaign = null;
-
-        } else if (target.value === 'new') {
-          this.newPublishingCampaign = true;
-          this.newPublishingCampaignName = "Nouvelle campagne";
-          this.publishingCampaign = uuid.v4();
-
-        } else {
-          this.newPublishingCampaign = false;
-          this.publishingCampaign = target.value;
-        }
-      },
-
       getGenericEntries() {
         return this.formEntries.filter(fe => fe.generic);
       },
 
       generateAndPublishForms() {
+        console.log(JSON.stringify(this.publishingCampaigns))
 
-        if(this.publishingCampaign){ //all forms will be under the same campaign
+        /*
+        if(this.publishingCampaigns.length > 0){ // forms under campaigns
+          generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.publishingCampaigns)
+        } else { // no campaign
+          generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities);
+        }*/
+
+
+/*
+        if(this.formCampaign.publishingCampaign){ //all forms will be under the same campaign
 
           if(this.newPublishingCampaign){ // we create a new campaign
-            saveFormCampaignFB(this.publishingCampaign, {id: this.publishingCampaign, name:this.newPublishingCampaignName}).then((e) => {
+            saveFormCampaignFB(this.formCampaign.publishingCampaign, {id: this.formCampaign.publishingCampaign, name:this.formCampaign.newPublishingCampaignName}).then((e) => {
 
-              generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.publishingCampaign);
+              generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.formCampaign.publishingCampaign);
 
             }).catch((e) => {
               console.log(e);
             });
           }else{ //we use an existing campaign
-            generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.publishingCampaign);
+            generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.formCampaign.publishingCampaign);
           }
         }else{ // no campaigns
           generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities);
         }
-
+*/
         this.closeModal();
       },
 

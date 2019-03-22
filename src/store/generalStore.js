@@ -38,22 +38,8 @@ export default {
       Firebase.database().ref(campaignPath)
         .on('value', (snapshot) => {
           const value = snapshot.val();
-          if (value) {
-            state.formCampaigns = Object.keys(value).map(k => (
-                {
-                  name: value[k].name,
-                  id: value[k].id,
-                  formNumber: value[k].forms ? value[k].forms.length : 0,
-                  forms: value[k].forms ? value[k].forms.map(cf => {
-                    const fullForm = state.publishedForms.find(pf => pf.id === cf);
-                    return {id: cf, name: fullForm ? fullForm.name : ''};
-                  }) : []
-                }
-              )
-            );
-          } else {
-            state.formCampaigns = [];
-          }
+          state.formCampaigns = value || {};
+
         })
     },
 
