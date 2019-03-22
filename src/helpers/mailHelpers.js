@@ -1,8 +1,11 @@
 import {getFormURL, getFormUrlWithToken, getFormUrlWithUserID} from "@/helpers/rooterHelpers";
 import {generateEmailToken, getUserIdFromEmail} from "@/helpers/accountHelpers";
 
-export function sendMailWithSocket(socket, mail) {
-  socket.emit('sendMail', mail);
+export function sendMailToBack(mail) {
+  return fetch("http://localhost:3000/api/mailer/mail",
+    {method:"POST",
+      headers: {"Content-Type": "application/json", "Accept":"application/json"},
+      body: JSON.stringify(mail)})
 }
 
 export function getInvitationText(formName, userDisplayName) {
