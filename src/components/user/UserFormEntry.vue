@@ -143,8 +143,7 @@
           return userA.length !== this.selectedUserAnswers.length
             || !this.selectedUserAnswers.every(a => userA.includes(a));
         }
-
-        return userA !== this.selectedUserAnswers;
+        return userA !== this.selectedUserAnswers;;
       }
     },
     methods: {
