@@ -133,9 +133,11 @@
           .attr("fill", "transparent")
           .on("mouseover", function () {
             d3.select(this).attr("fill", "rgba(255,255,255,0.5)");
+            d3.select(this).style("cursor", "pointer");
           })
           .on("mouseout", function () {
             d3.select(this).attr("fill", "transparent");
+            d3.select(this).style("cursor", "default");
           })
           .on("click", (d) => {
             this.$parent.$emit('section-list-choice', d)
@@ -206,11 +208,11 @@
 
       //get around faulty value updating
 
-      updatedValue(d, pie){
+      updatedValue(d, pie) {
         const newData = this.sections.find(s => s.id === d.data.sectionID);
         let newPieData;
         if (newData) {
-          if(pie) {
+          if (pie) {
             newPieData = pie(newData.values);
             return newPieData.find(v => v.data.name === d.data.name);
           }
@@ -241,5 +243,4 @@
 </script>
 
 <style scoped>
-
 </style>
