@@ -5,7 +5,7 @@
             @click="publishForm"><i class="material-icons md-36">send</i></button>
 
     <JsonImportModal :show-modal="showJsonImportModal" :form-entries="this.formEntries" :save-form="this.saveForm" :publishing-campaigns="publishingCampaigns" @close="closeJsonImportModal"/>
-    <EntryPointModal :show-modal="showEntryPointModal" @close="closeEntryPointModal" :publishing-campaigns="publishingCampaigns"/>
+    <EntryPointModal :show-modal="showEntryPointModal" @close="closeEntryPointModal" />
 
   </div>
 
@@ -15,7 +15,7 @@
   import EntryPointModal from "./EntryPointModal";
   import {nativeFbFunctions} from "../../helpers/firebaseHelpers";
   import JsonImportModal from "./JsonImportModal";
-  import {publishCreatorFormFB} from "../../thunks/creatorForm";
+  import {publishCreatorFormFB, setFormCampaignFB} from "../../thunks/creatorForm";
   import {inviteUser} from "../../thunks/userAccountThunks";
   import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "../../helpers/accountHelpers";
 
@@ -39,6 +39,10 @@
       },
       publishingCampaigns: {
         type: Array,
+        required: true
+      },
+      formTitle: {
+        type: String,
         required: true
       }
     },
@@ -64,6 +68,9 @@
         }
         else{
           this.directPublishForm();
+
+          this.publishingCampaigns.forEach(campaign => setFormCampaignFB(campaign,  {id: this.formID,title: this.formTitle}));
+
           this.showEntryPointModal = true;
 
         }

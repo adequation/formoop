@@ -24,10 +24,6 @@
         showModal:{
           type: Boolean,
           required: true
-        },
-        publishingCampaigns: {
-          type: Array,
-          required: true
         }
       },
       computed: {

@@ -12,7 +12,7 @@
           <input type="checkbox" id="none" :checked="!formPublishingCampaign.length > 0"/>Aucune</label>
         <label v-for="c in campaignsFB" :key="c.id">
           <input type="checkbox" :id=c.id :checked="formPublishingCampaign.includes(c.id)"/>{{c.name}}</label>
-        <span>
+        <span class = "add-new-campaign">
           <input type="text" placeholder="Nouvelle campagne" v-model="newCampaignName"/>
           <button type="button" @click="addCampaign">+</button>
         </span>
@@ -24,14 +24,14 @@
 <script>
   import * as uuid from "uuid";
   import {saveFormCampaignFB} from "../../thunks/creatorForm";
-  import {getFormCampaign} from "../../helpers/campaignsHelpers";
+  import {doesCampaignExists, getFormCampaign} from "../../helpers/campaignsHelpers";
 
   export default {
-    name: "CreatorPublishingCampaignDropdown",
+    name: "CreatorPublishingCampaignSelector",
     data() {
       return {
         showList: false,
-        formPublishingCampaign: [],
+        formPublishingCampaign: this.formCampaign || [],
         newCampaignName: null
       }
     },
@@ -60,20 +60,17 @@
       },
 
       addCampaign() {
-        if (this.newCampaignName) {
+       if (this.newCampaignName) {
           // Check if campaign already exists
-          if (this.campaignsFB.filter(fc => fc.name === this.newCampaignName) > 0) return;
+          if (!doesCampaignExists(this.campaignsFB, this.newCampaignName)) {
 
-          const newCampaignID = uuid.v4();
+            const newCampaignID = uuid.v4();
 
-          saveFormCampaignFB(newCampaignID, {id: newCampaignID, name: this.newCampaignName})
+            saveFormCampaignFB(newCampaignID, {id: newCampaignID, name: this.newCampaignName})
+          }
         }
         this.newCampaignName = null;
       },
-
-      setFormCampaign(campaignsFromFB){
-        this.formPublishingCampaign = getFormCampaign(campaignsFromFB, this.formID);
-      }
 
     },
     computed: {
@@ -83,11 +80,14 @@
       campaignsFB() {
         return this.$store.getters.formCampaigns;
       },
+      formCampaign() {
+        return getFormCampaign(this.campaignsFB, this.formID)
+      }
 
     },
     watch : {
-      campaignsFB: function(val) {
-        this.setFormCampaign(val);
+      formCampaign: function(newValue) {
+        this.formPublishingCampaign = newValue
       }
     }
   }
@@ -122,9 +122,11 @@
 
   #campaigns-list label {
     display: block;
+    text-align: left;
   }
 
   #campaigns-list label:hover {
-    background-color: #1e90ff;
+    background-color: #b45a23;
   }
+
 </style>

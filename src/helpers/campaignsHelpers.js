@@ -18,3 +18,20 @@ export function getFormCampaign(campaignsFromFB, formID) {
 
   return campaignsContainingFormId;
 }
+
+
+export function doesCampaignExists(campaignsFromFB, newCampaignName) {
+  const campaignsId = Object.keys(campaignsFromFB);
+
+  const campaigns = campaignsId.map(id => {
+    return campaignsFromFB[id];
+  });
+
+  let alreadyExists = false;
+
+  campaigns.forEach(campaign => {
+    if(campaign.name === newCampaignName) return alreadyExists = true
+  });
+
+  return alreadyExists;
+}

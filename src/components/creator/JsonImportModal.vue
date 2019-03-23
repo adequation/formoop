@@ -98,12 +98,12 @@
       generateAndPublishForms() {
         console.log(JSON.stringify(this.publishingCampaigns))
 
-        /*
+
         if(this.publishingCampaigns.length > 0){ // forms under campaigns
           generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.publishingCampaigns)
         } else { // no campaign
           generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities);
-        }*/
+        }
 
 
 /*

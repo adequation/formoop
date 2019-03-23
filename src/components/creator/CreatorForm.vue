@@ -5,7 +5,7 @@
 
 
 
-    <CreatorPublishingCampaignDropdown />
+    <CreatorPublishingCampaignSelector />
 
     <CreatorFormEntry v-for="(entry, i) in formEntries"
                       :key="entry.id"
@@ -54,7 +54,7 @@
               <i class="material-icons md-36">save</i>
             </button>
 
-            <CreatorPublication :form-entries="formEntries" :publishing-campaigns="publishingCampaigns" :save-form="saveForm"/>
+            <CreatorPublication :form-entries="formEntries" :publishing-campaigns="publishingCampaigns" :save-form="saveForm" :form-title="formTitle"/>
           </div>
         </div>
 
@@ -73,11 +73,11 @@
   import {getCreatedFormFromID, nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import CreatorPublication from "@/components/creator/CreatorPublication";
   import DockingMenu from "@/components/containers/DockingMenu";
-  import CreatorPublishingCampaignDropdown from "@/components/creator/CreatorPublishingCampaignDropdown";
+  import CreatorPublishingCampaignSelector from "@/components/creator/CreatorPublishingCampaignSelector";
 
   export default {
     name: 'CreatorForm',
-    components: {CreatorPublication, CreatorFormEntry, DockingMenu, CreatorPublishingCampaignDropdown},
+    components: {CreatorPublication, CreatorFormEntry, DockingMenu, CreatorPublishingCampaignSelector},
     data() {
       return {
         formEntries: [],
