@@ -38,8 +38,7 @@
         },
         user(){
           return nativeFbFunctions.getCurrentUser();
-        }
-      },
+        }},
       methods: {
         inviteEntry({userID, formID, metadata}){
           inviteUser(userID, formID, metadata);

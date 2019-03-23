@@ -1,9 +1,9 @@
 <template>
   <transition name="modal">
 
-    <div class="modal-mask">
-      <div class="modal-wrapper">
-        <div class="modal-container">
+    <div class="modal-mask" @click="$emit('close')">
+      <div class="modal-wrapper" >
+        <div class="modal-container" v-on:click.stop="">
 
           <div class="modal-closer">
             <slot name="upper-right">
@@ -62,6 +62,7 @@
   }
 
   .modal-container {
+    z-index: 9999;
     width: 70%;
     height: 70%;
     margin: 1em auto;

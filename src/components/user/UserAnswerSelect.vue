@@ -15,9 +15,7 @@
     name: 'AnswerSelect',
     data () {
       return {
-        selectedAnswers: this.currentSelectedAnswers !== null ?
-          this.currentSelectedAnswers || (this.currentUserAnswers || null) :
-          this.currentSelectedAnswers
+        selectedAnswers: this.currentUserAnswers || null
       }
     },
     props: {

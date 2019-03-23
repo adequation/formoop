@@ -1,20 +1,42 @@
 <template>
   <div
-    :class="inConflict && user ? 'user-form-entry-conflicted' : hasAnswers && user ? 'user-form-entry-answered' : 'user-form-entry'">
+      :class="[
+      'user-form-entry',
+      justConflicted ? 'shake' : '',
+      inConflict && user ? 'user-form-entry-conflicted' :
+      hasAnswers && user ? 'user-form-entry-answered' :
+      'user-form-entry-default'
+    ]">
 
-    <div :class="['answered-by-wrapper', inConflict && user ? 'answered-by-conflict' : user && hasAnswers ?
-                (showAnswers ? 'answered-by-opened' : 'answered-by') : 'answered-by-disabled' ]">
+    <div class="answered-by-wrapper">
 
-      <button type="button" @click="switchAnswersView" title="Voir les réponses" :disabled="!user">
-        <div class="answered-by-content" v-if="!showAnswers">{{currentEntryAnswers ?
-          Object.keys(currentEntryAnswers).length : ''}} <i class="material-icons md-18">face</i></div>
-        <div class="answered-by-content" v-else><i class="material-icons md-18">close</i></div>
+      <button :class="['answered-by-users',
+       inConflict && user ? 'answered-by-users-conflict' :
+       hasAnswers && user ? 'answered-by-users-ok' :
+       'answered-by-users-disabled'
+       ]"
+      type="button" @click="switchAnswersView" title="Voir les réponses" :disabled="!user">
+
+        <div class="answered-by-content" > {{!showAnswers && currentEntryAnswers ?
+          Object.keys(currentEntryAnswers).length : ''}} <i class="material-icons md-18">{{!showAnswers ? 'face' : 'close'}}</i></div>
       </button>
+
+      <div class="user-answer-tools">
+
+        <button v-if="!!currentUserAnswers"
+                class="delete-answer-button" type="button" title="Supprimer ma réponse"
+                @click="deleteAnswer"><i class="material-icons">delete</i>
+        </button>
+
+        <button v-if="isUpdated" class="save-answer-button-updated" type="button" title="Enregistrer ma réponse"
+                @click="saveAnswer"><i class="material-icons">save</i>
+        </button>
+
+      </div>
 
     </div>
 
     <UserQuestionTitle :question="entry.question"/>
-
 
     <div v-if="showAnswers && hasAnswers">
       <UserEntryAnswersDetails
@@ -37,14 +59,16 @@
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import UserEntryAnswersDetails from "@/components/user/UserEntryAnswersDetails";
   import {isEntryInConflict} from "@/helpers/userAnswersHelpers";
-  import {setSelectedAnswerFB} from "@/thunks/userFormEntriesThunks";
+  import {deleteUserAnswerFB, setSelectedAnswerFB} from "@/thunks/userFormEntriesThunks";
 
   export default {
     name: 'FormEntry',
     components: {UserEntryAnswersDetails, UserAnswer, UserQuestionTitle},
     data() {
       return {
-        showAnswers: false
+        showAnswers: false,
+
+        justConflicted: false
       }
     },
     props: {
@@ -78,7 +102,6 @@
       currentUserAnswers() {
         if (!this.user) return {};
 
-
         return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.id] : {};
       },
 
@@ -105,6 +128,23 @@
       invitedUsers() {
         return this.$store.getters.invitedUsers;
       },
+
+      selectedUserAnswers(){
+        return this.selectedAnswers[this.entry.id];
+      },
+
+      isUpdated(){
+        const userA = this.currentUserAnswers || null;
+
+        if(this.selectedUserAnswers === undefined) return false;
+
+        if(Array.isArray(this.selectedUserAnswers)){
+          if(!Array.isArray(userA)) return this.selectedUserAnswers.length > 0;
+          return userA.length !== this.selectedUserAnswers.length
+            || !this.selectedUserAnswers.every(a => userA.includes(a));
+        }
+        return userA !== this.selectedUserAnswers;;
+      }
     },
     methods: {
 
@@ -134,8 +174,26 @@
         }
 
         return '';
-      }
+      },
+
+      deleteAnswer() {
+        deleteUserAnswerFB(this.$store.getters.getFormID, this.entry.id, this.user.id);
+      },
+
+      saveAnswer() {
+        if (this.user){
+          setSelectedAnswerFB(this.$store.getters.getFormID, this.entry.id, this.selectedAnswers, this.user.id);
+        }
+
+        else alert("Vous n'êtes pas connecté !");
+      },
     },
+    watch : {
+      inConflict(){
+        this.justConflicted = this.inConflict;
+        setTimeout(() => { this.justConflicted = false; }, 500);
+      }
+    }
   }
 
   /**/
@@ -143,84 +201,39 @@
 
 <style scoped>
   .user-form-entry {
+    position:relative;
     background-color: #f6f6f6;
     margin: 0.5em auto;
-    padding: 0.5em;
+    padding: 0.3em;
 
     width: 75%;
 
     border-left: 7px solid #aaaaaa;
   }
 
+  .user-form-entry:hover {
+
+  }
+
   .user-form-entry-answered {
-    background-color: #f6f6f6;
-
-    margin: 0.5em auto;
-    padding: 0.5em;
-    width: 75%;
-
     border-left: 7px solid #42b983;
   }
 
   .user-form-entry-conflicted {
-    background-color: #f6f6f6;
-
-    margin: 0.5em auto;
-    padding: 0.5em;
-    width: 75%;
-
     border-left: 7px solid tomato;
   }
 
-  .answered-by-list-wrapper {
+  .answered-by-wrapper{
+    top: 0;
+    left: 0;
     position: absolute;
-    color: white;
-    font-weight: 600;
 
-    z-index: 11;
-  }
+    width: 100%;
 
-  .user-name-text {
-    font-size: 14px;
-  }
-
-  .user-answer-text-separator {
-    border: 0;
-    height: 1px;
-    background: #ffffff33;
-  }
-
-  .answered-by-list-wrapper > div {
-    border-radius: 5px;
-    background: #2d8246;
-    font-size: 12px;
-    padding: 20px !important;
-    display: inline-block;
-    position: relative;
-    top: -11px;
-    overflow: auto !important;
-
-    max-width: 275px;
-  }
-
-  .answered-by-list-wrapper:after {
-    content: '';
-    position: absolute;
-    top: -11px;
-    left: 16%;
-    width: 0;
-    height: 0;
-    border: 13px solid transparent;
-    border-bottom-color: #2d8246;
-    border-top: 0;
-    margin-left: -13px;
-    margin-top: -13px;
-  }
-
-  .answered-by-wrapper {
-    float: left;
-    margin: 1em;
-    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .answered-by-content {
@@ -230,8 +243,12 @@
     align-items: center;
   }
 
-  .answered-by button {
+  .answered-by-users {
     color: #fff;
+
+    margin: 0.5em;
+
+    cursor: pointer;
 
     display: flex;
     flex-direction: row;
@@ -239,71 +256,98 @@
     align-items: center;
 
     font-size: large;
-    background: #42b983;
+    background: grey;
     border: none;
 
     border-radius: 15px;
+
+    box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 0px 0px;
   }
 
-  .answered-by button:hover {
+  .answered-by-users-ok {
+    background: #42b983 ;
+  }
+
+  .answered-by-users-ok:hover {
     background: #2d8246;
   }
 
-  .answered-by-conflict button {
-    color: #fff;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-
-    font-size: large;
+  .answered-by-users-conflict {
     background: tomato;
-    border: none;
-
-    border-radius: 15px;
   }
 
-  .answered-by-conflict button:hover {
+  .answered-by-users-conflict:hover {
     background: #e24536;
   }
 
-  .answered-by-opened button {
-    color: #fff;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-
-    font-size: large;
-    background: #42b983;
-    border: none;
-
-    border-radius: 15px;
-  }
-
-  .answered-by-opened button:hover {
-    background: #2d8246;
-  }
-
-  .answered-by-disabled button {
-    color: #fff;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-
-    font-size: large;
+  .answered-by-users-disabled {
     background: #aaaaaa;
-    border: none;
-
-    border-radius: 15px;
   }
 
-  .answered-by-disabled button:hover {
+  .answered-by-users-disabled:hover {
     background: #969696;
+  }
+
+  .user-answer-tools {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    margin: 0.5em;
+  }
+
+  .delete-answer-button {
+    padding: 0.4em;
+    color: #fff;
+    cursor: pointer;
+
+    margin-left: 0.1em;
+    margin-right: 0.1em;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: large;
+    background: #00000055;
+    border: none;
+
+    border-radius: 10px;
+
+    box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 0px 0px;
+  }
+
+  .delete-answer-button:hover {
+    background-color: tomato;
+  }
+
+  .save-answer-button-updated {
+
+    margin-left: 0.1em;
+    margin-right: 0.1em;
+    cursor: pointer;
+
+    padding: 0.4em;
+    color: #fff;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: large;
+    background: #00000055;
+    border: none;
+
+    border-radius: 10px;
+
+    box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 0px 0px;
+  }
+
+  .save-answer-button-updated:hover {
+    background-color: #42b983;
   }
 
 </style>

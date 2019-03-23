@@ -52,7 +52,6 @@
           this.selectedAnswers.push(answer.id)
         }
         this.setSelectedAnswers();
-
         e.preventDefault();
       },
       setSelectedAnswers: function () {
@@ -61,9 +60,10 @@
     },
     watch:{
       currentUserAnswers: function (val) {
-        console.log(val)
-        this.selectedAnswers = val ? val.slice() || [] : [];
-        this.setSelectedAnswers();
+        if(!val || !val.length){
+          this.selectedAnswers =  [];
+          this.setSelectedAnswers();
+        }
       },
     }
   }
@@ -79,7 +79,7 @@
     font-size: large;
     background: white;
     border: 1px solid #00000055;
-    padding: 0.2em 0.3em 0.1em 0.3em;
+    padding: 0.1em 0.3em 0.1em 0.3em;
 
     width: auto;
     overflow: hidden;
@@ -102,12 +102,10 @@
 
     cursor: pointer;
     font-size: large;
-    color: white;
-    background: #4286f4;
-    border: 1px solid #00000055;
-    padding: 0.2em 0.3em 0.1em 0.3em;
-
-    font-weight: 600;
+    background: white;
+    color:  #3C7ADF;
+    border: 2px solid #4286f4;
+    padding: 0.2em 0.3em 0.2em 0.3em;
 
     width: auto;
     overflow: hidden;
@@ -117,7 +115,7 @@
   }
 
   .user-answer-checkbox-selected:hover {
-    background: #3462ad;
+    background: #4286f422;
   }
 
   .user-answer-checkbox-content {
