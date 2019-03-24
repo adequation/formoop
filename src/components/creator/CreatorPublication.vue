@@ -129,4 +129,9 @@
     justify-content: space-between;
     align-items: center;
   }
+
+  .creator-form-save-button:hover {
+    background: #276a35;
+  }
+
 </style>

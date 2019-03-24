@@ -1,7 +1,7 @@
 <template>
   <div class="campaign-select">
 
-    <div class="select-box" @click="showList = !showList">
+    <div class="select-box" @click="showList = !showList" title="Campagnes du formulaire">
       <div class="selected-campaign-list">
         <div class="selected-campaign" v-for="c in getFullCampaigns(selectedCampaigns)"
              @click="removeSelected(c.id)"
@@ -15,20 +15,23 @@
 
         </div>
 
-        <input class="search-box"
-               type="text"
-               placeholder="Nom de la campagne..."
-               v-if="showList"
-               v-model="searchQuery"
-               @click.stop=""/>
+        <div class="search-campaign">
+          <input class="search-box"
+                 type="text"
+                 placeholder="Nom de la campagne..."
+                 v-if="showList"
+                 v-model="searchQuery"
+                 @click.stop=""/>
+          <i v-if="searchQuery && showList" class="material-icons md-18" role="button"  @click.stop="" @click="searchQuery = ''">clear</i>
+        </div>
       </div>
 
-        <i class="material-icons" @click.stop="" @click="showList = !showList">keyboard_arrow_down</i>
+      <i class="material-icons" @click.stop="" @click="showList = !showList">keyboard_arrow_down</i>
 
     </div>
 
     <div class="campaigns-list" v-if="showList">
-      <div v-if="searchedCampaigns.length <= 0">Aucune campagne</div>
+      <div class="no-campaign-found" v-if="searchedCampaigns.length <= 0">Aucune campagne</div>
 
       <div v-else class="campaign-to-select"
            v-for="c in searchedCampaigns"
@@ -54,7 +57,7 @@
         showList: false,
         selectedCampaigns: (this.formCampaign || []).slice(),
         newCampaignName: null,
-        searchQuery : ''
+        searchQuery: ''
       }
     },
     methods: {
@@ -98,7 +101,7 @@
         return this.campaignsFB[campaignID] || {id: campaignID, name: '...'};
       },
 
-      getFullCampaigns(campaignsIDs){
+      getFullCampaigns(campaignsIDs) {
         return campaignsIDs.map(id => this.getFullCampaign(id))
           .sort((a, b) => a.name.localeCompare(b.name));
       },
@@ -123,7 +126,7 @@
           .sort((a, b) => a.name.localeCompare(b.name))
       },
 
-      searchedCampaigns(){
+      searchedCampaigns() {
 
         return this.notSelectedCampaigns.filter(c =>
           this.searchTokens.every(t =>
@@ -159,20 +162,29 @@
 
   .selected-campaign-list {
     float: left;
-    width: auto;
+    width: 100%;
     padding: 5px;
   }
 
-  .drop-down-arrow {
-    background: none;
-    border: none;
+
+  .search-campaign {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .search-box {
+    width: 100%;
     background: none;
     border: none;
 
     border-bottom: 1px solid rgb(217, 217, 217);
+  }
+
+  .search-box:focus {
+    outline: none;
   }
 
   .select-box {
@@ -212,6 +224,7 @@
   }
 
   .campaigns-list {
+    width: 100%;
     border: 1px solid rgb(217, 217, 217);
     border-radius: 4px 4px 4px 4px;
     background: white;
@@ -231,4 +244,7 @@
     cursor: pointer;
   }
 
+  .no-campaign-found{
+    margin: 5px;
+  }
 </style>

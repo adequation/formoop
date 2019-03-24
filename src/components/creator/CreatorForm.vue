@@ -456,11 +456,20 @@
     border-bottom: 1px solid #00000055;
   }
 
+  .creator-form-sections-buttons-wrapper input:focus {
+    outline: none;
+  }
+
 
   .creator-section-name-input {
     background: none;
     border: none;
     width: auto;
+  }
+
+  .creator-section-name-input::placeholder{
+    color: white;
+    opacity: 0.8;
   }
 
   .vertical-separator {
