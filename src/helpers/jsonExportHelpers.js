@@ -49,7 +49,6 @@ function parseNotAnswered(brutForm) {
 }
 
 function convertAnswerIdToText(answer, entry){
-  console.log(answer);
   if(entry.type === 'checkbox'){
     let textAnswer = [];
     answer.forEach(ua => {
