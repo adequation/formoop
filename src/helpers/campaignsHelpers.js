@@ -72,8 +72,11 @@ export function addFormToWantedCampaigns(form, campaignsFromFB, campaignsIDToAdd
         const index = c.forms.findIndex(f => f.id === form.id);
         if(index >=0) {
           c.forms[index] = form;
-          campaignsFBCopy[c.id].forms = c.forms.slice();
+        }else{
+          c.forms.push(form);
         }
+
+        campaignsFBCopy[c.id].forms = c.forms.slice();
       }
     }
   });

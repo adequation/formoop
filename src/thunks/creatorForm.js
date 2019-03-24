@@ -26,11 +26,15 @@ export const saveFormCampaignsFB = (campaigns) => {
 
 export const saveAndFilterCampaignsFB = (form, campaigns, campaignsIDKeepingForm) => {
 
+  console.log('form', form)
+  console.log('camp', campaigns)
+  console.log('campaignsIDKeepingForm', campaignsIDKeepingForm)
+
   //remove the unwated ones
   let filteredCampaigns = removeFormFromUnwantedCampaigns(form.id, campaigns, campaignsIDKeepingForm);
 
   //add to the wanted ones
-  filteredCampaigns = addFormToWantedCampaigns(form, filteredCampaigns, campaignsIDKeepingForm);
+  filteredCampaigns = addFormToWantedCampaigns(form, campaigns, campaignsIDKeepingForm);
 
   saveFormCampaignsFB(filteredCampaigns);
 
