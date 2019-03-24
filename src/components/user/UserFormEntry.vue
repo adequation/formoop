@@ -21,7 +21,7 @@
           Object.keys(currentEntryAnswers).length : ''}} <i class="material-icons md-18">{{!showAnswers ? 'face' : 'close'}}</i></div>
       </button>
 
-      <div class="user-answer-tools">
+      <div class="user-answer-tools" v-if="user">
 
         <button v-if="!!currentUserAnswers"
                 class="delete-answer-button" type="button" title="Supprimer ma réponse"
