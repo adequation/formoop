@@ -40,7 +40,8 @@
       },
     },
     created() {
-      this.$store.dispatch('setCreatorID', {formID: null})
+      this.$store.dispatch('setCreatorID', {formID: null});
+      this.$store.dispatch('setFormCampaigns');
     }
   }
 </script>

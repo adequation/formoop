@@ -18,6 +18,8 @@
   import {publishCreatorFormFB, setFormCampaignFB} from "../../thunks/creatorForm";
   import {inviteUser} from "../../thunks/userAccountThunks";
   import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "../../helpers/accountHelpers";
+  import {removeFormFromUnwantedCampaigns} from "@/helpers/campaignsHelpers";
+  import {saveAndFilterCampaignsFB} from "@/thunks/creatorForm";
 
   export default {
     name: "CreatorPublication",
@@ -69,7 +71,9 @@
         else{
           this.directPublishForm();
 
-          this.publishingCampaigns.forEach(campaign => setFormCampaignFB(campaign,  {id: this.formID,title: this.formTitle}));
+          //remove the form where we don't want it to be
+          //and add it where it is not
+          saveAndFilterCampaignsFB({id: this.formID,title: this.formTitle}, this.formCampaigns, this.publishingCampaigns);
 
           this.showEntryPointModal = true;
 

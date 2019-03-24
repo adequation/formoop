@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="multiselect">
-      <div class="selectBox" @click="showCampaignList()">
+      <p>{{formPublishingCampaign.map(id=> campaignsFB[id].name).join(' | ')}}</p>
+
+      <div class="selectBox" @click="showCampaignList">
         <select>
           <option>Campagne(s)</option>
         </select>
@@ -12,7 +14,7 @@
           <input type="checkbox" id="none" :checked="!formPublishingCampaign.length > 0"/>Aucune</label>
         <label v-for="c in campaignsFB" :key="c.id">
           <input type="checkbox" :id=c.id :checked="formPublishingCampaign.includes(c.id)"/>{{c.name}}</label>
-        <span class = "add-new-campaign">
+        <span class="add-new-campaign">
           <input type="text" placeholder="Nouvelle campagne" v-model="newCampaignName"/>
           <button type="button" @click="addCampaign">+</button>
         </span>
@@ -50,7 +52,10 @@
         if (c.target.id === "none") {
           this.formPublishingCampaign = [];
         } else {
-          this.formPublishingCampaign.includes(c.target.id) ? this.formPublishingCampaign = this.formPublishingCampaign.filter(cc => cc !== c.target.id) : this.formPublishingCampaign.push(c.target.id);
+          this.formPublishingCampaign.includes(c.target.id) ?
+            this.formPublishingCampaign =
+              this.formPublishingCampaign.filter(cc => cc !== c.target.id)
+            : this.formPublishingCampaign.push(c.target.id);
         }
         this.setPublishingCampaigns(this.formPublishingCampaign);
       },
@@ -60,14 +65,14 @@
       },
 
       addCampaign() {
-       if (this.newCampaignName) {
+        if (this.newCampaignName) {
           // Check if campaign already exists
           if (!doesCampaignExists(this.campaignsFB, this.newCampaignName)) {
 
             const newCampaignID = uuid.v4();
 
             saveFormCampaignFB(newCampaignID, {id: newCampaignID, name: this.newCampaignName})
-          }
+          } else alert("La campagne existe déjà !");
         }
         this.newCampaignName = null;
       },
@@ -83,10 +88,9 @@
       formCampaign() {
         return getFormCampaign(this.campaignsFB, this.formID)
       }
-
     },
-    watch : {
-      formCampaign: function(newValue) {
+    watch: {
+      formCampaign: function (newValue) {
         this.formPublishingCampaign = newValue
       }
     }

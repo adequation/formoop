@@ -1,6 +1,7 @@
 import * as Firebase from 'firebase'
 import {campaignPath, getCreatedFormFromID, publishingPath} from "@/helpers/firebaseHelpers";
 import * as uuid from "uuid";
+import {addFormToWantedCampaigns, removeFormFromUnwantedCampaigns} from "@/helpers/campaignsHelpers";
 
 export const saveCreatorFormFB = (creatorID, formID, form) => {
 
@@ -13,6 +14,25 @@ export const saveFormCampaignFB = (campaignID, campaign) => {
 
   return Firebase.database().ref(campaignPath.concat(campaignID))
     .set(campaign);
+
+};
+
+export const saveFormCampaignsFB = (campaigns) => {
+
+  return Firebase.database().ref(campaignPath)
+    .set(campaigns);
+
+};
+
+export const saveAndFilterCampaignsFB = (form, campaigns, campaignsIDKeepingForm) => {
+
+  //remove the unwated ones
+  let filteredCampaigns = removeFormFromUnwantedCampaigns(form.id, campaigns, campaignsIDKeepingForm);
+
+  //add to the wanted ones
+  filteredCampaigns = addFormToWantedCampaigns(form, filteredCampaigns, campaignsIDKeepingForm);
+
+  saveFormCampaignsFB(filteredCampaigns);
 
 };
 

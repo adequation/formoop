@@ -3,8 +3,6 @@
 
     <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
 
-
-
     <CreatorPublishingCampaignSelector />
 
     <CreatorFormEntry v-for="(entry, i) in formEntries"
@@ -15,8 +13,7 @@
                       :formSections="formSections"
     />
 
-    <div class="creator-form-footer">
-    </div>
+    <div class="creator-form-footer"></div>
 
     <DockingMenu class="creator-form-bottom-menu">
       <div slot="body">
@@ -69,7 +66,7 @@
 
   import CreatorFormEntry from './CreatorFormEntry'
   import * as Firebase from "firebase";
-  import {saveCreatorFormFB, publishCreatorFormFB} from "@/thunks/creatorForm";
+  import {saveCreatorFormFB, publishCreatorFormFB, saveAndFilterCampaignsFB} from "@/thunks/creatorForm";
   import {getCreatedFormFromID, nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import CreatorPublication from "@/components/creator/CreatorPublication";
   import DockingMenu from "@/components/containers/DockingMenu";
@@ -235,6 +232,10 @@
           console.log(e);
         });
 
+        //remove the form where we don't want it to be
+        //and add it where it is not
+        saveAndFilterCampaignsFB({id: this.formID,title: this.formTitle}, this.formCampaigns, this.publishingCampaigns);
+
       },
     },
     created: function () {
@@ -242,6 +243,8 @@
       this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
       this.$store.dispatch('setPublishedForms');
       this.$store.dispatch('setCreatorID', {formID: null});
+      this.$store.dispatch('setFormCampaigns');
+
 
       //emitting of a new entry
       this.$root.$on('add-entry-answer', (id, answer) => {
@@ -318,6 +321,10 @@
 
       creatorID() {
         return this.$store.getters.creatorID;
+      },
+
+      formCampaigns() {
+        return this.$store.getters.formCampaigns;
       },
 
       sections() {
