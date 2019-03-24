@@ -1,6 +1,7 @@
 import * as Firebase from 'firebase'
 import {campaignPath, getCreatedFormFromID, publishingPath} from "@/helpers/firebaseHelpers";
 import * as uuid from "uuid";
+import {addFormToWantedCampaigns, removeFormFromUnwantedCampaigns} from "@/helpers/campaignsHelpers";
 
 export const saveCreatorFormFB = (creatorID, formID, form) => {
 
@@ -13,6 +14,25 @@ export const saveFormCampaignFB = (campaignID, campaign) => {
 
   return Firebase.database().ref(campaignPath.concat(campaignID))
     .set(campaign);
+
+};
+
+export const saveFormCampaignsFB = (campaigns) => {
+
+  return Firebase.database().ref(campaignPath)
+    .set(campaigns);
+
+};
+
+export const saveAndFilterCampaignsFB = (form, campaigns, campaignsIDKeepingForm) => {
+
+  //remove the unwated ones
+  let filteredCampaigns = removeFormFromUnwantedCampaigns(form.id, campaigns, campaignsIDKeepingForm);
+
+  //add to the wanted ones
+  filteredCampaigns = addFormToWantedCampaigns(form, filteredCampaigns, campaignsIDKeepingForm);
+
+  saveFormCampaignsFB(filteredCampaigns);
 
 };
 
@@ -30,6 +50,27 @@ export const setFormsCampaignFB = (campaignID, forms) => {
       if(formIndex >=0) campaigns[formIndex] = f;
       else campaigns.push(f);
     });
+
+    console.log("newCampaign", campaigns);
+
+    //we set the new array
+    Firebase.database().ref(campaignPath.concat(campaignID).concat('/forms')).set(campaigns);
+  });
+
+};
+
+export const setFormCampaignFB = (campaignID, form) => {
+
+  return Firebase.database().ref(campaignPath.concat(campaignID).concat('/forms')).once('value', (snapshot) => {
+    const campaigns = snapshot.val() || []; //we get the current campaign forms
+
+      const formIndex = campaigns.find(cf => cf.id === form.id);
+
+      //we override if the form exists
+      //if the form doesn't exist, we add it
+      if(formIndex >=0) campaigns[formIndex] = form;
+      else campaigns.push(form);
+
 
     console.log("newCampaign", campaigns);
 
@@ -162,7 +203,7 @@ const generateAndPublishForms = (creatorForm, entities) => {
 
 
 
-export const publishGenericFormsFB = (creatorID, formID, entities, campaignID = null) => {
+export const publishGenericFormsFB = (creatorID, formID, entities, formCampaigns = []) => {
 
   //we fetch the form in firebase
   //then we publish it
@@ -172,8 +213,9 @@ export const publishGenericFormsFB = (creatorID, formID, entities, campaignID = 
       if (value) {
         const createdForms = generateAndPublishForms(value, entities);
 
-        if(campaignID){
-          setFormsCampaignFB(campaignID,  createdForms);
+        if(formCampaigns){
+          formCampaigns.forEach(campaign => setFormsCampaignFB(campaign,  createdForms));
+
         }
       }
     });
@@ -302,7 +344,7 @@ const generateForms = (creatorID, creatorForm, entities) => {
 };
 
 //Generate only
-export const generateGenericFormsFB = (creatorID, formID, entities, campaignID = null) => {
+export const generateGenericFormsFB = (creatorID, formID, entities, publishingCampaigns = []) => {
   //we fetch the form in firebase
   //then we save it into user's datas
   return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
@@ -312,8 +354,8 @@ export const generateGenericFormsFB = (creatorID, formID, entities, campaignID =
       if (value) {
         const createdForms = generateForms(creatorID, value, entities);
 
-        if(campaignID){
-          setFormsCampaignFB(campaignID,  createdForms);
+        if(publishingCampaigns.length > 0 ){
+          publishingCampaigns.forEach(campaignID => setFormsCampaignFB(campaignID,  createdForms) );
         }
       }
     });
