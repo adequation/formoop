@@ -1,5 +1,9 @@
 <template>
   <div class="form" v-if="formEntries">
+
+      <user-close-form class="user-form-close-button" v-if="isEntryPoint" />
+
+
     <h1>{{formTitle}}</h1>
     <h2>{{user ? user.name : 'Non connecté'}}</h2>
 
@@ -20,17 +24,17 @@
                              :selectedAnswers="selectedAnswers"/>
 
         <UserFormEntry v-for="entry in singleEntries"
-                       :key="entry.id"
+                       :key="`all_single_${entry.id}`"
                        :entry="entry"
                        :userAnswers="userAnswers || {}"
                        :selectedAnswers="selectedAnswers"/>
 
       </div>
 
-      <div v-if="filter === 'singles'">
+      <div v-else-if="filter === 'singles'">
 
         <UserFormEntry v-for="entry in singleEntries"
-                       :key="entry.id"
+                       :key="`single_${entry.id}`"
                        :entry="entry"
                        :userAnswers="userAnswers || {}"
                        :selectedAnswers="selectedAnswers"/>
@@ -52,7 +56,6 @@
         <UserEntryGrid :entries="sortedEntries"
                        :userAnswers="userAnswers"
                        :selectedAnswers="selectedAnswers">
-
         </UserEntryGrid>
 
       </div>
@@ -70,7 +73,7 @@
       <div slot="body">
 
 
-        <div class="user-form-progress-bar"
+        <div class="user-form-progress-bar smooth"
              :style="{width: Math.floor(Object.keys(userAnswers).length/formEntries.length * 100) + '%'}">
         </div>
 
@@ -116,7 +119,6 @@
           </div>
 
           <div class="user-form-utils-buttons-wrapper">
-            <user-close-form class="user-form-close-button" v-if="isEntryPoint" />
 
             <button class="user-form-save-button" @click="saveAnswers" type="button" title="Enregistrer le formulaire">
               <i class="material-icons md-36">save</i>
@@ -124,14 +126,12 @@
 
             <InviteModal class="user-form-invite-button" v-if="user"/>
 
-
           </div>
         </div>
 
 
       </div>
     </DockingMenu>
-
 
   </div>
   <div v-else>
@@ -354,7 +354,10 @@
     methods: {
       setSelectedAnswers(id, answers) {
         const tmp = {...this.selectedAnswers};
-        tmp[id] = answers;
+
+        if(Array.isArray(answers))  tmp[id] = answers;
+          else tmp[id] = answers;
+
         this.selectedAnswers = tmp;
       },
 
@@ -404,10 +407,6 @@
         this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
         this.$store.dispatch('setUser', {userID: this.$route.params.userID});
       },
-
-      userAnswers() {
-        this.$store.dispatch('setInvitedUsers')
-      }
     }
   }
 </script>
@@ -619,4 +618,6 @@
     height: 60px;
     top: 10px;
   }
+
+
 </style>

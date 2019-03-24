@@ -3,18 +3,17 @@
 
     <div v-for="entry in entries"
          :key="entry.id"
-         :class="inConflict(entry) ? 'user-grid-entry-conflicted' : hasAnswers(entry) ? 'user-grid-entry-answered' : 'user-grid-entry'"
+         :class="['user-grid-entry', inConflict(entry) ? 'user-grid-entry-conflicted' : hasAnswers(entry) ? 'user-grid-entry-answered' : '']"
          @click="focusedEntry = entry">
       <div class="user-grid-entry-content">
         {{entry.question.title}}
       </div>
     </div>
 
-
     <Modal v-if="focusedEntry" @close="closeModal">
       <div slot="body">
         <UserFormEntry
-          :key="focusedEntry.id"
+          :key="`grid_${focusedEntry.id}`"
           :entry="focusedEntry"
           :userAnswers="userAnswers || {}"
           :selectedAnswers="selectedAnswers"/>
@@ -138,20 +137,11 @@
   }
 
   .user-grid-entry-answered {
-    margin: 2px;
-    background: #e1f5eb;
-
     border-left: 7px #42b983 solid;
-
-    transition: transform .2s;
   }
 
   .user-grid-entry-conflicted {
-    margin: 2px;
-    background-color: #f5d8ce;
-
     border-left: 7px solid tomato;
-    transition: transform .2s;
   }
 
   .user-entry-grid > *:hover {

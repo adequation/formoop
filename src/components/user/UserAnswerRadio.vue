@@ -74,7 +74,7 @@
     font-size: large;
     background: white;
     border: 1px solid #00000055;
-    padding: 0.2em 0.5em 0.1em 0.5em;
+    padding: 0.1em 0.5em 0.1em 0.5em;
 
     width: auto;
     overflow: hidden;
@@ -93,12 +93,11 @@
 
     cursor: pointer;
     font-size: large;
-    color: white;
-    background: #4286f4;
-    border: 1px solid #00000055;
-    padding: 0.2em 0.5em 0.1em 0.5em;
+    background: white;
+    color:  #3C7ADF;
 
-    font-weight: 600;
+    border: 2px solid #4286f4;
+    padding: 0.2em 0.5em 0.2em 0.5em;
 
     width: auto;
     overflow: hidden;
@@ -108,7 +107,7 @@
   }
 
   .user-answer-radio-selected:hover {
-    background: #3462ad;
+    background: #4286f422;
   }
 
   .user-answer-radio-content {

@@ -10,7 +10,7 @@
 
         <UserFormEntry v-for="entry in group.entries"
                        :entry="entry"
-                       :key="entry.id"
+                       :key="`group_single_${entry.id}`"
                        class="user-group-entry"
                        :userAnswers="userAnswers"
                        :small="true"

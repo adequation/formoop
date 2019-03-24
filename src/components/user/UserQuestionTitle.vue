@@ -23,6 +23,6 @@
 
 <style scoped>
   .user-question-title{
-
+    margin-bottom: 0.5em;
   }
 </style>
