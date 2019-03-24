@@ -108,6 +108,17 @@ export function parseForm(brutForm){
 
 export function parseCampaign(campaign){
 
+  let forms = '';
+  campaign.forms.forEach(F => {
+    forms += parseForm(F);
+  });
+
+  return{
+    name: campaign.name,
+    id: campaign.id,
+    forms: forms,
+  }
+
 
 }
 
