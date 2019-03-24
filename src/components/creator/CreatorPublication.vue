@@ -4,8 +4,8 @@
     <button type="button" class="creator-form-save-button" title="Publier le formulaire"
             @click="publishForm"><i class="material-icons md-36">send</i></button>
 
-    <JsonImportModal :show-modal="showJsonImportModal" :form-entries="this.formEntries" :save-form="this.saveForm" @close="closeJsonImportModal"/>
-    <EntryPointModal :show-modal="showEntryPointModal" @close="closeEntryPointModal"/>
+    <JsonImportModal :show-modal="showJsonImportModal" :form-entries="this.formEntries" :save-form="this.saveForm" :publishing-campaigns="publishingCampaigns" @close="closeJsonImportModal"/>
+    <EntryPointModal :show-modal="showEntryPointModal" @close="closeEntryPointModal" />
 
   </div>
 
@@ -15,9 +15,11 @@
   import EntryPointModal from "./EntryPointModal";
   import {nativeFbFunctions} from "../../helpers/firebaseHelpers";
   import JsonImportModal from "./JsonImportModal";
-  import {publishCreatorFormFB} from "../../thunks/creatorForm";
+  import {publishCreatorFormFB, setFormCampaignFB} from "../../thunks/creatorForm";
   import {inviteUser} from "../../thunks/userAccountThunks";
   import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "../../helpers/accountHelpers";
+  import {removeFormFromUnwantedCampaigns} from "@/helpers/campaignsHelpers";
+  import {saveAndFilterCampaignsFB} from "@/thunks/creatorForm";
 
   export default {
     name: "CreatorPublication",
@@ -37,6 +39,14 @@
         type: Function,
         required: true
       },
+      publishingCampaigns: {
+        type: Array,
+        required: true
+      },
+      formTitle: {
+        type: String,
+        required: true
+      }
     },
     computed: {
       formCampaigns() {
@@ -60,7 +70,13 @@
         }
         else{
           this.directPublishForm();
+
+          //remove the form where we don't want it to be
+          //and add it where it is not
+          saveAndFilterCampaignsFB({id: this.formID,title: this.formTitle}, this.formCampaigns, this.publishingCampaigns);
+
           this.showEntryPointModal = true;
+
         }
       },
       directPublishForm(){
@@ -113,4 +129,9 @@
     justify-content: space-between;
     align-items: center;
   }
+
+  .creator-form-save-button:hover {
+    background: #276a35;
+  }
+
 </style>
