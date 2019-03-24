@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a :href="JsonParsing(campaign)" :download="form.title + '.json'"> Download </a>
+    <a :href="JsonParsing(campaign)" :download="campaign.title + '.json'"> Download </a>
   </div>
 </template>
 
