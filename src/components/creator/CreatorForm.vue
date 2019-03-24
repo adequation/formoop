@@ -3,6 +3,7 @@
 
     <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
 
+    <CreatorCampaignSelect/>
 
     <CreatorFormEntry v-for="(entry, i) in formEntries"
                       :key="entry.id"
@@ -12,8 +13,7 @@
                       :formSections="formSections"
     />
 
-    <div class="creator-form-footer">
-    </div>
+    <div class="creator-form-footer"></div>
 
     <DockingMenu class="creator-form-bottom-menu">
       <div slot="body">
@@ -51,7 +51,7 @@
               <i class="material-icons md-36">save</i>
             </button>
 
-            <CreatorPublication :form-entries="formEntries" :save-form="saveForm"/>
+            <CreatorPublication :form-entries="formEntries" :publishing-campaigns="publishingCampaigns" :save-form="saveForm" :form-title="formTitle"/>
           </div>
         </div>
 
@@ -66,14 +66,15 @@
 
   import CreatorFormEntry from './CreatorFormEntry'
   import * as Firebase from "firebase";
-  import {saveCreatorFormFB, publishCreatorFormFB} from "@/thunks/creatorForm";
-  import {getCreatedFormFromID, nativeFbFunctions} from "@/helpers/firebaseHelpers";
+  import {saveAndFilterCampaignsFB, saveCreatorFormFB} from "@/thunks/creatorForm";
+  import {getCreatedFormFromID} from "@/helpers/firebaseHelpers";
   import CreatorPublication from "@/components/creator/CreatorPublication";
   import DockingMenu from "@/components/containers/DockingMenu";
+  import CreatorCampaignSelect from "@/components/creator/CreatorCampaignSelect";
 
   export default {
     name: 'CreatorForm',
-    components: {CreatorPublication, CreatorFormEntry, DockingMenu},
+    components: {CreatorPublication, CreatorFormEntry, DockingMenu, CreatorCampaignSelect},
     data() {
       return {
         formEntries: [],
@@ -89,7 +90,9 @@
         defaultFormTitle: 'Formulaire sans titre',
         showModal: false,
         newSection: null,
-        formSections: []
+        formSections: [],
+        publishingCampaigns: []
+
       }
     },
     methods: {
@@ -174,6 +177,10 @@
         }
       },
 
+      setFormPublishingCampaign(publishingCampaigns){
+        this.publishingCampaigns = publishingCampaigns;
+      },
+
       setForm(form) {
         if (!form) {
           this.formEntries = [];
@@ -225,6 +232,10 @@
           console.log(e);
         });
 
+        //remove the form where we don't want it to be
+        //and add it where it is not
+        saveAndFilterCampaignsFB({id: this.formID,title: this.formTitle}, this.formCampaigns, this.publishingCampaigns);
+
       },
     },
     created: function () {
@@ -232,6 +243,8 @@
       this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
       this.$store.dispatch('setPublishedForms');
       this.$store.dispatch('setCreatorID', {formID: null});
+      this.$store.dispatch('setFormCampaigns');
+
 
       //emitting of a new entry
       this.$root.$on('add-entry-answer', (id, answer) => {
@@ -249,6 +262,10 @@
 
       this.$on('set-entry-requirement', (id, requirement) => {
         this.setFormEntryRequirement(id, requirement)
+      });
+
+      this.$on('set-publishing-campaign', publishingCampaigns => {
+        this.setFormPublishingCampaign(publishingCampaigns)
       });
 
       //when an entry is mounted
@@ -291,6 +308,7 @@
       //retreive form
       this.getFormFromFB(this.creatorID, this.formID);
 
+
     },
     computed: {
       formID() {
@@ -303,6 +321,10 @@
 
       creatorID() {
         return this.$store.getters.creatorID;
+      },
+
+      formCampaigns() {
+        return this.$store.getters.formCampaigns;
       },
 
       sections() {
@@ -434,11 +456,20 @@
     border-bottom: 1px solid #00000055;
   }
 
+  .creator-form-sections-buttons-wrapper input:focus {
+    outline: none;
+  }
+
 
   .creator-section-name-input {
     background: none;
     border: none;
     width: auto;
+  }
+
+  .creator-section-name-input::placeholder{
+    color: white;
+    opacity: 0.8;
   }
 
   .vertical-separator {
