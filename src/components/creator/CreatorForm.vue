@@ -3,7 +3,7 @@
 
     <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
 
-    <CreatorPublishingCampaignSelector />
+    <CreatorCampaignSelect/>
 
     <CreatorFormEntry v-for="(entry, i) in formEntries"
                       :key="entry.id"
@@ -66,15 +66,15 @@
 
   import CreatorFormEntry from './CreatorFormEntry'
   import * as Firebase from "firebase";
-  import {saveCreatorFormFB, publishCreatorFormFB, saveAndFilterCampaignsFB} from "@/thunks/creatorForm";
-  import {getCreatedFormFromID, nativeFbFunctions} from "@/helpers/firebaseHelpers";
+  import {saveAndFilterCampaignsFB, saveCreatorFormFB} from "@/thunks/creatorForm";
+  import {getCreatedFormFromID} from "@/helpers/firebaseHelpers";
   import CreatorPublication from "@/components/creator/CreatorPublication";
   import DockingMenu from "@/components/containers/DockingMenu";
-  import CreatorPublishingCampaignSelector from "@/components/creator/CreatorPublishingCampaignSelector";
+  import CreatorCampaignSelect from "@/components/creator/CreatorCampaignSelect";
 
   export default {
     name: 'CreatorForm',
-    components: {CreatorPublication, CreatorFormEntry, DockingMenu, CreatorPublishingCampaignSelector},
+    components: {CreatorPublication, CreatorFormEntry, DockingMenu, CreatorCampaignSelect},
     data() {
       return {
         formEntries: [],

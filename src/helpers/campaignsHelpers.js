@@ -1,11 +1,6 @@
-import {saveFormCampaignsFB} from "@/thunks/creatorForm";
-
 export function getFormCampaign(campaignsFromFB, formID) {
-  const campaignsId = Object.keys(campaignsFromFB);
 
-  const campaigns = campaignsId.map(id => {
-    return campaignsFromFB[id];
-  });
+  const campaigns = Object.keys(campaignsFromFB).map(id => campaignsFromFB[id]);
 
   const campaignsContainingFormId = [];
 
@@ -15,8 +10,6 @@ export function getFormCampaign(campaignsFromFB, formID) {
       if (!!form) campaignsContainingFormId.push(campaign.id)
     }
   });
-
-  console.log(campaignsContainingFormId);
 
   return campaignsContainingFormId;
 }
