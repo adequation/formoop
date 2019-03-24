@@ -137,18 +137,18 @@ const router = new Router({
       }
     },
     {
-      path: '/closed/',
-      name: 'ClosedForms',
-      component: CreatorClosedForms,
+      path: '/monitor/campaign/:campaignID',
+      name: 'SupervisorCampaign',
+      component: SupervisorCampaignDashboard,
       meta: {
         requiresAuth: true,
         any: false
       }
     },
     {
-      path: '/wip',
-      name: 'wip',
-      component: SupervisorCampaignDashboard,
+      path: '/closed/',
+      name: 'ClosedForms',
+      component: CreatorClosedForms,
       meta: {
         requiresAuth: true,
         any: false

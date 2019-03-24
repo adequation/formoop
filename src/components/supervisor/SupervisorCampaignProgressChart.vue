@@ -19,7 +19,7 @@
 
         format: d3.format(".1f"),
 
-        margin: {top: 30, right: 0, bottom: 10, left: 30},
+        margin: {top: 30, right: 0, bottom: 10, left: 0},
       }
     },
 
@@ -52,7 +52,7 @@
 
       y() {
         return d3.scaleBand()
-          .domain(this.values.map(d => d.name))
+          .domain(this.values.map((d,i) => d.name))
           .range([this.margin.top, this.height - this.margin.bottom])
           .padding(0.1)
       },
@@ -141,9 +141,9 @@
 
         const yAx = svg.selectAll('.y-axis').data([{}]);
 
-        const yAxEnter = yAx.enter().append("g")
+        /*const yAxEnter = yAx.enter().append("g")
           .attr('class', 'y-axis')
-          .call(this.yAxis);
+          .call(this.yAxis);*/
       }
     },
 
@@ -163,8 +163,8 @@
 </script>
 
 <style scoped>
-  .campaign-progress {
-    width: auto;
+  .campaign-progress-chart {
+    width: 100%;
   }
 
   .campaign-progress-chart {
