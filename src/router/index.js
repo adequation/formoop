@@ -11,6 +11,7 @@ import PublishedForms from '@/components/general/PublishedForms'
 import FormCampaign from '@/components/general/FormCampaign'
 import CreatorCampaign from '@/components/creator/CreatorCampaign'
 import ClosedForm from '@/components/general/ClosedForm'
+import SupervisorCampaignDashboard from '@/components/supervisor/SupervisorCampaignDashboard'
 
 import Firebase from 'firebase';
 import CreatorClosedForms from "../components/creator/CreatorClosedForms";
@@ -139,6 +140,15 @@ const router = new Router({
       path: '/closed/',
       name: 'ClosedForms',
       component: CreatorClosedForms,
+      meta: {
+        requiresAuth: true,
+        any: false
+      }
+    },
+    {
+      path: '/wip',
+      name: 'wip',
+      component: SupervisorCampaignDashboard,
       meta: {
         requiresAuth: true,
         any: false

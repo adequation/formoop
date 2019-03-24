@@ -4,7 +4,7 @@
 
     <SupervisorForceDirectedGraph :userAnswers="userAnswers" :formEntries="formEntries" :users="invitedUsers"/>
 
-    <SupervisorCirclePacking :userAnswers="userAnswers" :formEntries="formEntries" :users="invitedUsers"/>
+    <!--<SupervisorCirclePacking :userAnswers="userAnswers" :formEntries="formEntries" :users="invitedUsers"/> !-->
 
 
     <p><span class="answer-percentage">{{Number(getPercentageValue("answered", this.formEntries, this.userAnswers)).toFixed(2)}}%</span>
