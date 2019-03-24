@@ -106,3 +106,8 @@ export function parseForm(brutForm){
   }
 }
 
+export function parseCampaign(campaign){
+
+
+}
+
