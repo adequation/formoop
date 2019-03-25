@@ -3,17 +3,41 @@
 
     <h1>{{campaignName}}</h1>
 
+    <Modal v-if="showSingleForm" @close="showSingleForm = false">
+
+      <div slot="body">
+
+        <div class="single-form-wrapper">
+          <div class="single-form">
+
+            <SupervisorForceDirectedGraph v-if="selectedForm.usersAnswers"
+                                          :userAnswers="selectedForm.usersAnswers"
+                                          :formEntries="selectedForm ?
+                                          Object.keys(selectedForm.entries).map(k =>  selectedForm.entries[k]) : []"
+                                          :users="selectedForm.users"/>
+
+          </div>
+        </div>
+
+
+      </div>
+    </Modal>
+
     <div>
       <table class="campaign-progression-table">
         <th>Nom du formulaire</th>
         <th>Progression</th>
-        <th>qsdfef</th>
-        <tr v-for="v in campaignFormsProgress" :key="v.name">
-          <td>{{v.name}}</td>
+        <th>Points d'entrée</th>
+        <th>Nombre de participants</th>
+        <th>Temps depuis publication</th>
+        <tr v-for="form in campaignFullForms" :key="form.id" @click="openSingleForm(form)">
+          <td>{{form.title}}</td>
           <td>
-            <SupervisorCampaignProgressChart :data="[v]"/>
+            <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
           </td>
-          <td>{{v.value}}</td>
+          <td><span class="tag" v-for="e in getEntryPoints(form).map(ep => ep.name)">{{e}}</span></td>
+          <td>{{(Object.keys(form.users)||[]).length}}</td>
+          <td>...</td>
         </tr>
       </table>
     </div>
@@ -24,19 +48,34 @@
     <DockingMenu class="supervisor-campaign-bottom-menu">
       <div slot="body">
 
-        <div class="creator-form-buttons-wrapper">
+        <div class="supervisor-campaign-bottom-menu-wrapper">
 
-          <div class="creator-form-buttons-type">
-          <button class="bottom-button" title="Progression"><i class="material-icons">timeline</i></button>
-          <button class="bottom-button" title="Conflits"><i class="material-icons">event_busy</i></button>
+
+          <div class="creator-form-buttons-wrapper">
+
+            <div class="creator-form-buttons-type">
+              <button class="bottom-button filter-button" title="Progression"><i class="material-icons">timeline</i></button>
+              <button class="bottom-button filter-button" title="Conflits"><i class="material-icons">event_busy</i></button>
+            </div>
+
+            <div class="creator-form-buttons-sort">
+              <button class="bottom-button sort-button" title="Filtrer">
+                <i class="material-icons">sort</i>
+              </button>
+              <button class="bottom-button sort-button" title="Filtrer par ordre alphabetique">
+                <i class="material-icons">sort_by_alpha</i>
+              </button>
+            </div>
+
           </div>
 
-          <div class="creator-form-buttons-sort">
-            <button class="bottom-button" title="Progression"><i class="material-icons">sort</i></button>
-            <button class="bottom-button" title="Conflits"><i class="material-icons">sort_by_alpha</i></button>
-          </div>
 
+          <div class="creator-form-tools-wrapper">
+            <button class="bottom-button tool-button" title="Récupérer les résultats"><i class="material-icons md-36">save_alt</i></button>
+            <button class="bottom-button tool-button" title="Progression"><i class="material-icons md-36">description</i></button>
+          </div>
         </div>
+
 
       </div>
     </DockingMenu>
@@ -50,13 +89,21 @@
   import SupervisorProgressChart from "@/components/supervisor/SupervisorProgressChart";
   import DockingMenu from "@/components/containers/DockingMenu";
   import {getPercentage} from "@/helpers/userAnswersHelpers";
+  import Modal from "@/components/containers/Modal";
+  import SupervisorBasicFormInfo from "@/components/supervisor/SupervisorBasicFormInfo";
+  import SupervisorForceDirectedGraph from "@/components/supervisor/SupervisorForceDirectedGraph";
 
   export default {
     name: "SupervisorCampaignDashboard",
-    components: {SupervisorProgressChart, SupervisorCampaignProgressChart, DockingMenu},
+    components: {
+      SupervisorForceDirectedGraph,
+      SupervisorBasicFormInfo, Modal, SupervisorProgressChart, SupervisorCampaignProgressChart, DockingMenu},
 
     data() {
-      return {}
+      return {
+        showSingleForm : false,
+        selectedForm : null,
+      }
     },
 
     computed: {
@@ -77,10 +124,7 @@
       },
 
       campaignFormsProgress() {
-        return this.campaignFullForms.map(f => ({
-          name: f.title,
-          value: getPercentage('answered', Object.keys(f.entries).map(formEntryKey => f.entries[formEntryKey]), f.usersAnswers)
-        }));
+        return this.campaignFullForms.map(f => this.getFormProgress(f));
       },
 
       campaignName() {
@@ -90,9 +134,37 @@
       campaignID() {
         return this.campaign ? this.campaign.id : this.$route.params.campaignID;
       },
+
+
     },
 
-    methods: {},
+    methods: {
+
+      getFormProgress(form){
+        return {
+          name: form.title,
+          id: form.id,
+          value: getPercentage('answered',
+            Object.keys(form.entries).map(formEntryKey => form.entries[formEntryKey]),
+            form.usersAnswers)
+        }
+      },
+
+      getEntryPoints(form){
+        return form.entryPoint ? Object.keys(form.entryPoint).map(key => form.entryPoint[key]) : []
+      },
+
+      openSingleForm(form){
+        this.selectedForm = form;
+        this.showSingleForm = true;
+      },
+
+      getFormProgressionPercentage(form){
+        return getPercentage('answered', form ?
+          Object.keys(form.entries).map(k =>  form.entries[k]) : [], form.usersAnswers);
+      }
+
+    },
 
     created() {
       this.$store.dispatch('setPublishedForms');
@@ -115,20 +187,35 @@
 </script>
 
 <style scoped>
-  .supervisor-campaign-bottom-menu{
+  .supervisor-campaign-bottom-menu {
     height: 5em;
+
+  }
+
+  .supervisor-campaign-bottom-menu-wrapper {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .campaign-progression-table {
     width: 100%;
+    border-collapse: collapse;
   }
 
   .campaign-progression-table td {
-
     border-bottom: 1px solid #e8e8e8;
   }
 
-  .creator-form-buttons-type{
+  .campaign-progression-table tr:hover {
+    background: #00000011;
+    cursor: pointer;
+  }
+
+  .creator-form-buttons-type {
     margin-left: 1em;
     margin-right: 1em;
 
@@ -138,7 +225,7 @@
     align-items: center;
   }
 
-  .creator-form-buttons-sort{
+  .creator-form-buttons-sort {
     margin-left: 1em;
     margin-right: 1em;
 
@@ -148,7 +235,17 @@
     align-items: center;
   }
 
-  .creator-form-buttons-wrapper{
+  .creator-form-buttons-wrapper {
+    padding: 1em;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .creator-form-tools-wrapper {
+
     padding: 1em;
 
     display: flex;
@@ -161,7 +258,6 @@
     margin-right: 0.5em;
     padding: 0.5em;
     color: white;
-    background: #2d8246;
 
     cursor: pointer;
     font-size: large;
@@ -173,5 +269,56 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .filter-button {
+    background: #4286f4;
+  }
+
+  .sort-button {
+    background: #fa7d32;
+  }
+
+  .tool-button {
+    background: #2d8246;
+  }
+
+  .filter-button:hover {
+    background: #3462ad;
+  }
+
+  .sort-button:hover {
+    background: #c86428;
+  }
+
+  .tool-button:hover {
+    background: #276a35;
+  }
+
+  .single-form {
+    max-height: 75vh;
+    overflow-y: scroll;
+  }
+
+  .single-form-wrapper {
+    height: 100%;
+    overflow-y: scroll;
+  }
+
+  .tag {
+    display: inline-block;
+    white-space:nowrap;
+    height: 20px;
+    line-height: 20px;
+    text-decoration: none solid rgba(0, 0, 0, 0.65);
+    background: rgb(250, 250, 250);
+    border: 1px solid rgb(217, 217, 217);
+    border-radius: 4px 4px 4px 4px;
+    margin: 0 10px 10px 0;
+    padding: 0 7px;
+
+    overflow: hidden;
+
+    cursor: pointer;
   }
 </style>

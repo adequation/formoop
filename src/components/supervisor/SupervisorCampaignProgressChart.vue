@@ -19,7 +19,7 @@
 
         format: d3.format(".1f"),
 
-        margin: {top: 30, right: 0, bottom: 10, left: 0},
+        margin: {top: 10, right: 0, bottom: 10, left: 0},
       }
     },
 
@@ -82,7 +82,7 @@
         const svg = d3.select(`#${this.uniqueID}`)
           .attr('width', '100%')
           .attr('height', this.height)
-          .attr('viewbox', `0 0 ${this.height} ${this.width}`);
+          .attr('viewbox', `0 0 ${this.height} ${this.width/3}`);
 
         const bars = svg.selectAll('.bars').data([{}]);
 
