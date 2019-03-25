@@ -29,6 +29,7 @@
         <th>Progression</th>
         <th>Points d'entrée</th>
         <th>Nombre de participants</th>
+        <th>Nombre de participants actifs</th>
         <th>Temps depuis publication</th>
         <tr v-for="form in campaignFullForms" :key="form.id" @click="openSingleForm(form)">
           <td>{{form.title}}</td>
@@ -37,6 +38,7 @@
           </td>
           <td><span class="tag" v-for="e in getEntryPoints(form).map(ep => ep.name)">{{e}}</span></td>
           <td>{{(Object.keys(form.users)||[]).length}}</td>
+          <td>{{getActivePeople(form.usersAnswers, (Object.keys(form.users)||[]).length)}}</td>
           <td>...</td>
         </tr>
       </table>
@@ -88,7 +90,7 @@
   import SupervisorCampaignProgressChart from "@/components/supervisor/SupervisorCampaignProgressChart";
   import SupervisorProgressChart from "@/components/supervisor/SupervisorProgressChart";
   import DockingMenu from "@/components/containers/DockingMenu";
-  import {getPercentage} from "@/helpers/userAnswersHelpers";
+  import {activeParticipantNumber, getPercentage} from "@/helpers/userAnswersHelpers";
   import Modal from "@/components/containers/Modal";
   import SupervisorBasicFormInfo from "@/components/supervisor/SupervisorBasicFormInfo";
   import SupervisorForceDirectedGraph from "@/components/supervisor/SupervisorForceDirectedGraph";
@@ -159,9 +161,12 @@
         this.showSingleForm = true;
       },
 
-      getFormProgressionPercentage(form){
-        return getPercentage('answered', form ?
-          Object.keys(form.entries).map(k =>  form.entries[k]) : [], form.usersAnswers);
+      getActivePeople(usersAnswers, totalNumberOfInvitedPeople){
+        let activePercentage = 0;
+        if(totalNumberOfInvitedPeople > 0)
+          activePercentage = activeParticipantNumber(usersAnswers)/totalNumberOfInvitedPeople;
+
+        return `${activeParticipantNumber(usersAnswers)} (${activePercentage*100}%)`;
       }
 
     },
@@ -297,12 +302,11 @@
 
   .single-form {
     max-height: 75vh;
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 
   .single-form-wrapper {
     height: 100%;
-    overflow-y: scroll;
   }
 
   .tag {
