@@ -476,6 +476,7 @@
   .user-form-search-bar {
     background: none;
     border: none;
+    outline: none;
   }
 
   .user-form-search-delete-button {

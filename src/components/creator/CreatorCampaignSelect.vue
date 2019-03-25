@@ -22,7 +22,8 @@
                  v-if="showList"
                  v-model="searchQuery"
                  @click.stop=""/>
-          <i v-if="searchQuery && showList" class="material-icons md-18" role="button"  @click.stop="" @click="searchQuery = ''">clear</i>
+          <i v-if="searchQuery && showList" class="material-icons md-18" role="button" @click.stop=""
+             @click="searchQuery = ''">clear</i>
         </div>
       </div>
 
@@ -30,17 +31,20 @@
 
     </div>
 
-    <div class="campaigns-list" v-if="showList">
-      <div class="no-campaign-found" v-if="searchedCampaigns.length <= 0">Aucune campagne</div>
 
-      <div v-else class="campaign-to-select"
-           v-for="c in searchedCampaigns"
-           @click="addSelected(c.id)">
+    <transition name="accordion-fade-slide" mode="out-in">
+      <div class="campaigns-list" v-if="showList">
+        <div class="no-campaign-found" v-if="searchedCampaigns.length <= 0">Aucune campagne</div>
 
-        {{c.name}} ({{(c.forms || []).length}} formulaires)
+        <div v-else class="campaign-to-select"
+             v-for="c in searchedCampaigns"
+             @click="addSelected(c.id)">
 
+          {{c.name}} ({{(c.forms || []).length}} formulaires)
+
+        </div>
       </div>
-    </div>
+    </transition>
 
   </div>
 </template>
@@ -49,6 +53,7 @@
   import * as uuid from "uuid";
   import {saveFormCampaignFB} from "../../thunks/creatorForm";
   import {doesCampaignExists, getFormCampaign} from "../../helpers/campaignsHelpers";
+  import {sameAnswersArray} from "../../helpers/userAnswersHelpers";
 
   export default {
     name: "CreatorCampaignSelect",
@@ -70,10 +75,9 @@
         if (this.newCampaignName) {
           // Check if campaign already exists
           if (!doesCampaignExists(this.campaignsFB, this.newCampaignName)) {
-
             const newCampaignID = uuid.v4();
-
-            saveFormCampaignFB(newCampaignID, {id: newCampaignID, name: this.newCampaignName})
+            saveFormCampaignFB(newCampaignID, {id: newCampaignID, name: this.newCampaignName});
+            this.addSelected(newCampaignID);
           } else alert("La campagne existe déjà !");
         }
         this.newCampaignName = null;
@@ -145,7 +149,8 @@
 
     watch: {
       formCampaign: function (newValue) {
-        this.selectedCampaigns = newValue ? newValue.slice() : [];
+        if(!sameAnswersArray(newValue,[...this.selectedCampaigns]))
+          this.selectedCampaigns = newValue ? newValue.slice() : [];
       }
     }
   }
@@ -179,8 +184,10 @@
     width: 100%;
     background: none;
     border: none;
-
     border-bottom: 1px solid rgb(217, 217, 217);
+
+    font-size: 1em;
+    color: #2c3e50;
   }
 
   .search-box:focus {
@@ -228,6 +235,13 @@
     border: 1px solid rgb(217, 217, 217);
     border-radius: 4px 4px 4px 4px;
     background: white;
+
+    max-height: 155px;
+    overflow-y: auto;
+  }
+
+  .campaigns-list:hover {
+    cursor: pointer;
   }
 
   .campaign-to-select {
@@ -244,7 +258,22 @@
     cursor: pointer;
   }
 
-  .no-campaign-found{
+  .no-campaign-found {
     margin: 5px;
   }
+
+  .accordion-fade-slide-enter-active, .accordion-fade-slide-leave-active {
+    transition: all 0.25s;
+  }
+
+  .accordion-fade-slide-enter {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+
+  .accordion-fade-slide-leave-to {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+
 </style>
