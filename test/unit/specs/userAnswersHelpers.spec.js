@@ -311,6 +311,24 @@ describe('userAnswersHelpers.js', () => {
     },
   };
 
+  const userAnswersMock2 = {
+    entry1: {
+      user1 : 'option1',
+    },
+    entry2: {
+      user1 : 'option2',
+    },
+    entry3: {
+      user1 : 'option3',
+    },
+    entry4: {
+      user1 : 'option1',
+    },
+    entry5: {
+      user1 : 'option2',
+    },
+  };
+
   it('Should have no active participants if there is no one or if no one answered', () => {
     expect(activeParticipantNumber(null)).toEqual(0);
     expect(activeParticipantNumber(undefined)).toEqual(0);
@@ -319,6 +337,10 @@ describe('userAnswersHelpers.js', () => {
 
   it('Should have 3 active participants', () => {
     expect(activeParticipantNumber(userAnswersMock)).toEqual(3);
+  });
+
+  it('Should have only one active participants', () => {
+    expect(activeParticipantNumber(userAnswersMock2)).toEqual(1);
   });
 
 });
