@@ -246,7 +246,6 @@ export const publishCreatorFormFB = (creatorID, formID) => {
 
 //Only generate
 const writeGeneratedCreatorFormFB = (creatorID, form) => {
-  console.log("gege", creatorID, form)
   return Firebase.database().ref(getCreatedFormFromID(creatorID, form.id))
     .set(form);
 };
@@ -308,8 +307,9 @@ const parseGenericEntryToCreator = (entry, entity) => {
 };
 
 //Only Generate
+//be careful, we put the "nom" property (non open source perspective here...)
 const parseGenericFormToCreator = (form, entity) => {
-  const parsedForm = {id: uuid.v4(), title: form.title};
+  const parsedForm = {id: uuid.v4(), title: `${form.title} (${entity.nom})`};
 
   //parse entries
   const entriesObject = {};
@@ -337,11 +337,13 @@ const parseGenericFormToCreator = (form, entity) => {
 const generateForms = (creatorID, creatorForm, entities) => {
   const createdForms = [];
 
+  console.log(entities)
   Object.keys(entities).forEach(entityKey => {
     const parsedForm = parseGenericFormToCreator(creatorForm, entities[entityKey]);
     writeGeneratedCreatorFormFB(creatorID, parsedForm);
 
-    createdForms.push({id: parsedForm.id, title: parsedForm.title});
+    //the name is created with the "promoteur" name
+    createdForms.push({id: parsedForm.id, title: parsedForm.title });
   });
 
   return createdForms;

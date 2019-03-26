@@ -28,7 +28,7 @@
           reader.onload = (evt) => {
             const rawFile = evt.target.result;
             this.parsedData = parsePromoteurCSV(rawFile);
-            console.log(JSON.stringify(this.parsedData, true));
+
             this.$root.$emit("csv-parsed", this.parsedData);
           };
 

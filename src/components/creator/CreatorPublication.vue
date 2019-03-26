@@ -4,7 +4,7 @@
     <button type="button" class="creator-form-save-button" title="Publier le formulaire"
             @click="publishForm"><i class="material-icons md-36">send</i></button>
 
-    <JsonImportModal :show-modal="showJsonImportModal" :form-entries="this.formEntries" :save-form="this.saveForm" :publishing-campaigns="publishingCampaigns" @close="closeJsonImportModal"/>
+    <CSVImportModal :show-modal="showCSVImportModal" :form-entries="this.formEntries" :save-form="this.saveForm" :publishing-campaigns="publishingCampaigns" @close="closeJsonImportModal"/>
     <EntryPointModal :show-modal="showEntryPointModal" @close="closeEntryPointModal" />
 
   </div>
@@ -14,19 +14,18 @@
 <script>
   import EntryPointModal from "./EntryPointModal";
   import {nativeFbFunctions} from "../../helpers/firebaseHelpers";
-  import JsonImportModal from "./JsonImportModal";
-  import {publishCreatorFormFB, setFormCampaignFB} from "../../thunks/creatorForm";
+  import CSVImportModal from "./CSVImportModal";
+  import {publishCreatorFormFB} from "../../thunks/creatorForm";
   import {inviteUser} from "../../thunks/userAccountThunks";
   import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "../../helpers/accountHelpers";
-  import {removeFormFromUnwantedCampaigns} from "@/helpers/campaignsHelpers";
   import {saveAndFilterCampaignsFB} from "@/thunks/creatorForm";
 
   export default {
     name: "CreatorPublication",
-    components: {JsonImportModal, EntryPointModal},
+    components: {CSVImportModal, EntryPointModal},
     data() {
       return {
-        showJsonImportModal: false,
+        showCSVImportModal: false,
         showEntryPointModal: false,
       }
     },
@@ -66,7 +65,7 @@
       publishForm(){
         this.saveForm();
         if(this.formContainsGenericQuestion()){
-          this.showJsonImportModal = true;
+          this.showCSVImportModal = true;
         }
         else{
           this.directPublishForm();
@@ -80,7 +79,6 @@
         }
       },
       directPublishForm(){
-        console.log("publi");
         publishCreatorFormFB(this.creatorID, this.formID);
         //Ajoute l'admin en user
         const userID = getUserIdFromEmail(this.user.email);
@@ -104,7 +102,7 @@
         this.showEntryPointModal = false;
       },
       closeJsonImportModal() {
-        this.showJsonImportModal = false;
+        this.showCSVImportModal = false;
       },
     },
 
