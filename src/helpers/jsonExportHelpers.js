@@ -77,7 +77,7 @@ function givenAnswers(userID, answeredentries, brutForm, usersAnswers){
 function parseUsers(brutForm){
   let users = [];
   Object.keys(brutForm.users).forEach(userID =>{
-    let answeredentries = answeredEntries(userID, brutForm.usersAnswers);
+    let answeredentries = brutForm.usersAnswers? answeredEntries(userID, brutForm.usersAnswers): [];
     if( answeredentries.length !== 0)
       users.push({
         name: brutForm.users[userID].name,
@@ -96,20 +96,23 @@ function parseUsers(brutForm){
 }
 
 export function parseForm(brutForm){
+  console.log(brutForm);
 
   return {
     title: brutForm.title,
     answeredEntries: parseAnswered(brutForm),
     notAnsweredEntries: parseNotAnswered(brutForm),
     users: parseUsers(brutForm),
-  }
+  };
 }
 
 export function parseCampaign(campaign){
+  console.log("inside");
+  console.log(campaign);
 
-  let forms = '';
+  let forms = [];
   campaign.forms.forEach(F => {
-    forms += parseForm(F);
+    forms.push(parseForm(F));
   });
 
   return{

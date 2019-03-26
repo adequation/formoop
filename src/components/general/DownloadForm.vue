@@ -17,8 +17,11 @@
           }
       },
       methods: {
+        /**
+         * @return {string}
+         */
         JsonParsing(BrutForm){
-          return parseForm(BrutForm);
+          return "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(parseForm(BrutForm), null, 2));
         }
       }
     }

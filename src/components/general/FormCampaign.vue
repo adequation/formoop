@@ -1,10 +1,11 @@
 <template>
   <div>
 
-    <div v-if="formCampaigns.length > 0">
+    <div v-if="Object.keys(formCampaigns).length > 0">
 
       <p v-for="campaign in formCampaigns">
         <router-link :to=getCampaignPath(campaign)>{{campaign.name}} ({{campaign.formNumber}} formulaires)</router-link>
+        <download-campaign :campaign="campaign"/>
       </p>
 
     </div>
@@ -20,10 +21,11 @@
 
 <script>
   import * as uuid from "uuid";
+  import DownloadCampaign from "./DownloadCampaign";
 
   export default {
     name: "FormCampaign",
-
+    components: {DownloadCampaign},
     methods: {
       getCampaignPath(campaign) {
         return "/campaigns/".concat(campaign.id);
@@ -36,6 +38,7 @@
 
     computed: {
       formCampaigns() {
+        console.log(this.$store.getters.formCampaigns.length);
         return this.$store.getters.formCampaigns;
       }
     },
