@@ -12,7 +12,7 @@
       name: "DownloadForm",
       props: {
           form: {
-            type: object,
+            type: Object,
             required: true,
           }
       },

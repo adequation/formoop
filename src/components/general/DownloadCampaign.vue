@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a :href="JsonParsing(campaign)" :download="campaign.name + '.json'"> Download </a>
+    <a :href="JsonParsing(campaign)" :download="campaign.name + '.json'"><i class="material-icons md-36">save_alt</i> </a>
   </div>
 </template>
 
@@ -27,6 +27,7 @@
         JsonParsing(campaign){
             console.log(this.campaignToConvert);
             return "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(parseCampaign(this.campaignToConvert), null, 2));
+
           },
       }
     }
