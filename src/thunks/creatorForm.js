@@ -2,6 +2,8 @@ import * as Firebase from 'firebase'
 import {campaignPath, getCreatedFormFromID, publishingPath} from "@/helpers/firebaseHelpers";
 import * as uuid from "uuid";
 import {addFormToWantedCampaigns, removeFormFromUnwantedCampaigns} from "@/helpers/campaignsHelpers";
+import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helpers/accountHelpers";
+import {isValidAddress} from "@/helpers/mailHelpers";
 
 export const saveCreatorFormFB = (creatorID, formID, form) => {
 
@@ -25,10 +27,6 @@ export const saveFormCampaignsFB = (campaigns) => {
 };
 
 export const saveAndFilterCampaignsFB = (form, campaigns, campaignsIDKeepingForm) => {
-
-  console.log('form', form)
-  console.log('camp', campaigns)
-  console.log('campaignsIDKeepingForm', campaignsIDKeepingForm)
 
   //remove the unwated ones
   let filteredCampaigns = removeFormFromUnwantedCampaigns(form.id, campaigns, campaignsIDKeepingForm);
@@ -54,8 +52,6 @@ export const setFormsCampaignFB = (campaignID, forms) => {
       if(formIndex >=0) campaigns[formIndex] = f;
       else campaigns.push(f);
     });
-
-    console.log("newCampaign", campaigns);
 
     //we set the new array
     Firebase.database().ref(campaignPath.concat(campaignID).concat('/forms')).set(campaigns);
@@ -166,8 +162,34 @@ const parseGenericEntry = (entry, entity) => {
   return parsedEntries;
 };
 
+//be careful, we put the "nom" property (non open source perspective here...)
 const parseGenericFormToUser = (form, entity) => {
-  const parsedForm = {id: uuid.v4(), title: form.title};
+  const parsedForm = {id: uuid.v4(), title: `${form.title} - ${entity.nom}`};
+
+  //if there is a contact, add it as an entry point and send him an email
+  if(entity.contact){
+    const emailAdress = entity.contact;
+
+    if(isValidAddress(emailAdress)){
+
+      parsedForm.entryPoint = {};
+
+      const userID = getUserIdFromEmail(emailAdress);
+
+      parsedForm.entryPoint[userID] =
+        {
+          email: emailAdress,
+          id: userID,
+          name: getNameFromEmail(emailAdress),
+          company: getDomainFromEmail(emailAdress)
+        };
+
+       /**************\
+      |THE MAIL IZEERE|
+      \**************/
+    }
+
+  }
 
   //parse entries
   const entriesObject = {};
@@ -211,16 +233,15 @@ export const publishGenericFormsFB = (creatorID, formID, entities, formCampaigns
 
   //we fetch the form in firebase
   //then we publish it
+
   return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
     .on('value', function (snapshot) {
       const value = snapshot.val();
       if (value) {
         const createdForms = generateAndPublishForms(value, entities);
 
-        if(formCampaigns){
-          formCampaigns.forEach(campaign => setFormsCampaignFB(campaign,  createdForms));
+        formCampaigns.forEach(campaignID => setFormsCampaignFB(campaignID,  createdForms));
 
-        }
       }
     });
 
@@ -307,7 +328,6 @@ const parseGenericEntryToCreator = (entry, entity) => {
 };
 
 //Only Generate
-//be careful, we put the "nom" property (non open source perspective here...)
 const parseGenericFormToCreator = (form, entity) => {
   const parsedForm = {id: uuid.v4(), title: `${form.title} (${entity.nom})`};
 
@@ -337,7 +357,7 @@ const parseGenericFormToCreator = (form, entity) => {
 const generateForms = (creatorID, creatorForm, entities) => {
   const createdForms = [];
 
-  console.log(entities)
+
   Object.keys(entities).forEach(entityKey => {
     const parsedForm = parseGenericFormToCreator(creatorForm, entities[entityKey]);
     writeGeneratedCreatorFormFB(creatorID, parsedForm);

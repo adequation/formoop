@@ -21,11 +21,11 @@ describe('csvParserHelpers.js', () => {
 
   });
 
-  const mockCSV = `PRCLEUNIK,PROMOTEUR,NOMPROG,VILLE
-  0,PROMOTEUR1,PROG1,VILLE1
-  0,PROMOTEUR1,PROG2,VILLE2
+  const mockCSV = `PRCLEUNIK,PROMOTEUR,NOMPROG,VILLE,CONTACT
+  0,PROMOTEUR1,PROG1,VILLE1,mock@mock.com
+  0,PROMOTEUR1,PROG2,VILLE2,mock@mock.com
   1,PROMOTEUR2,PROG3,VILLE3
-  1,PROMOTEUR2,PROG4,VILLE4`;
+  1,PROMOTEUR2,PROG4,VILLE4,mock2@mock.com`;
 
   const resultParseMock = {
     'Promoteur1': {
@@ -33,14 +33,16 @@ describe('csvParserHelpers.js', () => {
       programmes: [
         {programme: 'Prog1', ville: 'Ville1'},
         {programme: 'Prog2', ville: 'Ville2'},
-      ]
+      ],
+      contact: 'mock@mock.com'
     },
     'Promoteur2': {
       nom: 'Promoteur2',
       programmes: [
         {programme: 'Prog3', ville: 'Ville3'},
         {programme: 'Prog4', ville: 'Ville4'},
-      ]
+      ],
+      contact: 'mock2@mock.com'
     }
   };
 

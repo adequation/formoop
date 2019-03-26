@@ -30,7 +30,7 @@
 
 <script>
     import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
-    import {generateGenericFormsFB} from "@/thunks/creatorForm";
+    import {generateGenericFormsFB, publishGenericFormsFB} from "@/thunks/creatorForm";
     import Modal from "@/components/containers/Modal";
     import CSVParser from "@/components/general/CSVParser";
 
@@ -93,11 +93,7 @@
         generateAndPublishForms() {
 
 
-          //if(this.publishingCampaigns.length > 0){ // forms under campaigns
-            generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.publishingCampaigns || [])
-          //} else { // no campaign
-            //generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities);
-          //}
+          publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.publishingCampaigns || []);
 
 
           /*

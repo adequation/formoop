@@ -62,6 +62,7 @@
       }
     },
     methods: {
+
       publishForm(){
         this.saveForm();
         if(this.formContainsGenericQuestion()){
@@ -78,6 +79,7 @@
 
         }
       },
+
       directPublishForm(){
         publishCreatorFormFB(this.creatorID, this.formID);
         //Ajoute l'admin en user
@@ -89,6 +91,7 @@
           company: getDomainFromEmail(this.user.email)
         });
       },
+
       formContainsGenericQuestion() {
         let containsGenericQuestion = false;
 
@@ -98,6 +101,7 @@
 
         return containsGenericQuestion;
       },
+
       closeEntryPointModal() {
         this.showEntryPointModal = false;
       },

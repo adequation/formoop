@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import {parseCSV, parsePromoteurCSV} from "@/helpers/csvParserHelpers";
+  import {parsePromoteurCSV} from "@/helpers/csvParserHelpers";
 
   export default {
         name: "CSVParser",
