@@ -3,6 +3,7 @@ import * as d3 from "d3";
 export function parsePromoteurCSV(rawFile){
   const promoteurs = {};
 
+
   d3.csvParse(rawFile, function(d) {
     const row =  {
       nom: cleanWord(d.PROMOTEUR),
@@ -36,7 +37,6 @@ export function formatUppercaseLowerCase(word){
 
 //format a string to be fancy when displayed
 export function cleanWord(word){
-  const formatted = formatUppercaseLowerCase(word);
 
-  return formatted.trim();
+  return formatUppercaseLowerCase(word.trim());;
 }
