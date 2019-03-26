@@ -115,6 +115,21 @@ export function cohesion(answers){
   );
 }
 
+//return the number of active participant
+export function activeParticipantNumber(userAnswers){
+  //if there is no one, or no one has answered, return it
+  if(!userAnswers) return 0;
+
+  const activePeople = {};
+
+  Object.keys(userAnswers).forEach(entryID => {
+    const usersThatAnswered = userAnswers[entryID];
+    Object.keys(usersThatAnswered).map(userID => activePeople[userID] = true)
+  });
+
+  return Object.keys(activePeople).length;
+}
+
 //return a the list of entries answered by a user
 export function answeredEntries(userID, userAnswers) {
   return Object.keys(userAnswers).filter(key => Object.keys(userAnswers[key]).includes(userID));

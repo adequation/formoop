@@ -1,8 +1,7 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
 import Firebase from 'firebase'
-import {campaignPath, getUser, nativeFbFunctions, publishingPath} from "@/helpers/firebaseHelpers";
-import {getUserMetadata} from "@/thunks/userAccountThunks";
+import {campaignPath, publishingPath} from "@/helpers/firebaseHelpers";
 
 Vue.use(Vuex);
 
@@ -11,11 +10,13 @@ export default {
     publishedForms: [],
     formCampaigns: [],
     currentCampaign: null,
+    campaignFullForms: []
   },
   getters: {
     publishedForms:   state => state.publishedForms,
     formCampaigns:    state => state.formCampaigns,
     currentCampaign:  state => state.currentCampaign,
+    campaignFullForms: state => state.campaignFullForms
   },
   mutations: {
     setPublishedForms: (state) => {
@@ -42,6 +43,30 @@ export default {
         })
     },
 
+    setCampaignFullForms: (state) => {
+      if(!state.currentCampaign) {
+        state.campaignFullForms = [];
+        return;
+      }
+
+      if(!state.currentCampaign.forms) {
+        state.campaignFullForms = [];
+        return;
+      }
+
+      if(state.currentCampaign.forms){
+        Firebase.database().ref(publishingPath)
+          .on('value', function (snapshot) {
+            const value = snapshot.val();
+            if (value) {
+              state.campaignFullForms = state.currentCampaign.forms.map(cf => value[cf.id]);
+            }
+            else state.campaignFullForms = [];
+          })
+      }
+
+    },
+
     setCurrentCampaign: (state, {campaignID}) => {
       Firebase.database().ref(campaignPath.concat(campaignID))
         .on('value', (snapshot) => {
@@ -66,7 +91,12 @@ export default {
     setCurrentCampaign: (context, {campaignID}) => {
       context.commit('setCurrentCampaign', {campaignID});
       context.commit('setFormCampaigns');
+      context.commit('setCampaignFullForms');
     },
+
+    setCampaignFullForms: (context) => {
+      context.commit('setCampaignFullForms');
+    }
   }
 }
 
