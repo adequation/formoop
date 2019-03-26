@@ -1,9 +1,9 @@
 <template>
   <div>
 
-    <div v-if="formCampaigns.length > 0">
+    <div v-if="campaignAsArray.length > 0">
 
-      <p v-for="campaign in formCampaigns">
+      <p v-for="campaign in campaignAsArray">
         <router-link :to=getCampaignPath(campaign)>{{campaign.name}} ({{campaign.formNumber}} formulaires)</router-link>
       </p>
 
@@ -26,7 +26,7 @@
 
     methods: {
       getCampaignPath(campaign) {
-        return "/campaigns/".concat(campaign.id);
+        return "monitor/campaign/".concat(campaign.id);
       },
 
       createNewCampaign() {
@@ -37,6 +37,10 @@
     computed: {
       formCampaigns() {
         return this.$store.getters.formCampaigns;
+      },
+
+      campaignAsArray(){
+        return Object.keys(this.formCampaigns).map(key => this.formCampaigns[key]);
       }
     },
 

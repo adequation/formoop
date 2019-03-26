@@ -11,6 +11,7 @@ import PublishedForms from '@/components/general/PublishedForms'
 import FormCampaign from '@/components/general/FormCampaign'
 import CreatorCampaign from '@/components/creator/CreatorCampaign'
 import ClosedForm from '@/components/general/ClosedForm'
+import SupervisorCampaignDashboard from '@/components/supervisor/SupervisorCampaignDashboard'
 
 import Firebase from 'firebase';
 import CreatorClosedForms from "../components/creator/CreatorClosedForms";
@@ -130,6 +131,15 @@ const router = new Router({
       path: '/monitor/:formID',
       name: 'SupervisorDashboard',
       component: SupervisorDashboard,
+      meta: {
+        requiresAuth: true,
+        any: false
+      }
+    },
+    {
+      path: '/monitor/campaign/:campaignID',
+      name: 'SupervisorCampaign',
+      component: SupervisorCampaignDashboard,
       meta: {
         requiresAuth: true,
         any: false

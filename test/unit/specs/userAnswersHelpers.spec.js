@@ -1,4 +1,5 @@
 import {
+  activeParticipantNumber,
   answerAmount, answerArray,
   coesion,
   cohesion, conflictedEntries,
@@ -285,6 +286,61 @@ describe('userAnswersHelpers.js', () => {
   it('Cohesion should be 100% if everybody is agreeing', () => {
     expect(cohesion([1, 0, 0, 0])).toEqual(1);
     expect(cohesion([145, 0, 0, 0])).toEqual(1);
+  });
+
+  const userAnswersMock = {
+    entry1: {
+      user1 : 'option1',
+      user2 : 'option2',
+    },
+    entry2: {
+      user1 : 'option1',
+      user3 : 'option2',
+    },
+    entry3: {
+      user2 : 'option1',
+    },
+    entry4: {
+      user1 : 'option1',
+      user2 : 'option1',
+      user3 : 'option1',
+    },
+    entry5: {
+      user1 : 'option1',
+      user2 : 'option2',
+    },
+  };
+
+  const userAnswersMock2 = {
+    entry1: {
+      user1 : 'option1',
+    },
+    entry2: {
+      user1 : 'option2',
+    },
+    entry3: {
+      user1 : 'option3',
+    },
+    entry4: {
+      user1 : 'option1',
+    },
+    entry5: {
+      user1 : 'option2',
+    },
+  };
+
+  it('Should have no active participants if there is no one or if no one answered', () => {
+    expect(activeParticipantNumber(null)).toEqual(0);
+    expect(activeParticipantNumber(undefined)).toEqual(0);
+    expect(activeParticipantNumber({})).toEqual(0);
+  });
+
+  it('Should have 3 active participants', () => {
+    expect(activeParticipantNumber(userAnswersMock)).toEqual(3);
+  });
+
+  it('Should have only one active participants', () => {
+    expect(activeParticipantNumber(userAnswersMock2)).toEqual(1);
   });
 
 });

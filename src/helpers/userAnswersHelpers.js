@@ -114,3 +114,18 @@ export function cohesion(answers){
     (max * (means.length - 1))
   );
 }
+
+//return the number of active participant
+export function activeParticipantNumber(userAnswers){
+  //if there is no one, or no one has answered, return it
+  if(!userAnswers) return 0;
+
+  const activePeople = {};
+
+  Object.keys(userAnswers).forEach(entryID => {
+    const usersThatAnswered = userAnswers[entryID];
+    Object.keys(usersThatAnswered).map(userID => activePeople[userID] = true)
+  });
+
+  return Object.keys(activePeople).length;
+}
