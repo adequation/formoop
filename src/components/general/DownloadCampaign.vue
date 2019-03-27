@@ -33,7 +33,6 @@
          * @return {string}
          */
         JsonParsing(campaign){
-            console.log(this.campaignToConvert);
             return "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(parseCampaign(this.campaignToConvert), null, 2));
 
           },
