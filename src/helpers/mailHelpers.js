@@ -19,7 +19,6 @@ export function getFormUrlWithInvite(emailAdress, formID, window) {
   return getFormUrlWithUserID(formID, getUserIdFromEmail(emailAdress), window)
 }
 
-
 export function getInvitationEntryPointText(formName, userDisplayName, formURL){
   return 'Vous avez été invité '
     .concat('à participer et à animer le formulaire \n ')
