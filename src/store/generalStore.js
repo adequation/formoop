@@ -25,8 +25,7 @@ export default {
           const value = snapshot.val();
           if (value) {
             state.publishedForms = Object.keys(value).map(k => ({
-              title: value[k].title,
-              id: value[k].id,
+              ...value[k],
               questionNumber: value[k].entries ? Object.keys(value[k].entries).length : 0
             }));
           } else {
