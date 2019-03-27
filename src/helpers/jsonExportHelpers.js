@@ -110,15 +110,21 @@ export function parseCampaign(campaign){
   console.log("inside");
   console.log(campaign);
 
-  let forms = [];
-  campaign.forms.forEach(F => {
-    forms.push(parseForm(F));
+  let publishedForms = [];
+  campaign.publishedForms.forEach(F => {
+    publishedForms.push(parseForm(F));
+  });
+
+  let closedForms = [];
+  campaign.closedForms.forEach(F => {
+    closedForms.push(parseForm(F));
   });
 
   return{
     name: campaign.name,
     id: campaign.id,
-    forms: forms,
+    publishedForms: publishedForms,
+    closedForms: closedForms,
   }
 
 

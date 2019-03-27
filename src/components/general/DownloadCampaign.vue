@@ -17,7 +17,7 @@
       },
       computed: {
         campaignToConvert(){
-          return getCampaignWithForms(this.campaign, this.$store.getters.publishedForms, this.$store.getters.finishedForms);
+          return getCampaignWithForms(this.campaign, this.$store.getters.campaignFullForms, this.$store.getters.finishedForms);
         }
       },
       methods: {

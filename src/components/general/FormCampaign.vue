@@ -5,7 +5,6 @@
 
       <p v-for="campaign in campaignAsArray">
         <router-link :to=getCampaignPath(campaign)>{{campaign.name}} ({{campaign.formNumber}} formulaires)</router-link>
-        <download-campaign :campaign="campaign"/>
       </p>
 
     </div>

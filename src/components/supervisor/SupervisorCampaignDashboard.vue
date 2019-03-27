@@ -41,7 +41,7 @@
           <td>{{(Object.keys(form.users)||[]).length}}</td>
           <td>{{getActivePeople(form.usersAnswers, (Object.keys(form.users)||[]).length)}}</td>
           <td>...</td>
-          <td> <download-form :form="form"/> </td>
+          <!-- <td> <download-form :form="form"/> </td> -->
         </tr>
       </table>
     </div>
@@ -76,7 +76,7 @@
 
           <div class="creator-form-tools-wrapper">
             <download-campaign class="bottom-button tool-button" title="Récupérer les résultats" :campaign="campaign"/>
-            <button class="bottom-button tool-button" title="Récupérer les résultats"> <i class="material-icons md-36">save_alt</i></button>
+            <!-- <button class="bottom-button tool-button" title="Récupérer les résultats"> <i class="material-icons md-36">save_alt</i></button> -->
             <button class="bottom-button tool-button" title="Progression"><i class="material-icons md-36">description</i></button>
           </div>
         </div>
