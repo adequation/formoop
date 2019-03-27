@@ -76,22 +76,23 @@ function givenAnswers(userID, answeredentries, brutForm, usersAnswers){
 
 function parseUsers(brutForm){
   let users = [];
-  Object.keys(brutForm.users).forEach(userID =>{
-    let answeredentries = brutForm.usersAnswers? answeredEntries(userID, brutForm.usersAnswers): [];
-    if( answeredentries.length !== 0)
-      users.push({
-        name: brutForm.users[userID].name,
-        email: brutForm.users[userID].email,
-        givenAnswers: givenAnswers(userID, answeredentries, brutForm, brutForm.usersAnswers),
-      });
-    else{
-      users.push({
-        name: brutForm.users[userID].name,
-        email: brutForm.users[userID].email,
-        givenAnswers: [],
-      })
-    }
-  });
+  if(brutForm.users)
+    Object.keys(brutForm.users).forEach(userID =>{
+      let answeredentries = brutForm.usersAnswers? answeredEntries(userID, brutForm.usersAnswers): [];
+      if( answeredentries.length !== 0)
+        users.push({
+          name: brutForm.users[userID].name,
+          email: brutForm.users[userID].email,
+          givenAnswers: givenAnswers(userID, answeredentries, brutForm, brutForm.usersAnswers),
+        });
+      else{
+        users.push({
+          name: brutForm.users[userID].name,
+          email: brutForm.users[userID].email,
+          givenAnswers: [],
+        })
+      }
+    });
   return users;
 }
 
