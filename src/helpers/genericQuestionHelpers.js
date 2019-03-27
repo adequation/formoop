@@ -4,3 +4,9 @@ export function getGenericQuestionTitle(blocks) {
     return b.content;
   }).join(' ');
 }
+
+export function isFormGeneric(entries) {
+
+  return !!entries.find(e => e.generic);
+
+}
