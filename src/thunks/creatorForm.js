@@ -33,7 +33,7 @@ export const saveAndFilterCampaignsFB = (form, campaigns, campaignsIDKeepingForm
   let filteredCampaigns = removeFormFromUnwantedCampaigns(form.id, campaigns, campaignsIDKeepingForm);
 
   //add to the wanted ones
-  filteredCampaigns = addFormToWantedCampaigns(filteredCampaigns, campaigns, campaignsIDKeepingForm);
+  filteredCampaigns = addFormToWantedCampaigns(form, campaigns, campaignsIDKeepingForm);
 
   saveFormCampaignsFB(filteredCampaigns);
 
@@ -72,8 +72,6 @@ export const setFormCampaignFB = (campaignID, form) => {
     if (formIndex >= 0) campaigns[formIndex] = form;
     else campaigns.push(form);
 
-
-    console.log("newCampaign", campaigns);
 
     //we set the new array
     Firebase.database().ref(campaignPath.concat(campaignID).concat('/forms')).set(campaigns);
