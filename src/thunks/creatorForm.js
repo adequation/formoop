@@ -33,7 +33,7 @@ export const saveAndFilterCampaignsFB = (form, campaigns, campaignsIDKeepingForm
   let filteredCampaigns = removeFormFromUnwantedCampaigns(form.id, campaigns, campaignsIDKeepingForm);
 
   //add to the wanted ones
-  filteredCampaigns = addFormToWantedCampaigns(form, campaigns, campaignsIDKeepingForm);
+  filteredCampaigns = addFormToWantedCampaigns(filteredCampaigns, campaigns, campaignsIDKeepingForm);
 
   saveFormCampaignsFB(filteredCampaigns);
 
