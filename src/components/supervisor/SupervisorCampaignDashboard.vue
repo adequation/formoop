@@ -31,7 +31,7 @@
         <th>Nombre de participants</th>
         <th>Nombre de participants actifs</th>
         <th>Temps depuis publication</th>
-        <th>Télécharger les données</th>
+        <!-- <th>Télécharger les données</th> -->
         <tr v-for="form in campaignFullForms" :key="form.id" @click="openSingleForm(form)">
           <td>{{form.title}}</td>
           <td>
