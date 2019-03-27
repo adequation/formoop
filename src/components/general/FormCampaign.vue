@@ -13,16 +13,28 @@
       <h1>Il n'y a aucune campagne en cours pour l'instant</h1>
     </div>
 
+    <input class="new-campaign-box"
+           type="text"
+           placeholder="Nom de la campagne"
+           v-model="newCampaignName"/>
     <button @click="createNewCampaign">Créer une campagne</button>
+
 
   </div>
 </template>
 
 <script>
   import * as uuid from "uuid";
+  import {saveFormCampaignFB} from "../../thunks/creatorForm";
+  import {doesCampaignExists} from "../../helpers/campaignsHelpers";
 
   export default {
     name: "FormCampaign",
+    data() {
+      return {
+        newCampaignName:null
+      }
+    },
 
     methods: {
       getCampaignPath(campaign) {
@@ -30,7 +42,14 @@
       },
 
       createNewCampaign() {
-        this.$router.replace(this.getCampaignPath({id: uuid.v4()}));
+        if (this.newCampaignName) {
+          // Check if campaign already exists
+          if (!doesCampaignExists(this.formCampaigns, this.newCampaignName)) {
+            const newCampaignID = uuid.v4();
+            saveFormCampaignFB(newCampaignID, {id: newCampaignID, name: this.newCampaignName});
+          } else alert("La campagne existe déjà !");
+        }
+        this.newCampaignName = null;
       }
     },
 
@@ -41,7 +60,7 @@
 
       campaignAsArray(){
         return Object.keys(this.formCampaigns).map(key => this.formCampaigns[key]);
-      }
+      },
     },
 
     created() {
