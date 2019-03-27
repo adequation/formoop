@@ -173,16 +173,20 @@ const parseGenericFormToUser = (form, entity) => {
     if(isValidAddress(emailAdress)){
 
       parsedForm.entryPoint = {};
+      parsedForm.users = {};
 
       const userID = getUserIdFromEmail(emailAdress);
 
-      parsedForm.entryPoint[userID] =
+      const user =
         {
           email: emailAdress,
           id: userID,
           name: getNameFromEmail(emailAdress),
           company: getDomainFromEmail(emailAdress)
         };
+
+      parsedForm.entryPoint[userID] = user;
+      parsedForm.users[userID] = user;
 
        /**************\
       |THE MAIL IZEERE|
