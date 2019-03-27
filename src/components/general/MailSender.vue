@@ -1,71 +1,72 @@
 <template>
 
-    <div class="mail-form" v-if="!selectedUser">
+  <div class="mail-form" v-if="!selectedUser">
 
-      <div class="mail-addresses-input-wrapper">
-        <input class="mail-addresses-input"
-               type="email"
-               placeholder="Adresse email"
-               v-model="currentMailAdress"/>
-        <button type="button" @click="addAdressToPool"> + </button>
-      </div>
-
-
-
-      <div class="mail-addresses-input-wrapper">
-        <table class="mail-adress-table">
-          <tr v-for="(a,i) in mailAddresses">
-            <td>{{a}}</td>
-            <td><button type="button" @click="deleteAdress(i)">
-            <i class="material-icons md-18">close</i>
-            </button></td>
-          </tr>
-        </table>
-      </div>
-
-      <div class="mail-body-wrapper">
-        <input class="mail-subject-input"
-               type="text"
-               placeholder="Sujet du mail"
-               v-model="mailSubject"/>
-        <textarea class="mail-body-input"
-                  title=""
-                  placeholder="Contenu du mail (facultatif)"
-                  v-model="mailContent"
-                  rows="5"
-                  cols="25"></textarea>
-
-        <button type="button" @click="sendMail" class="send-mail-button" title="Envoyer !">
-          <i class="material-icons md-36">send</i>
-        </button>
-
-      </div>
-
-
+    <div class="mail-addresses-input-wrapper">
+      <input class="mail-addresses-input"
+             type="email"
+             placeholder="Adresse email"
+             v-model="currentMailAdress"/>
+      <button type="button" @click="addAdressToPool"> +</button>
     </div>
 
-    <div v-else>
-      <h2>Envoyer un message à {{selectedUser.name}}</h2>
 
-      <textarea class="mail-content-textarea"
+    <div class="mail-addresses-input-wrapper">
+      <table class="mail-adress-table">
+        <tr v-for="(a,i) in mailAddresses">
+          <td>{{a}}</td>
+          <td>
+            <button type="button" @click="deleteAdress(i)">
+              <i class="material-icons md-18">close</i>
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="mail-body-wrapper">
+      <input class="mail-subject-input"
+             type="text"
+             placeholder="Sujet du mail"
+             v-model="mailSubject"/>
+      <textarea class="mail-body-input"
                 title=""
                 placeholder="Contenu du mail (facultatif)"
                 v-model="mailContent"
                 rows="5"
                 cols="25"></textarea>
 
-      <button @click="sendMailToUser" class="send-mail-button" title="Envoyer !">
+      <button type="button" @click="sendMail" class="send-mail-button" title="Envoyer !">
         <i class="material-icons md-36">send</i>
       </button>
 
     </div>
 
 
+  </div>
+
+  <div v-else>
+    <h2>Envoyer un message à {{selectedUser.name}}</h2>
+
+    <textarea class="mail-content-textarea"
+              title=""
+              placeholder="Contenu du mail (facultatif)"
+              v-model="mailContent"
+              rows="5"
+              cols="25"></textarea>
+
+    <button @click="sendMailToUser" class="send-mail-button" title="Envoyer !">
+      <i class="material-icons md-36">send</i>
+    </button>
+
+  </div>
+
+
 </template>
 
 <script>
   import io from 'socket.io-client';
-  import {getFormUrlWithInvite, getFormUrlWithToken, sendMailWithSocket} from "@/helpers/mailHelpers";
+  import {getFormUrlWithInvite, getFormUrlWithToken, sendMailToBack} from "@/helpers/mailHelpers";
   import {inviteUser, inviteEntryPoint} from "@/thunks/userAccountThunks";
   import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helpers/accountHelpers";
 
@@ -78,8 +79,6 @@
         mailSubject: 'Invitation Formoop',
         mailContent: '',
 
-        mailerURL: 'localhost:3000',
-        socket: null
       }
     },
     props: {
@@ -114,7 +113,7 @@
         if (!this.mailAddresses.find(a => a === this.currentMailAdress)
           && this.isValidAdress(this.currentMailAdress))
           this.mailAddresses.push(this.currentMailAdress);
-        this.currentMailAdress  = '';
+        this.currentMailAdress = '';
       },
 
       deleteAdress(index) {
@@ -130,38 +129,39 @@
 
         this.mailAddresses.forEach(emailAdress => {
 
-            const userID = getUserIdFromEmail(emailAdress);
-              this.callBack({userID, formID: this.formID, metadata: {
-                  email : emailAdress,
-                  id: userID,
-                  name: getNameFromEmail(emailAdress),
-                  company: getDomainFromEmail(emailAdress)
-                }});
+          const userID = getUserIdFromEmail(emailAdress);
+          this.callBack({
+            userID, formID: this.formID, metadata: {
+              email: emailAdress,
+              id: userID,
+              name: getNameFromEmail(emailAdress),
+              company: getDomainFromEmail(emailAdress)
+            }
+          });
 
-          sendMailWithSocket(this.socket, {
-            from: 'formoop@gmail.com',
-            to: emailAdress,
-            html: (this.beforeBody || '')
-              + '<br/><br/>'
-              + (this.mailContent || '')
-              + '<br/><br/>'
-              + getFormUrlWithInvite(emailAdress, this.formID, window),
-            subject: this.mailSubject
+          sendMailToBack({
+            recipient: emailAdress,
+            message: {
+              html: (this.beforeBody || '')
+                + '<br/><br/>'
+                + (this.mailContent || '')
+                + '<br/><br/>'
+                + getFormUrlWithInvite(emailAdress, this.formID, window),
+              subject: this.mailSubject
+            }
           });
         });
 
-        this.currentMailAdress  = '';
-        this.mailAddresses      = [];
-        this.mailSubject        = '';
-        this.mailContent        = '';
+        this.currentMailAdress = '';
+        this.mailAddresses = [];
+        this.mailSubject = '';
+        this.mailContent = '';
       },
 
       sendMailToUser() {
-        console.log(this.selectedUser)
-        console.log(this.sender)
-          sendMailWithSocket(this.socket, {
-            from: 'formoop@gmail.com',
-            to: this.selectedUser.email,
+        sendMailToBack({
+          recipient: this.selectedUser.email,
+          message: {
             html: `<strong>${this.sender.name} (${this.sender.email})</strong> vous à envoyé un message à travers Formoop !`
               + '<br/><br/>'
               + '<div style="background: lightgray;">'
@@ -173,21 +173,19 @@
               + 'Ca se passe par ici : '
               + getFormUrlWithInvite(this.selectedUser.email, this.formID, window),
             subject: `Message de ${this.sender.name}`
-          });
+          }
+        });
 
-        this.currentMailAdress  = '';
-        this.mailAddresses      = [];
-        this.mailSubject        = '';
-        this.mailContent        = '';
+        this.currentMailAdress = '';
+        this.mailAddresses = [];
+        this.mailSubject = '';
+        this.mailContent = '';
       }
     },
     created() {
-      this.socket = io(this.mailerURL);
     },
     mounted() {
-      this.socket.on('mailer', (data) => {
-        console.log(data.message);
-      });
+
     }
   }
 </script>
@@ -206,7 +204,7 @@
   }
 
   .mail-subject-input {
-    width : 100%;
+    width: 100%;
     margin-bottom: 0.5em;
   }
 
@@ -241,7 +239,7 @@
 
     text-align: left;
     border-collapse: collapse;
-    table-layout:fixed;
+    table-layout: fixed;
   }
 
   .mail-adress-table tr:hover {
@@ -256,7 +254,7 @@
   .mail-adress-table td {
     padding-left: 5px;
     padding-top: 0.25em;
-    padding-bottom:0.25em;
+    padding-bottom: 0.25em;
 
     width: 200px;
 
@@ -274,6 +272,7 @@
     margin-bottom: 0.5em;
 
   }
+
   .mail-body-input {
     border: 1px solid #00000033;
     resize: none;
