@@ -4,19 +4,6 @@ import {getUserIdFromEmail} from "@/helpers/accountHelpers";
 
 describe('genericQuestionTitle.js', () => {
 
-  it('Should send the mail on a socket', () => {
-
-    const mockedSocket = {
-      emit: jest.fn((mail) => mail)
-    };
-
-    const mockedMail = 'mail';
-
-    sendMailWithSocket(mockedSocket, mockedMail);
-
-    expect(mockedSocket.emit).toBeCalledWith('sendMail', mockedMail);
-  });
-
   it('Should get the email body from form name and user name', () => {
 
     const mockedForm = 'form';
