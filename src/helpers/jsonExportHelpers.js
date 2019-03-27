@@ -97,7 +97,6 @@ function parseUsers(brutForm){
 }
 
 export function parseForm(brutForm){
-  console.log(brutForm);
 
   return {
     title: brutForm.title,
@@ -108,8 +107,6 @@ export function parseForm(brutForm){
 }
 
 export function parseCampaign(campaign){
-  console.log("inside");
-  console.log(campaign);
 
   let publishedForms = [];
   campaign.publishedForms.forEach(F => {
