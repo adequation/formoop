@@ -83,7 +83,8 @@
 
 
           <div class="creator-form-tools-wrapper">
-            <button class="bottom-button tool-button" title="Récupérer les résultats"><i class="material-icons md-36">save_alt</i></button>
+            <download-campaign class="bottom-button tool-button" title="Récupérer les résultats" :campaign="campaign"/>
+            <!-- <button class="bottom-button tool-button" title="Récupérer les résultats"> <i class="material-icons md-36">save_alt</i></button> -->
             <button class="bottom-button tool-button" title="Progression"><i class="material-icons md-36">description</i></button>
           </div>
         </div>
@@ -104,10 +105,14 @@
   import Modal from "@/components/containers/Modal";
   import SupervisorBasicFormInfo from "@/components/supervisor/SupervisorBasicFormInfo";
   import SupervisorForceDirectedGraph from "@/components/supervisor/SupervisorForceDirectedGraph";
+  import DownloadCampaign from "../general/DownloadCampaign";
+  import DownloadForm from "../general/DownloadForm";
 
   export default {
     name: "SupervisorCampaignDashboard",
     components: {
+      DownloadForm,
+      DownloadCampaign,
       SupervisorForceDirectedGraph,
       SupervisorBasicFormInfo, Modal, SupervisorProgressChart, SupervisorCampaignProgressChart, DockingMenu},
 

@@ -129,3 +129,8 @@ export function activeParticipantNumber(userAnswers){
 
   return Object.keys(activePeople).length;
 }
+
+//return a the list of entries answered by a user
+export function answeredEntries(userID, userAnswers) {
+  return Object.keys(userAnswers).filter(key => Object.keys(userAnswers[key]).includes(userID));
+}

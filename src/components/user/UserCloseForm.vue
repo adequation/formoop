@@ -86,7 +86,6 @@
           this.$router.replace(path);
         },
         closeForm() {
-
           closePublishedForm(this.formID);
           this.redirect('/closedForm')
         },
