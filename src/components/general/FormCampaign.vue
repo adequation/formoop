@@ -4,7 +4,7 @@
     <div v-if="campaignAsArray.length > 0">
 
       <p v-for="campaign in campaignAsArray">
-        <router-link :to=getCampaignPath(campaign)>{{campaign.name}} ({{campaign.formNumber}} formulaires)</router-link>
+        <router-link :to=getCampaignPath(campaign)>{{campaign.name}} ({{(campaign.forms || []).length}} formulaires)</router-link>
       </p>
 
     </div>

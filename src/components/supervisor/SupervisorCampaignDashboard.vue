@@ -37,8 +37,8 @@
             <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
           </td>
           <td><span class="tag" v-for="e in getEntryPoints(form).map(ep => ep.name)">{{e}}</span></td>
-          <td>{{(Object.keys(form.users)||[]).length}}</td>
-          <td>{{getActivePeople(form.usersAnswers, (Object.keys(form.users)||[]).length)}}</td>
+          <td>{{(form.users ? Object.keys(form.users) : []).length}}</td>
+          <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
           <td>...</td>
         </tr>
       </table>

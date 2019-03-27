@@ -1,4 +1,4 @@
-import {getGenericQuestionTitle} from "@/helpers/genericQuestionHelpers";
+import {getGenericQuestionTitle, isFormGeneric} from "@/helpers/genericQuestionHelpers";
 
 
 describe('genericQuestionTitle.js', () => {
@@ -17,5 +17,29 @@ describe('genericQuestionTitle.js', () => {
 
     expect(getGenericQuestionTitle(mockBlocks)).toEqual(expected);
   });
+
+  it('Should be a generic form', ()=> {
+    const mockEntries = [
+        {id : 'e0', },
+        {id : 'e1', },
+        {id : 'e2', },
+        {id : 'e3', generic:true},
+        {id : 'e4', },
+      ];
+
+      expect(isFormGeneric(mockEntries)).toEqual(true);
+  });
+
+  it('Should not be a generic form', ()=> {
+    const mockEntries = [
+        {id : 'e0' },
+        {id : 'e1' },
+        {id : 'e2' },
+        {id : 'e3' },
+        {id : 'e4' },
+      ];
+
+    expect(isFormGeneric(mockEntries)).toEqual(false);
+  })
 
 });

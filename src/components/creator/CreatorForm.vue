@@ -71,6 +71,7 @@
   import CreatorPublication from "@/components/creator/CreatorPublication";
   import DockingMenu from "@/components/containers/DockingMenu";
   import CreatorCampaignSelect from "@/components/creator/CreatorCampaignSelect";
+  import {isFormGeneric} from "@/helpers/genericQuestionHelpers";
 
   export default {
     name: 'CreatorForm',
@@ -234,7 +235,9 @@
 
         //remove the form where we don't want it to be
         //and add it where it is not
-        saveAndFilterCampaignsFB({id: this.formID,title: this.formTitle}, this.formCampaigns, this.publishingCampaigns);
+
+        if(!isFormGeneric(this.formEntries))
+          saveAndFilterCampaignsFB({id: this.formID, title: this.formTitle}, this.formCampaigns, this.publishingCampaigns);
 
       },
     },
