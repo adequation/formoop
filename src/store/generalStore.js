@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
 import Firebase from 'firebase'
-import {campaignPath, publishingPath} from "@/helpers/firebaseHelpers";
+import {campaignPath, closedPath, publishingPath} from "@/helpers/firebaseHelpers";
 
 Vue.use(Vuex);
 
@@ -10,13 +10,15 @@ export default {
     publishedForms: [],
     formCampaigns: [],
     currentCampaign: null,
-    campaignFullForms: []
+    campaignFullForms: [],
+    campaignClosedForms: []
   },
   getters: {
-    publishedForms:   state => state.publishedForms,
-    formCampaigns:    state => state.formCampaigns,
-    currentCampaign:  state => state.currentCampaign,
-    campaignFullForms: state => state.campaignFullForms
+    publishedForms: state => state.publishedForms,
+    formCampaigns: state => state.formCampaigns,
+    currentCampaign: state => state.currentCampaign,
+    campaignFullForms: state => state.campaignFullForms,
+    campaignClosedForms: state => state.campaignClosedForms,
   },
   mutations: {
     setPublishedForms: (state) => {
@@ -40,29 +42,64 @@ export default {
         .on('value', (snapshot) => {
           const value = snapshot.val();
           state.formCampaigns = value || {};
-
         })
     },
 
     setCampaignFullForms: (state) => {
-      if(!state.currentCampaign) {
+      if (!state.currentCampaign) {
         state.campaignFullForms = [];
         return;
       }
 
-      if(!state.currentCampaign.forms) {
+      if (!state.currentCampaign.forms) {
         state.campaignFullForms = [];
         return;
       }
 
-      if(state.currentCampaign.forms){
+      if (state.currentCampaign.forms) {
         Firebase.database().ref(publishingPath)
           .on('value', function (snapshot) {
             const value = snapshot.val();
+
             if (value) {
-              state.campaignFullForms = state.currentCampaign.forms.map(cf => value[cf.id]);
+              const fullForms = [];
+              state.currentCampaign.forms.forEach(cf => {
+                if(value[cf.id]) fullForms.push(value[cf.id]);
+              });
+              state.campaignFullForms = fullForms.slice();
             }
             else state.campaignFullForms = [];
+          })
+      }
+
+    },
+
+    setCampaignClosedForms: (state) => {
+      if (!state.currentCampaign) {
+        state.campaignClosedForms = [];
+        return;
+      }
+
+      if (!state.currentCampaign.forms) {
+        state.campaignClosedForms = [];
+        return;
+      }
+
+      if (state.currentCampaign.forms) {
+        Firebase.database().ref(closedPath)
+          .on('value', function (snapshot) {
+            const value = snapshot.val();
+            console.log(value)
+            if (value) {
+              const fullForms = [];
+
+              state.currentCampaign.forms.forEach(cf => {
+                if(value[cf.id]) fullForms.push(value[cf.id]);
+              });
+
+              state.campaignClosedForms = fullForms.slice();
+            }
+            else state.campaignClosedForms = [];
           })
       }
 
@@ -93,10 +130,15 @@ export default {
       context.commit('setCurrentCampaign', {campaignID});
       context.commit('setFormCampaigns');
       context.commit('setCampaignFullForms');
+      context.commit('setCampaignClosedForms');
     },
 
     setCampaignFullForms: (context) => {
       context.commit('setCampaignFullForms');
+    },
+
+    setCampaignClosedForms: (context) => {
+      context.commit('setCampaignClosedForms');
     }
   }
 }

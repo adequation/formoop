@@ -30,7 +30,7 @@
         <th>Points d'entrée</th>
         <th>Nombre de participants</th>
         <th>Nombre de participants actifs</th>
-        <th>Temps depuis publication</th>
+        <th>État</th>
         <tr v-for="form in campaignFullForms" :key="form.id" @click="openSingleForm(form)">
           <td>{{form.title}}</td>
           <td>
@@ -39,7 +39,17 @@
           <td><span class="tag" v-for="e in getEntryPoints(form).map(ep => ep.name)">{{e}}</span></td>
           <td>{{(form.users ? Object.keys(form.users) : []).length}}</td>
           <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
-          <td>...</td>
+          <td><i class="material-icons">lock_open</i></td>
+        </tr>
+        <tr v-for="form in campaignClosedForms" :key="form.id" @click="openSingleForm(form)">
+          <td>{{form.title}}</td>
+          <td>
+            <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
+          </td>
+          <td><span class="tag" v-for="e in getEntryPoints(form).map(ep => ep.name)">{{e}}</span></td>
+          <td>{{(form.users ? Object.keys(form.users) : []).length}}</td>
+          <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
+          <td><i class="material-icons">lock</i></td>
         </tr>
       </table>
     </div>
@@ -125,6 +135,10 @@
         return this.campaign ? this.$store.getters.campaignFullForms || [] : []
       },
 
+      campaignClosedForms() {
+        return this.campaign ? this.$store.getters.campaignClosedForms || [] : []
+      },
+
       campaignFormsProgress() {
         return this.campaignFullForms.map(f => this.getFormProgress(f));
       },
@@ -136,7 +150,6 @@
       campaignID() {
         return this.campaign ? this.campaign.id : this.$route.params.campaignID;
       },
-
 
     },
 
@@ -186,6 +199,7 @@
 
       campaign(newValue, oldValue) {
         this.$store.dispatch('setCampaignFullForms');
+        this.$store.dispatch('setCampaignClosedForms');
       }
     }
   }
