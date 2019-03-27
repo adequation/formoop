@@ -34,5 +34,7 @@
 </script>
 
 <style scoped>
-
+ a {
+   color: #fff;
+ }
 </style>
