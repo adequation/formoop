@@ -86,21 +86,10 @@ export function addFormToWantedCampaigns(form, campaignsFromFB, campaignsIDToAdd
 
 // Return a new campaign object with the forms for the campaign in parametters
 export function getCampaignWithForms( campaign, publishedForms, closedForms){
-  let campaignPublishedForms = [];
-  let campaignClosedForms = [];
-  console.log(campaign);
-  campaign.forms.forEach( form => {
-    let findedForm = publishedForms.find( pf => pf.id === form.id);
-    if(findedForm) campaignPublishedForms.push(findedForm);
-    else {
-      findedForm = closedForms.find( cf => cf.id === form.id);
-      if (findedForm) campaignClosedForms.push(findedForm);
-    }
-  });
   return {
     name: campaign.name,
     id: campaign.id,
-    publishedForms: campaignPublishedForms,
-    closedForms: campaignClosedForms,
+    publishedForms: publishedForms? publishedForms : [],
+    closedForms: closedForms? closedForms: [] ,
   }
 }

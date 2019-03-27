@@ -13,11 +13,19 @@
           campaign:{
             type: Object,
             required: true,
+          },
+          campaignForms: {
+            type: Array,
+            required: true,
+          },
+          campaignClosedForms: {
+            type: Array,
+            required: true,
           }
       },
       computed: {
         campaignToConvert(){
-          return getCampaignWithForms(this.campaign, this.$store.getters.campaignFullForms, this.$store.getters.finishedForms);
+          return getCampaignWithForms(this.campaign, this.campaignForms, this.campaignClosedForms);
         }
       },
       methods: {
@@ -36,5 +44,6 @@
 <style scoped>
  a {
    color: #fff;
+   height: 36px;
  }
 </style>

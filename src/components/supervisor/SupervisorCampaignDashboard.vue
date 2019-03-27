@@ -83,7 +83,7 @@
 
 
           <div class="creator-form-tools-wrapper">
-            <download-campaign class="bottom-button tool-button" title="Récupérer les résultats" :campaign="campaign"/>
+            <download-campaign class="bottom-button tool-button" title="Récupérer les résultats" :campaign="campaign" :campaign-forms="campaignFullForms" :campaign-closed-forms="campaignClosedForms"/>
             <!-- <button class="bottom-button tool-button" title="Récupérer les résultats"> <i class="material-icons md-36">save_alt</i></button> -->
             <button class="bottom-button tool-button" title="Progression"><i class="material-icons md-36">description</i></button>
           </div>
