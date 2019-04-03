@@ -1,16 +1,12 @@
 <template>
 
-  <div class="creator-form-entry smooth"
+  <div class="creator-form-entry smooth" transition="expand"
        :style="{ borderLeft: `10px solid ${borderColor}`}">
 
-    <h3 class="form-entry-title">
-      <span v-if="entry.generic">{{getGenericTitle(entry.question.blocks)}}</span>
-      <span v-else>{{entry.question.title}}</span>
 
-      <span v-if="entry.required" class="form-entry-required">*</span>
-    </h3>
+    <div class="creator-form-entry-tools-wrapper">
 
-    <select title="" @change="onChangeSection($event.target)">
+    <select title="" @change="onChangeSection($event.target)" @click.stop>
       <option value="-1">Aucune</option>
       <option v-for="t in formSections"
               :key="t"
@@ -20,20 +16,23 @@
         {{t}}
       </option>
     </select>
+      <h3 class="form-entry-title">
+        <span v-if="entry.generic">{{getGenericTitle(entry.question.blocks)}}</span>
+        <span v-else>{{entry.question.title}}</span>
 
-    <div v-if="opened">
-      <div class="creator-form-entry-tools-wrapper">
-        <div class="creator-form-entry-section-select">
+        <span v-if="entry.required" class="form-entry-required">*</span>
+      </h3>
 
-        </div>
+    <button type="button"
+            :class="['creator-form-entry-requirement', entry.required ? 'creator-form-entry-required' : 'creator-form-entry-not-required']"
+            title="Rendre important"
+            @click="onChangeRequirement"
+            @click.stop>*
+    </button>
 
-        <button type="button"
-                :class="['creator-form-entry-requirement', entry.required ? 'creator-form-entry-required' : 'creator-form-entry-not-required']"
-                title="Rendre important"
-                @click="onChangeRequirement">*
-        </button>
-      </div>
+  </div>
 
+    <div v-if="opened"  @click.stop>
 
       <CreatorGenericQuestionBlock v-if="entry.generic" :entry="entry"/>
       <input v-else title="" type="text" class="questionTitle" v-model="entry.question.title"
@@ -53,8 +52,6 @@
 
       <button type="button" @click="deleteEntry">Supprimer la question</button>
     </div>
-
-
 
   </div>
 
@@ -166,6 +163,8 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
+
   }
 
   .creator-form-entry-requirement {
@@ -187,6 +186,7 @@
 
   .creator-form-entry-required:hover {
     color: #dc472f;
+    cursor: pointer;
   }
 
   .creator-form-entry-not-required {
@@ -197,7 +197,24 @@
 
   .creator-form-entry-not-required:hover {
     color: #5f6c7a;
+    cursor: pointer;
+  }
 
+  /* always present */
+  .expand-transition {
+    transition: all .3s ease;
+    height: 30px;
+    padding: 10px;
+    background-color: #eee;
+    overflow: hidden;
+  }
+  /* .expand-enter defines the starting state for entering */
+  /* .expand-leave defines the ending state for leaving */
+  .expand-enter, .expand-leave {
+    height: 0;
+    padding: 0 10px;
+    opacity: 0;
+    background: red;
   }
 
 </style>

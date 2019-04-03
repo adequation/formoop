@@ -1,6 +1,48 @@
 <template>
   <div class="creator-form">
 
+    <div class="drawer-opener" @click="showDrawer = true">
+
+    </div>
+    <Drawer v-if="showDrawer" @close="closeDrawer">
+
+        <div slot="body">
+          <CustomGrid
+            ref="entrySortingGrid"
+            :center="false"
+            :draggable="true"
+            :sortable="true"
+            :items="formEntries"
+            :cell-width="112"
+            :cell-height="62"
+            @change="gridChange"
+            @remove="gridRemove"
+            @click="gridClick"
+            @sort="gridSort">
+            <template slot="cell" slot-scope="props">
+              <div
+                :item="props.item"
+                :index="props.index"
+                @remove="props.remove()">
+
+                <CustomGridEntry
+                  :entry="props.item"
+                  :index="props.index"
+                  :cell-width="props.cellWidth"
+                  :cell-height="props.cellHeight"
+                  :padding="2"
+                  :color="getEntryColor(props.item)"/>
+
+              </div>
+
+
+            </template>
+          </CustomGrid>
+
+        </div>
+
+    </Drawer>
+
     <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
 
     <CreatorCampaignSelect/>
@@ -78,10 +120,16 @@
   import DockingMenu from "@/components/containers/DockingMenu";
   import CreatorCampaignSelect from "@/components/creator/CreatorCampaignSelect";
   import {isFormGeneric} from "@/helpers/genericQuestionHelpers";
+  import Drawer from "@/components/containers/Drawer";
+  import CustomGrid from "@/components/containers/CustomGrid/CustomGrid";
+  import {getSectionColor} from "@/helpers/sectionsHelpers";
+  import CustomGridEntry from "@/components/general/CustomGridEntry";
 
   export default {
     name: 'CreatorForm',
-    components: {CreatorPublication, CreatorFormEntry, DockingMenu, CreatorCampaignSelect},
+    components: {
+      CustomGridEntry,
+      CustomGrid, Drawer, CreatorPublication, CreatorFormEntry, DockingMenu, CreatorCampaignSelect},
     data() {
       return {
         focusedEntry: null,
@@ -96,7 +144,7 @@
         defaultAnswers: [{id: "", text: 'Option 1'}],
         formTitle: 'Formulaire sans titre',
         defaultFormTitle: 'Formulaire sans titre',
-        showModal: false,
+        showDrawer: false,
         newSection: null,
         formSections: [],
         publishingCampaigns: []
@@ -104,6 +152,36 @@
       }
     },
     methods: {
+
+      gridClick({items, index}) {
+        let value = items.find(v => v.index === index)
+        this.selected = value.item
+        console.log(this.selected)
+      },
+
+      gridChange(event) {
+        console.log('change', event)
+      },
+
+      gridRemove(itemIndex) {
+        this.items.splice(itemIndex, 1);
+      },
+
+      gridSort(event) {
+        console.log('sort', event)
+      },
+
+      gridRetreiveSortedItems(){
+        this.items = this.$refs.myGrid.getListClone();
+      },
+
+      getEntryColor(entry){
+        return getSectionColor(entry.section, this.formSections) || '#aaaaaa';
+      },
+
+      closeDrawer() {
+        this.showDrawer = false;
+      },
 
       focusEntry(entry){
         if(this.focusedEntry){
@@ -156,6 +234,7 @@
           fe.answers.push(answer);
           this.formEntries = tmp;
         }
+
       },
 
       setFormEntryType(id, type) {
@@ -289,6 +368,7 @@
       //when an entry is mounted
       this.$root.$on('mounted-entry', (id) => {
         window.scrollTo(0, document.body.scrollHeight);
+        this.focusEntry(this.formEntries.find(e => e.id === id));
       });
 
       //emitting of a new entry option
@@ -520,5 +600,16 @@
     height: 60px;
     top: 10px;
   }
+
+  .drawer-opener{
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 15px;
+    background: #eeeeee;
+  }
+
+
 
 </style>
