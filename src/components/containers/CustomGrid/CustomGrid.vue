@@ -177,18 +177,19 @@
       },
 
       sortList (itemIndex, gridPosition) {
-        let targetItem = this.list.find(item => item.index === itemIndex)
-        let targetItemSort = targetItem.sort
+        let targetItem = this.list.find(item => item.index === itemIndex);
+        let targetItemSort = targetItem.sort;
         /*
           Normalizing new grid position
         */
-        gridPosition = Math.max(gridPosition, 0)
+        gridPosition = Math.max(gridPosition, 0);
         /*
           If you remove this line you can drag items to positions that
           are further than items array length
         */
-        gridPosition = Math.min(gridPosition, this.list.length - 1)
+        gridPosition = Math.min(gridPosition, this.list.length - 1);
         if (targetItemSort !== gridPosition) {
+
           this.list = this.list.map(item => {
             if (item.index === targetItem.index) {
               return {
@@ -196,7 +197,8 @@
                 sort: gridPosition
               }
             }
-            const { sort } = item
+
+            const { sort } = item;
             if (targetItemSort > gridPosition) {
               if (sort <= targetItemSort && sort >= gridPosition) {
                 return {
@@ -205,6 +207,7 @@
                 }
               }
             }
+
             if (targetItemSort < gridPosition) {
               if (sort >= targetItemSort && sort <= gridPosition) {
                 return {
@@ -213,8 +216,10 @@
                 }
               }
             }
+
             return item
-          })
+          });
+
           this.$emit('sort', this.wrapEvent())
         }
       }
