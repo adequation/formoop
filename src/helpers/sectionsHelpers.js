@@ -31,6 +31,7 @@ export function getSections(formEntries, userAnswers) {
     .sort((a,b) => a.name.localeCompare(b.name));
 }
 
+//needs testing
 export function getSectionColor(currentSection, sections, interpolator = d3.interpolateRainbow){
 
   if(!currentSection || sections.length <= 0) return null;
