@@ -12,7 +12,7 @@ import FormCampaign from '@/components/general/FormCampaign'
 import CreatorCampaign from '@/components/creator/CreatorCampaign'
 import ClosedForm from '@/components/general/ClosedForm'
 import SupervisorCampaignDashboard from '@/components/supervisor/SupervisorCampaignDashboard'
-import CSVParser from '@/components/general/CSVParser'
+import GridWIP from '@/components/containers/CustomGrid/GripWIP'
 
 import Firebase from 'firebase';
 import CreatorClosedForms from "../components/creator/CreatorClosedForms";
@@ -158,7 +158,7 @@ const router = new Router({
     {
       path: '/wip/',
       name: 'WIP',
-      component: CSVParser,
+      component: GridWIP,
       meta: {
         requiresAuth: true,
         any: false
