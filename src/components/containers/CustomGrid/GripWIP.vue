@@ -1,6 +1,7 @@
 <template>
   <div>
   <custom-grid
+    ref="myGrid"
     :center="false"
     :draggable="true"
     :sortable="true"
@@ -23,6 +24,8 @@
         </div>
 
       </div>
+
+
     </template>
   </custom-grid>
   <hr/>
@@ -51,6 +54,8 @@
       </div>
     </template>
   </custom-grid>
+
+    <button @click="retreiveSortedItems"> Recup ma liste triée</button>
   </div>
 
 </template>
@@ -89,6 +94,10 @@
       },
       sort(event) {
         console.log('sort', event)
+      },
+
+      retreiveSortedItems(){
+        this.items = this.$refs.myGrid.getListClone();
       }
     }
 

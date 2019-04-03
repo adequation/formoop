@@ -76,6 +76,7 @@
     watch: {
       items: {
         handler: function (nextItems = []) {
+          console.log(nextItems)
           this.list = nextItems.map((item, index) => {
             return {
               item,
@@ -113,10 +114,11 @@
 
       rowShift () {
         if (this.center) {
-          let contentWidth = this.items.length * this.cellWidth
+          let contentWidth = this.items.length * this.cellWidth;
           let rowShift = contentWidth < this.gridResponsiveWidth
             ? (this.gridResponsiveWidth - contentWidth) / 2
-            : (this.gridResponsiveWidth % this.cellWidth) / 2
+            : (this.gridResponsiveWidth % this.cellWidth) / 2;
+
           return Math.floor(rowShift)
         }
         return 0
@@ -136,11 +138,12 @@
       /* Returns sorted clone of "list" array */
       getListClone () {
         return this.list
-          .slice(0)
+          .slice()
           .sort((a, b) => {
             return a.sort - b.sort
-          })
+          }).map(i => i.item)
       },
+
       removeItem ({ index }) {
         let removeItem = this.list.find(v => v.index === index);
         let removeItemSort = removeItem.sort;
@@ -188,6 +191,7 @@
           are further than items array length
         */
         gridPosition = Math.min(gridPosition, this.list.length - 1);
+
         if (targetItemSort !== gridPosition) {
 
           this.list = this.list.map(item => {
