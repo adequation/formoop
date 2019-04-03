@@ -1,4 +1,5 @@
 import {getRawPercentage} from "@/helpers/userAnswersHelpers";
+import * as d3 from "d3";
 
 export function getSections(formEntries, userAnswers) {
   const allSections = {};
@@ -28,4 +29,15 @@ export function getSections(formEntries, userAnswers) {
 
   return Object.keys(allSections).map(section => ({...allSections[section], id: section}))
     .sort((a,b) => a.name.localeCompare(b.name));
+}
+
+export function getSectionColor(currentSection, sections, interpolator = d3.interpolateRainbow){
+
+  if(!currentSection || sections.length <= 0) return null;
+
+  const index = sections.findIndex(s => s === currentSection);
+
+  if(index < 0) return null;
+
+  return interpolator(index / sections.length);
 }

@@ -5,13 +5,19 @@
 
     <CreatorCampaignSelect/>
 
-    <CreatorFormEntry v-for="(entry, i) in formEntries"
-                      :key="entry.id"
-                      :entry="entry"
-                      :initialyOpened="entry.initialyOpened"
-                      :ref="entry.id"
-                      :formSections="formSections"
-    />
+    <div v-for="(entry, i) in formEntries"
+         :key="entry.id"
+         @click="focusEntry(entry)">
+      <CreatorFormEntry
+                        :key="entry.id"
+                        :entry="entry"
+                        :opened="focusedEntry ? focusedEntry.id === entry.id : false"
+                        :ref="entry.id"
+                        :formSections="formSections"
+
+      />
+    </div>
+
 
     <div class="creator-form-footer"></div>
 
@@ -78,6 +84,7 @@
     components: {CreatorPublication, CreatorFormEntry, DockingMenu, CreatorCampaignSelect},
     data() {
       return {
+        focusedEntry: null,
         formEntries: [],
         defaultFormEntry: {
           question: {title: ''},
@@ -97,6 +104,15 @@
       }
     },
     methods: {
+
+      focusEntry(entry){
+        if(this.focusedEntry){
+
+          if(this.focusedEntry.id === entry.id) this.focusedEntry = null;
+          else this.focusedEntry = entry;
+
+        } else this.focusedEntry = entry;
+      },
 
       disableClick(e) {
         e.preventDefault();
@@ -357,7 +373,9 @@
         this.formSections.forEach(fs => {
           if (!tmp.includes(fs) && fs && fs !== '-1') tmp.push(fs);
         });
-        this.formSections = tmp;
+
+        tmp.sort((a,b) => a.localeCompare(b));
+        this.formSections = tmp.slice();
 
       }
     }

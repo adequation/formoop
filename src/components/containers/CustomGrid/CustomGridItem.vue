@@ -115,7 +115,9 @@
         document.addEventListener('touchmove', this.documentMouseMove);
         this.$emit('dragstart', this.wrapEvent(event))
       },
+
       drag(event) {
+
         let e = event.touches ? event.touches[0] : event;
         let distanceX = e.pageX - this.mouseMoveStartX;
         let distanceY = e.pageY - this.mouseMoveStartY;
@@ -126,6 +128,7 @@
         gridX = Math.min(gridX, this.rowCount - 1);
         gridY = Math.max(gridY, 0);
         let gridPosition = gridX + gridY * this.rowCount;
+
         const $event = {
           event,
           distanceX,
@@ -136,7 +139,8 @@
           gridX,
           gridY,
           gridPosition
-        }
+        };
+
         this.$emit('drag', $event)
       },
       mousedown(event) {

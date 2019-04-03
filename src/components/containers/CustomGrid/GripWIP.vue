@@ -86,12 +86,15 @@
         this.selected = value.item
         console.log(this.selected)
       },
+
       change(event) {
         console.log('change', event)
       },
+
       remove(itemIndex) {
         this.items.splice(itemIndex, 1);
       },
+
       sort(event) {
         console.log('sort', event)
       },

@@ -1,63 +1,62 @@
 <template>
-  <Collapse class="form-entry" :initialy-opened="initialyOpened" :showArrow="true">
 
-    <div slot="header">
-      <h3 class="form-entry-title" v-if="entry.generic">{{getGenericTitle(entry.question.blocks)}}
-        <span v-if="entry.required" class="form-entry-required">*</span>
-      </h3>
-      <h3 class="form-entry-title" v-else>{{entry.question.title}}
-        <span v-if="entry.required" class="form-entry-required">*</span>
-      </h3>
-    </div>
+  <div class="creator-form-entry smooth"
+       :style="{ borderLeft: `10px solid ${borderColor}`}">
 
-    <form slot="body" class="form-entry-content">
+    <h3 class="form-entry-title">
+      <span v-if="entry.generic">{{getGenericTitle(entry.question.blocks)}}</span>
+      <span v-else>{{entry.question.title}}</span>
 
-      <div>
+      <span v-if="entry.required" class="form-entry-required">*</span>
+    </h3>
 
-        <div class="creator-form-entry-tools-wrapper">
-          <div class="creator-form-entry-section-select">
-            <select title="" @change="onChangeSection($event.target)">
-              <option value="-1">Aucune</option>
-              <option v-for="t in formSections"
-                      :key="t"
-                      :name="t"
-                      :value="t"
-                      :selected="t === entry.section">
-                {{t}}
-              </option>
-            </select>
-          </div>
+    <select title="" @change="onChangeSection($event.target)">
+      <option value="-1">Aucune</option>
+      <option v-for="t in formSections"
+              :key="t"
+              :name="t"
+              :value="t"
+              :selected="t === entry.section">
+        {{t}}
+      </option>
+    </select>
 
-          <button type="button"
-                  :class="['creator-form-entry-requirement', entry.required ? 'creator-form-entry-required' : 'creator-form-entry-not-required']"
-                  title="Rendre important"
-                  @click="onChangeRequirement">*
-          </button>
+    <div v-if="opened">
+      <div class="creator-form-entry-tools-wrapper">
+        <div class="creator-form-entry-section-select">
+
         </div>
 
-
-        <CreatorGenericQuestionBlock v-if="entry.generic" :entry="entry"/>
-        <input v-else title="" type="text" class="questionTitle" v-model="entry.question.title"
-               placeholder="Titre de la question"/>
-
-        <select title="" @change="onChange($event.target)">
-          <option v-for="(t, i) in types"
-                  :key="i"
-                  :name="t.value"
-                  :value="t.value"
-                  :selected="t.value === entry.type">
-            {{t.displayName}}
-          </option>
-        </select>
-
+        <button type="button"
+                :class="['creator-form-entry-requirement', entry.required ? 'creator-form-entry-required' : 'creator-form-entry-not-required']"
+                title="Rendre important"
+                @click="onChangeRequirement">*
+        </button>
       </div>
+
+
+      <CreatorGenericQuestionBlock v-if="entry.generic" :entry="entry"/>
+      <input v-else title="" type="text" class="questionTitle" v-model="entry.question.title"
+             placeholder="Titre de la question"/>
+
+      <select title="" @change="onChange($event.target)">
+        <option v-for="(t, i) in types"
+                :key="i"
+                :name="t.value"
+                :value="t.value"
+                :selected="t.value === entry.type">
+          {{t.displayName}}
+        </option>
+      </select>
 
       <CreatorAnswer :answers="entry.answers" :types="types" :type="entry.type" :entryID="entry.id"></CreatorAnswer>
 
       <button type="button" @click="deleteEntry">Supprimer la question</button>
+    </div>
 
-    </form>
-  </Collapse>
+
+
+  </div>
 
 </template>
 
@@ -66,6 +65,7 @@
   import Collapse from '@/components/containers/Collapse'
   import CreatorGenericQuestionBlock from "@/components/creator/CreatorGenericQuestionBlock";
   import {getGenericQuestionTitle} from "@/helpers/genericQuestionHelpers";
+  import {getSectionColor} from "@/helpers/sectionsHelpers";
 
   export default {
     name: 'CreatorFormEntry',
@@ -75,7 +75,7 @@
         type: Object,
         required: true
       },
-      initialyOpened: {
+      opened: {
         type: Boolean,
         required: false
       },
@@ -86,7 +86,6 @@
     },
     data() {
       return {
-
         // fetch types into FB later
         types: [
           {value: 'radio', displayName: 'Choix multiples'},
@@ -95,6 +94,11 @@
           {value: 'checkbox', displayName: 'Cases à cocher'},
           {value: 'select', displayName: 'Liste déroulante'}
         ]
+      }
+    },
+    computed: {
+      borderColor(){
+        return getSectionColor(this.entry.section, this.formSections) || '#aaaaaa';
       }
     },
     methods: {
@@ -130,17 +134,27 @@
 </script>
 
 <style scoped>
-  .form-entry {
-    margin-top: 0.2em;
+
+  .creator-form-entry {
+    position: relative;
+    background-color: #f6f6f6;
+    margin: 0.5em auto;
+    padding: 0.3em;
+    width: 85%;
+
+    border-left: 7px solid #aaaaaa;
   }
+
+  .creator-form-entry:hover{
+    cursor: pointer;
+    transform: scale(1.01);
+  }
+
 
   .form-entry-title {
 
   }
 
-  .form-entry-content {
-
-  }
 
   .creator-form-entry-tools-wrapper {
     width: auto;
