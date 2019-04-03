@@ -35,7 +35,7 @@
 
 
             <div class="creator-form-sections-buttons-wrapper">
-              <input title="" type="text" placeholder="Nom de la section" class="creator-section-name-input" v-model="newSection"/>
+              <input title="" type="text" placeholder="Nom de la section" class="creator-section-name-input" v-model="newSection" v-on:keyup.enter="addSection"/>
 
               <button type="button" class="creator-form-section-button"
                       @click="addSection" title="Créer une nouvelle Section">
@@ -86,7 +86,7 @@
           initialyOpened: true //Opened collapse by default
         },
         defaultQuestion: {title: 'Titre de la question'},
-        defaultAnswers: [{id: "", text: 'Option 1'}],
+        defaultAnswers: [{id: "", text: 'Option'}],
         formTitle: 'Formulaire sans titre',
         defaultFormTitle: 'Formulaire sans titre',
         showModal: false,
@@ -133,11 +133,11 @@
         this.formEntries.push(entry);
       },
 
-      addFormEntryAnswer(id, answer) {
+      addFormEntryAnswer(id, answer, newOptionIndex) {
         const tmp = [...this.formEntries];
         const fe = tmp.find(e => e.id === id);
         if (fe) {
-          fe.answers.push(answer);
+          fe.answers.splice(newOptionIndex, 0, answer);
           this.formEntries = tmp;
         }
       },
@@ -247,11 +247,12 @@
       this.$store.dispatch('setCreatorID', {formID: null});
       this.$store.dispatch('setFormCampaigns');
 
-
       //emitting of a new entry
-      this.$root.$on('add-entry-answer', (id, answer) => {
-        this.addFormEntryAnswer(id, answer)
+      this.$root.$on('add-entry-answer', (id, answer, newOptionIndex) => {
+        this.addFormEntryAnswer(id, answer, newOptionIndex)
       });
+
+
 
       //emitting the type of an entry
       this.$on('set-entry-type', (id, type) => {

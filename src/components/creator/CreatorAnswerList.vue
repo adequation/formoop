@@ -4,41 +4,38 @@
 
       <div class="option" v-for="(a,i) in answers" :key="i">
 
-      <span>
-        <input v-if="type==='radio'" title="" type="radio" checked @click="disableClick($event)"/>
-        <input v-if="type==='checkbox'" title="" type="checkbox" checked @click="disableClick($event)"/>
-        <span v-if="type==='select'">⌄</span>
-      </span>
+        <span class="option-type-identifier">
+          <i v-if="type==='checkbox'" class="material-icons md-16">check_box_outline_blank</i>
+          <i v-if="type==='radio'" class="material-icons md-16">radio_button_unchecked</i>
+          <i v-if="type==='select'" class="material-icons md-16">keyboard_arrow_right</i>
+        </span>
 
-        <span>
-        <input title="" type="text" :value="a.text" v-on:input="optionTextOnChange($event.target, a.id)"/>
-      </span>
+        <input class="option-list-input" title="" ref="optionList" type="text" :value="a.text"
+               v-on:input="optionTextOnChange($event.target, a.id)" @keyup.enter="addOption(i)"/>
 
-        <span>
-        <button class="option-button delete-option-button" type="button" @click="deleteOption(a.id)">
-          <i class="material-icons">remove_circle_outline</i>
+        <button class="option-button delete-option-button" type="button" title="Supprimer l'option"
+                @click="deleteOption(a.id)">
+          <i class="material-icons md-16">clear</i>
         </button>
-      </span>
 
       </div>
 
       <div class="fake-option">
 
-      <span>
-        <input v-if="type==='radio'" title="" type="radio"  @click="disableClick($event)"/>
-        <input v-if="type==='checkbox'" title="" type="checkbox"  @click="disableClick($event)"/>
-        <span v-if="type==='select'">⌄</span>
-      </span>
+        <span class="option-type-identifier">
+          <i v-if="type==='checkbox'" class="material-icons md-16">check_box_outline_blank</i>
+          <i v-if="type==='radio'" class="material-icons md-16">radio_button_unchecked</i>
+          <i v-if="type==='select'" class="material-icons md-16">keyboard_arrow_right</i>
+        </span>
 
-        <span>
-        <input title="" disabled type="text" value=". . ." @click="addOption"/>
-      </span>
+        <input class="new-option-input" ref="newOption" type="text" title="Ajouter une option"
+               placeholder="Ajouter une option" v-model="newOptionText"
+               @keyup.enter="addOption(answers.length-1)"/>
 
-        <span>
-              <button class="option-button add-option-button" @click="addOption" type="button">
-                          <i class="material-icons">add_circle</i>
-              </button>
-      </span>
+        <button class="option-button add-option-button" title="Ajouter une option"
+                @click="addOption(answers.length-1)" type="button">
+          <i class="material-icons md-16">add</i>
+        </button>
 
       </div>
 
@@ -68,14 +65,42 @@
     data() {
       return {
         //default id is never used
-        defaultOption: {id: "", text: 'Option '},
+        defaultOption: {id: "", text: 'Option'},
+        newOptionText: ''
       }
     },
     methods: {
-      addOption() {
-        const newAnswer = {id: uuid.v4(), text: this.defaultOption.text.concat('' + (this.answers.length + 1))};
-        this.$root.$emit('add-entry-answer', this.entryID, newAnswer);
+      addOption(optionIndex) {
+        const newOptionIndex = optionIndex + 1;
+
+        if (this.newOptionText) {
+          this.addOptionWithText(newOptionIndex);
+        } else this.addNewOption(newOptionIndex);
       },
+
+
+      addOptionWithText(newOptionIndex) {
+        const newAnswer = {id: uuid.v4(), text: this.newOptionText};
+
+        this.newOptionText = '';
+
+        this.$root.$emit('add-entry-answer', this.entryID, newAnswer, newOptionIndex);
+
+        this.$nextTick(() => {
+          this.$refs.newOption.select()
+        });
+      },
+
+      addNewOption(newOptionIndex) {
+        const newAnswer = {id: uuid.v4(), text: this.defaultOption.text};
+
+        this.$root.$emit('add-entry-answer', this.entryID, newAnswer, newOptionIndex);
+
+        this.$nextTick(() => {
+          this.$refs.optionList[newOptionIndex].select()
+        });
+      },
+
 
       editOption(optionID, optionText) {
         this.$root.$emit('edit-entry-option', this.entryID, optionID, optionText)
@@ -102,10 +127,24 @@
 
   .option {
     margin-top: 0.5em;
+
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 2px;
   }
 
   .fake-option {
     margin-top: 0.5em;
+
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 2px;
   }
 
   input[type=text] {
@@ -121,15 +160,16 @@
     font-size: large;
     border: none;
 
-    outline-style:none;
-    box-shadow:none;
+    outline-style: none;
+    box-shadow: none;
   }
 
   .delete-option-button {
   }
 
   .delete-option-button:hover {
-    color: rgba(255, 0, 0, 0.75);
+    color: tomato;
+    cursor: pointer;
   }
 
   .add-option-button {
@@ -137,6 +177,27 @@
   }
 
   .add-option-button:hover {
-    color: rgba(75, 200, 0, 0.75);
+    color: #2d8246;
+    cursor: pointer;
+  }
+
+
+  .option-list-input{
+    color: #00000077;
+    outline: none;
+  }
+
+  .new-option-input{
+    color: #00000077;
+    outline: none;
+  }
+
+  .new-option-input::placeholder {
+    color: #00000077;
+  }
+
+  .option-type-identifier {
+    color: rgba(0, 0, 0, 0.4);
+    margin: 0.2em;
   }
 </style>

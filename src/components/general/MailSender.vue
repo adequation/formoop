@@ -6,7 +6,8 @@
       <input class="mail-addresses-input"
              type="email"
              placeholder="Adresse email"
-             v-model="currentMailAdress"/>
+             v-model="currentMailAdress"
+             @keyup.enter="addAdressToPool"/>
       <button type="button" @click="addAdressToPool"> +</button>
     </div>
 
