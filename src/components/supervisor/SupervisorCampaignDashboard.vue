@@ -57,6 +57,10 @@
     <SupervisorProgressChart
       :percentage="campaignFormsProgress.reduce( ( sum, { value } ) => sum + value , 0)/ campaignFormsProgress.length"></SupervisorProgressChart>
 
+    <div class="supervisor-footer">
+
+    </div>
+
     <DockingMenu class="supervisor-campaign-bottom-menu">
       <div slot="body">
 
@@ -343,5 +347,9 @@
     overflow: hidden;
 
     cursor: pointer;
+  }
+
+  .supervisor-footer {
+    margin: 8em;
   }
 </style>
