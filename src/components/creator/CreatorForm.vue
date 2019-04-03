@@ -39,6 +39,8 @@
             </template>
           </CustomGrid>
 
+          <button type="button" @click="closeDrawer">Trier !</button>
+
         </div>
 
     </Drawer>
@@ -153,14 +155,13 @@
     },
     methods: {
 
+
       gridClick({items, index}) {
-        let value = items.find(v => v.index === index)
-        this.selected = value.item
-        console.log(this.selected)
+        const value = items.find(v => v.index === index);
+        this.selected = value.item;
       },
 
       gridChange(event) {
-        console.log('change', event)
       },
 
       gridRemove(itemIndex) {
@@ -168,11 +169,10 @@
       },
 
       gridSort(event) {
-        console.log('sort', event)
       },
 
       gridRetreiveSortedItems(){
-        this.items = this.$refs.myGrid.getListClone();
+        this.formEntries = this.$refs.entrySortingGrid.getListClone();
       },
 
       getEntryColor(entry){
@@ -181,6 +181,7 @@
 
       closeDrawer() {
         this.showDrawer = false;
+        this.gridRetreiveSortedItems();
       },
 
       focusEntry(entry){
