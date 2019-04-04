@@ -15,6 +15,12 @@
       <div class="sorting-grid-entry-index" :style="{right: `${5+padding}px`, bottom: `${5+padding}px`}">
         {{index}}
       </div>
+
+      <div v-if="entry.required"
+        class="sorting-grid-entry-mandatory"
+           :style="{right: `${5+padding}px`, top: `2px`}">
+        *
+      </div>
     </div>
 
   </div>
@@ -85,6 +91,11 @@
   .sorting-grid-entry-index {
     color: #00000020;
     position: fixed;
+  }
+  .sorting-grid-entry-mandatory {
+    color: tomato;
+    position: fixed;
+    font-weight: bold;
   }
 
   .sorting-grid-entry-text {

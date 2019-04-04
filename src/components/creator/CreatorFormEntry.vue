@@ -1,60 +1,72 @@
 <template>
+  <div class="full-entry-wrapper">
+    <button :style="{float:'left'}" @click.stop >^</button>
 
-  <div class="creator-form-entry smooth" transition="expand"
-       :style="{ borderLeft: `10px solid ${borderColor}`}">
+    <div class="creator-form-entry smooth"
+         :style="{ borderLeft: `10px solid ${borderColor}`}">
 
 
-    <div class="creator-form-entry-tools-wrapper">
+      <div class="creator-form-entry-tools-wrapper">
 
-    <select title="" @change="onChangeSection($event.target)" @click.stop>
-      <option value="-1">Aucune</option>
-      <option v-for="t in formSections"
-              :key="t"
-              :name="t"
-              :value="t"
-              :selected="t === entry.section">
-        {{t}}
-      </option>
-    </select>
-      <h3 class="form-entry-title">
-        <span v-if="entry.generic">{{getGenericTitle(entry.question.blocks)}}</span>
-        <span v-else>{{entry.question.title}}</span>
+        <select title="" @change="onChangeSection($event.target)" @click.stop>
+          <option value="-1">Aucune</option>
+          <option v-for="t in formSections"
+                  :key="t"
+                  :name="t"
+                  :value="t"
+                  :selected="t === entry.section">
+            {{t}}
+          </option>
+        </select>
 
-        <span v-if="entry.required" class="form-entry-required">*</span>
-      </h3>
+        <div class="form-entry-title">
+          <h3 v-if="!opened">
+            <span v-if="entry.generic">{{getGenericTitle(entry.question.blocks)}}</span>
+            <span v-else>{{entry.question.title}}</span>
 
-    <button type="button"
-            :class="['creator-form-entry-requirement', entry.required ? 'creator-form-entry-required' : 'creator-form-entry-not-required']"
-            title="Rendre important"
-            @click="onChangeRequirement"
-            @click.stop>*
-    </button>
+            <span v-if="entry.required" class="form-entry-required">*</span>
+          </h3>
 
-  </div>
+          <div v-else @click.stop>
+            <CreatorGenericQuestionBlock v-if="entry.generic" :entry="entry"/>
+            <input v-else title="" type="text" class="questionTitle" v-model="entry.question.title"
+                   placeholder="Titre de la question"/>
+          </div>
 
-    <div v-if="opened"  @click.stop>
+        </div>
 
-      <CreatorGenericQuestionBlock v-if="entry.generic" :entry="entry"/>
-      <input v-else title="" type="text" class="questionTitle" v-model="entry.question.title"
-             placeholder="Titre de la question"/>
 
-      <select title="" @change="onChange($event.target)">
-        <option v-for="(t, i) in types"
-                :key="i"
-                :name="t.value"
-                :value="t.value"
-                :selected="t.value === entry.type">
-          {{t.displayName}}
-        </option>
-      </select>
+        <button type="button"
+                :class="['creator-form-entry-requirement', entry.required ? 'creator-form-entry-required' : 'creator-form-entry-not-required']"
+                title="Rendre important"
+                @click="onChangeRequirement"
+                @click.stop>*
+        </button>
 
-      <CreatorAnswer :answers="entry.answers" :types="types" :type="entry.type" :entryID="entry.id"></CreatorAnswer>
+      </div>
 
-      <button type="button" @click="deleteEntry">Supprimer la question</button>
+      <div v-if="opened" @click.stop>
+
+
+
+
+        <select title="" @change="onChange($event.target)">
+          <option v-for="(t, i) in types"
+                  :key="i"
+                  :name="t.value"
+                  :value="t.value"
+                  :selected="t.value === entry.type">
+            {{t.displayName}}
+          </option>
+        </select>
+
+        <CreatorAnswer :answers="entry.answers" :types="types" :type="entry.type" :entryID="entry.id"></CreatorAnswer>
+
+        <button type="button" @click="deleteEntry">Supprimer la question</button>
+      </div>
+
     </div>
-
   </div>
-
 </template>
 
 <script>
@@ -94,7 +106,7 @@
       }
     },
     computed: {
-      borderColor(){
+      borderColor() {
         return getSectionColor(this.entry.section, this.formSections) || '#aaaaaa';
       }
     },
@@ -142,16 +154,14 @@
     border-left: 7px solid #aaaaaa;
   }
 
-  .creator-form-entry:hover{
+  .creator-form-entry:hover {
     cursor: pointer;
     transform: scale(1.01);
   }
 
-
   .form-entry-title {
 
   }
-
 
   .creator-form-entry-tools-wrapper {
     width: auto;
@@ -163,7 +173,6 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-
 
   }
 
@@ -208,6 +217,7 @@
     background-color: #eee;
     overflow: hidden;
   }
+
   /* .expand-enter defines the starting state for entering */
   /* .expand-leave defines the ending state for leaving */
   .expand-enter, .expand-leave {
