@@ -45,6 +45,12 @@
 
       </div>
 
+      <transition
+        name="expand"
+        @enter="expandEnter"
+        @afterEnter="expandAfterEnter"
+        @beforeLeave="expandBeforeLeave"
+      >
       <div v-if="opened" @click.stop>
 
 
@@ -65,6 +71,8 @@
         <button type="button" @click="deleteEntry">Supprimer la question</button>
       </div>
 
+      </transition>
+
     </div>
   </div>
 </template>
@@ -75,10 +83,11 @@
   import CreatorGenericQuestionBlock from "@/components/creator/CreatorGenericQuestionBlock";
   import {getGenericQuestionTitle} from "@/helpers/genericQuestionHelpers";
   import {getSectionColor} from "@/helpers/sectionsHelpers";
-
+  import expandAnimationMixin from "@/mixins/expandAnimationMixin";
   export default {
     name: 'CreatorFormEntry',
     components: {CreatorGenericQuestionBlock, CreatorAnswer, Collapse},
+    mixins :[expandAnimationMixin],
     props: {
       entry: {
         type: Object,
@@ -143,6 +152,8 @@
 </script>
 
 <style scoped>
+
+  @import '../../style/animations.css';
 
   .creator-form-entry {
     position: relative;

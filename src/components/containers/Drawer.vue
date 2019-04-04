@@ -1,6 +1,7 @@
 <template>
   <div class="drawer-mask" @click="$emit('close')">
     <div class="drawer-wrapper" >
+
       <div class="drawer-container" v-on:click.stop="">
 
         <div class="drawer-closer">
@@ -29,6 +30,7 @@
         </div>
 
       </div>
+
     </div>
   </div>
 </template>
@@ -40,6 +42,9 @@
 </script>
 
 <style scoped>
+
+
+
   .drawer-mask {
     position: fixed;
     z-index: 9998;
@@ -47,7 +52,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, .5);
+    background: none;
     display: table;
     transition: opacity .3s ease;
   }

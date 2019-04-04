@@ -1,0 +1,27 @@
+.expand-enter-active,
+.expand-leave-active {
+  transition: height 0.35s ease;
+  overflow: hidden;
+}
+
+.expand-enter,
+.expand-leave-to {
+  height: 0 !important;
+}
+
+.slide-animation-enter-active {
+  animation: slide-animation 0.2s;
+}
+
+.slide-animation-leave-active {
+  animation: slide-animation 0.2s reverse;
+}
+
+@keyframes slide-animation {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}

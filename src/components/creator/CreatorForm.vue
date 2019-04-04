@@ -3,7 +3,10 @@
 
     <div class="drawer-opener" @click="showDrawer = true">
 
+
     </div>
+
+    <transition name="slide-animation">
     <Drawer v-if="showDrawer" @close="closeDrawer">
 
         <div slot="body">
@@ -44,6 +47,8 @@
         </div>
 
     </Drawer>
+
+    </transition>
 
     <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
 
@@ -464,6 +469,7 @@
 </script>
 
 <style scoped>
+  @import '../../style/animations.css';
 
   .creator-form {
     background-color: white;
