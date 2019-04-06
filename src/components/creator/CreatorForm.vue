@@ -184,10 +184,10 @@
         formSections: [],
         publishingCampaigns: [],
         tabs: [
-          {title: 'Créer', value: 'create', icon:'add'},
-          {title: 'Réarranger', value: 'sort', icon:'settings'},
+          {title: 'Créer', value: 'create', icon:'edit'},
+          {title: 'Parramètrer', value: 'sort', icon:'settings'},
           {title: 'Partager', value: 'share', icon:'share'},
-          {title: 'Résultats', value: 'results', icon: 'question_answer'}
+          {title: 'Résultats', value: 'results', icon: 'insert_chart'}
         ],
         currentTab: 'create',
       }
