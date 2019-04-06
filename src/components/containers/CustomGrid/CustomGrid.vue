@@ -76,7 +76,6 @@
     watch: {
       items: {
         handler: function (nextItems = []) {
-          console.log(nextItems)
           this.list = nextItems.map((item, index) => {
             return {
               item,

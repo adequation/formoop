@@ -1,4 +1,5 @@
 <template>
+
   <div class="drawer-mask" @click="$emit('close')">
     <div class="drawer-wrapper" >
 
@@ -42,8 +43,6 @@
 </script>
 
 <style scoped>
-
-
 
   .drawer-mask {
     position: fixed;

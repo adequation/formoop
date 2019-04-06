@@ -1,74 +1,97 @@
 <template>
   <div class="creator-form">
 
-    <div class="drawer-opener" @click="showDrawer = true">
+    <DockingMenu class="creator-form-top-menu"
+                 top>
+      <div slot="body">
+        <Tabs :current-tab="currentTab" :tabs="tabs" @change-tab="currentTab = $event"/>
+      </div>
+    </DockingMenu>
 
+    <div class="creator-form-header"></div>
 
+    <div v-if="currentTab === 'sort'">
+      <div class="sorting-grid-wrapper">
+        <CustomGrid
+          ref="entrySortingGrid"
+          :center="false"
+          :draggable="true"
+          :sortable="true"
+          :items="formEntries"
+          :cell-width="112"
+          :cell-height="62"
+          @change="gridChange"
+          @remove="gridRemove"
+          @click="gridClick"
+          @sort="gridSort">
+          <template slot="cell" slot-scope="props">
+            <div
+              :item="props.item"
+              :index="props.index"
+              @remove="props.remove()">
+
+              <CustomGridEntry
+                :entry="props.item"
+                :index="props.index"
+                :cell-width="props.cellWidth"
+                :cell-height="props.cellHeight"
+                :padding="2"
+                :color="getEntryColor(props.item)"/>
+
+            </div>
+
+          </template>
+        </CustomGrid>
+      </div>
+
+      <button type="button" @click="gridRetreiveSortedItems">Trier !</button>
     </div>
+
+    <div class="drawer-opener" @click="showDrawer = true"></div>
 
     <transition name="slide-animation">
     <Drawer v-if="showDrawer" @close="closeDrawer">
 
-        <div slot="body">
-          <CustomGrid
-            ref="entrySortingGrid"
-            :center="false"
-            :draggable="true"
-            :sortable="true"
-            :items="formEntries"
-            :cell-width="112"
-            :cell-height="62"
-            @change="gridChange"
-            @remove="gridRemove"
-            @click="gridClick"
-            @sort="gridSort">
-            <template slot="cell" slot-scope="props">
-              <div
-                :item="props.item"
-                :index="props.index"
-                @remove="props.remove()">
+      <div slot="body">
 
-                <CustomGridEntry
-                  :entry="props.item"
-                  :index="props.index"
-                  :cell-width="props.cellWidth"
-                  :cell-height="props.cellHeight"
-                  :padding="2"
-                  :color="getEntryColor(props.item)"/>
+        yes
 
-              </div>
-
-
-            </template>
-          </CustomGrid>
-
-          <button type="button" @click="closeDrawer">Trier !</button>
-
-        </div>
+      </div>
 
     </Drawer>
-
     </transition>
 
-    <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
+    <div v-if="currentTab === 'create'">
 
-    <CreatorCampaignSelect/>
+      <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
 
-    <div v-for="(entry, i) in formEntries"
-         :key="entry.id"
-         @click="focusEntry(entry)">
-      <CreatorFormEntry
-                        :key="entry.id"
-                        :entry="entry"
-                        :opened="focusedEntry ? focusedEntry.id === entry.id : false"
-                        :ref="entry.id"
-                        :formSections="formSections"
+      <CreatorCampaignSelect/>
 
-      />
+      <div v-for="(entry, i) in formEntries"
+           :key="entry.id"
+           @click="focusEntry(entry)">
+        <CreatorFormEntry
+          :key="entry.id"
+          :entry="entry"
+          :opened="focusedEntry ? focusedEntry.id === entry.id : false"
+          :ref="entry.id"
+          :formSections="formSections"
+
+        />
+      </div>
+
+      <div class="fake-entry">
+        <div @click="addEntry(false)"><i class="material-icons md-48">add_circle</i></div>
+        <div @click="addEntry(true)"><i class="material-icons md-48">info</i></div>
+      </div>
+
+
+      <div class="creator-form-footer"></div>
     </div>
 
+    <div v-else>
 
-    <div class="creator-form-footer"></div>
+    </div>
 
     <DockingMenu class="creator-form-bottom-menu">
       <div slot="body">
@@ -90,7 +113,8 @@
 
 
             <div class="creator-form-sections-buttons-wrapper">
-              <input title="" type="text" placeholder="Nom de la section" class="creator-section-name-input" v-model="newSection"/>
+              <input title="" type="text" placeholder="Nom de la section" class="creator-section-name-input"
+                     v-model="newSection"/>
 
               <button type="button" class="creator-form-section-button"
                       @click="addSection" title="Créer une nouvelle Section">
@@ -106,7 +130,8 @@
               <i class="material-icons md-36">save</i>
             </button>
 
-            <CreatorPublication :form-entries="formEntries" :publishing-campaigns="publishingCampaigns" :save-form="saveForm" :form-title="formTitle"/>
+            <CreatorPublication :form-entries="formEntries" :publishing-campaigns="publishingCampaigns"
+                                :save-form="saveForm" :form-title="formTitle"/>
           </div>
         </div>
 
@@ -131,12 +156,15 @@
   import CustomGrid from "@/components/containers/CustomGrid/CustomGrid";
   import {getSectionColor} from "@/helpers/sectionsHelpers";
   import CustomGridEntry from "@/components/general/CustomGridEntry";
+  import Tabs from "@/components/containers/Tabs";
 
   export default {
     name: 'CreatorForm',
     components: {
+      Tabs,
       CustomGridEntry,
-      CustomGrid, Drawer, CreatorPublication, CreatorFormEntry, DockingMenu, CreatorCampaignSelect},
+      CustomGrid, Drawer, CreatorPublication, CreatorFormEntry, DockingMenu, CreatorCampaignSelect
+    },
     data() {
       return {
         focusedEntry: null,
@@ -154,8 +182,14 @@
         showDrawer: false,
         newSection: null,
         formSections: [],
-        publishingCampaigns: []
-
+        publishingCampaigns: [],
+        tabs: [
+          {title: 'Créer', value: 'create', icon:'add'},
+          {title: 'Réarranger', value: 'sort', icon:'settings'},
+          {title: 'Partager', value: 'share', icon:'share'},
+          {title: 'Résultats', value: 'results', icon: 'question_answer'}
+        ],
+        currentTab: 'create',
       }
     },
     methods: {
@@ -176,23 +210,22 @@
       gridSort(event) {
       },
 
-      gridRetreiveSortedItems(){
+      gridRetreiveSortedItems() {
         this.formEntries = this.$refs.entrySortingGrid.getListClone();
       },
 
-      getEntryColor(entry){
+      getEntryColor(entry) {
         return getSectionColor(entry.section, this.formSections) || '#aaaaaa';
       },
 
       closeDrawer() {
         this.showDrawer = false;
-        this.gridRetreiveSortedItems();
       },
 
-      focusEntry(entry){
-        if(this.focusedEntry){
+      focusEntry(entry) {
+        if (this.focusedEntry) {
 
-          if(this.focusedEntry.id === entry.id) this.focusedEntry = null;
+          if (this.focusedEntry.id === entry.id) this.focusedEntry = null;
           else this.focusedEntry = entry;
 
         } else this.focusedEntry = entry;
@@ -270,7 +303,7 @@
         }
       },
 
-      setFormEntryRequirement(id, requirement){
+      setFormEntryRequirement(id, requirement) {
         const tmp = [...this.formEntries];
         const fe = tmp.find(e => e.id === id);
         if (fe) {
@@ -279,7 +312,7 @@
         }
       },
 
-      setFormPublishingCampaign(publishingCampaigns){
+      setFormPublishingCampaign(publishingCampaigns) {
         this.publishingCampaigns = publishingCampaigns;
       },
 
@@ -336,8 +369,11 @@
 
         //remove the form where we don't want it to be
         //and add it where it is not
-        if(!isFormGeneric(this.formEntries))
-          saveAndFilterCampaignsFB({id: this.formID, title: this.formTitle}, this.formCampaigns, this.publishingCampaigns);
+        if (!isFormGeneric(this.formEntries))
+          saveAndFilterCampaignsFB({
+            id: this.formID,
+            title: this.formTitle
+          }, this.formCampaigns, this.publishingCampaigns);
 
       },
     },
@@ -460,7 +496,7 @@
           if (!tmp.includes(fs) && fs && fs !== '-1') tmp.push(fs);
         });
 
-        tmp.sort((a,b) => a.localeCompare(b));
+        tmp.sort((a, b) => a.localeCompare(b));
         this.formSections = tmp.slice();
 
       }
@@ -475,8 +511,17 @@
     background-color: white;
   }
 
+  .creator-form-top-menu {
+    background-color: #4286f4 !important;
+    padding-bottom: 2px;
+  }
+
   .creator-form-footer {
     margin: 9em;
+  }
+
+  .creator-form-header {
+    margin: 4em;
   }
 
   .creator-form-buttons-wrapper {
@@ -510,7 +555,7 @@
     background: #3462ad;
   }
 
-  .creator-form-section-button{
+  .creator-form-section-button {
     margin-right: 0.5em;
     padding: 0.5em;
     color: white;
@@ -589,14 +634,13 @@
     outline: none;
   }
 
-
   .creator-section-name-input {
     background: none;
     border: none;
     width: auto;
   }
 
-  .creator-section-name-input::placeholder{
+  .creator-section-name-input::placeholder {
     color: white;
     opacity: 0.8;
   }
@@ -608,7 +652,7 @@
     top: 10px;
   }
 
-  .drawer-opener{
+  .drawer-opener {
     position: fixed;
     left: 0;
     top: 0;
@@ -617,6 +661,35 @@
     background: #eeeeee;
   }
 
+  .sorting-grid-wrapper {
+    margin: 1em;
+  }
 
+  .fake-entry{
+    position: relative;
 
+    margin: 1em auto;
+    padding: 0.3em;
+    width: 85%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+  }
+
+  .fake-entry div{
+    border: none;
+    background: none;
+    cursor: pointer;
+    color:#00000070;
+  }
+
+  .fake-entry div:hover{
+    border: none;
+    background: none;
+    cursor: pointer;
+    color:#000000aa;
+
+  }
 </style>
