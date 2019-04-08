@@ -18,6 +18,7 @@ export default {
     formID: '',
     formTitle: '',
     userAnswers: {},
+    formSections: [],
     invitedUsers: {},
     entryPoints: [],
     user: null
@@ -49,7 +50,9 @@ export default {
       return state.entryPoints;
     },
 
-    user : state => state.user
+    user : state => state.user,
+
+    formSections : state => state.formSections
   },
   mutations: {
     setFormEntries: (state) => {
@@ -74,6 +77,15 @@ export default {
           const value = snapshot.val();
           if (value) state.formTitle = value.title;
           else state.formTitle = null
+        })
+    },
+
+    setFormSections: (state) => {
+      Firebase.database().ref(getPublishedFormFromID(state.formID))
+        .on('value', function (snapshot) {
+          const value = snapshot.val();
+          if (value) state.formSections = value.sections || [];
+          else state.formSections = []
         })
     },
 
@@ -133,13 +145,18 @@ export default {
         context.commit('setFormEntries')
       },
 
+      setFormSections: (context) => {
+        context.commit('setFormSections')
+      },
+
       setFormID: (context, {formID}) => {
         context.commit('setFormID', {formID});
         context.commit('setFormEntries');
         context.commit('setFormTitle');
+        context.commit('setFormSections');
         context.commit('setUserAnswers');
         context.commit('setInvitedUsers');
-        context.commit('setEntryPoint')
+        context.commit('setEntryPoint');
       },
 
       setFormTitle: (context) => {

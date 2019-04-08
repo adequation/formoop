@@ -86,7 +86,7 @@ const writePublishedCreatorFormFB = (form) => {
 
 
 const parseFormToUser = (form) => {
-  const parsedForm = {id: form.id, title: form.title};
+  const parsedForm = {id: form.id, title: form.title, sections:form.sections};
 
   //parse entries
   const entriesObject = {};

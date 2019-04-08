@@ -323,8 +323,15 @@
         return this.searchQuery.split(' ');
       },
 
+      formSectionSortOrder(){
+          return this.$store.getters.formSections || []
+      },
+
       sections() {
-        return getSections(this.formEntries, this.userAnswers);
+        const sections = getSections(this.formEntries, this.userAnswers);
+
+        return sections.sort((a,b) =>
+          this.formSectionSortOrder.indexOf(a.name) - this.formSectionSortOrder.indexOf(b.name))
       },
 
       hasFilter() {
