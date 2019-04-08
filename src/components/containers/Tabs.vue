@@ -1,8 +1,7 @@
 <template>
   <nav class="tabs">
-    <button
+    <div
       class="tabs-item"
-      type="button"
       v-for="tab in tabs"
       :ref="tab.value"
       :key="tab.title"
@@ -15,7 +14,7 @@
       @click="handleClick(tab.value)"
     >
       <span class="tab-content"><i v-if="tab.icon" class="material-icons md-16">{{tab.icon}}</i>{{ tab.title }}</span>
-    </button>
+    </div>
     <div
       class="tabs-active-line"
       :style="{ width: `${activeLineWidth}px`, transform: `translateX(${activeLineOffset}px)` }"
@@ -24,8 +23,11 @@
 </template>
 
 <script>
+  import windowSize from "@/mixins/windowSize";
+
   export default {
     name: 'tabs',
+    mixins: [windowSize],
     props: {
       currentTab: {
         type: String,
@@ -41,6 +43,9 @@
         if (this.newTab === newCurrentTab) return;
         this.moveActiveLine(newCurrentTab);
       },
+      windowWidth(newWidth){
+        this.moveActiveLine(this.newTab || this.currentTab)
+      },
     },
     data: () => ({
       activeLineWidth: 0,
@@ -53,12 +58,14 @@
         this.moveActiveLine(value);
         this.newTab = value;
       },
+
       moveActiveLine(newValue) {
         const element = this.$refs[newValue][0];
         if (!element) return;
         this.activeLineWidth = element.clientWidth;
         this.activeLineOffset = element.offsetLeft;
       },
+
     },
     mounted() {
       this.moveActiveLine(this.currentTab);
@@ -76,7 +83,7 @@
     margin: 0 5px;
     padding: 10px 10px 8px;
     font-size: 16px;
-    letter-spacing: 0.8px;
+    letter-spacing: 1px;
     color: #ffffff75;
     text-decoration: none;
     border: none;
