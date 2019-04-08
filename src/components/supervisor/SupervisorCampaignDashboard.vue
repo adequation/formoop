@@ -31,7 +31,7 @@
         <th>Nombre de participants</th>
         <th>Nombre de participants actifs</th>
         <th>État</th>
-        <tr v-for="form in campaignFullForms" :key="'O-${form.id}'" @click="openSingleForm(form)">
+        <tr v-for="form in campaignFullForms" :key="'O-' + form.id" @click="openSingleForm(form)">
           <td>{{form.title}}</td>
           <td>
             <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
@@ -41,7 +41,7 @@
           <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
           <td><i class="material-icons">lock_open</i></td>
         </tr>
-        <tr v-for="form in campaignClosedForms" :key="'C-${form.id}'" @click="openSingleForm(form)">
+        <tr v-for="form in campaignClosedForms" :key="'C-' + form.id" @click="openSingleForm(form)">
           <td>{{form.title}}</td>
           <td>
             <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>

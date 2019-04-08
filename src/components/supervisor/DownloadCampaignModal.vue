@@ -5,50 +5,51 @@
         <h2>Selectionner les formulaires à télécharger</h2>
       </div>
       <div slot="body">
-        <table class="select-all-option ">
-          <thead>
-            <tr>
-              <th>
-                <label>
-                  <input type="checkbox" v-model="selectAll" @click="select">
-                  <i class="select-form-icon"></i>
-                </label>
-              </th>
-              <th>Nom du formulaire</th>
-              <th>Progression</th>
-              <th>État</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="form in openFormsToSelect" :key="'SO-${form.id}'">
-              <td>
-                <label class="select-form-checkbox">
-                  <input type="checkbox" :value="form" v-model="selectedForms">
-                  <i class="select-form-icon"></i>
-                </label>
-              </td>
-              <td>{{ form.title }}</td>
-              <td>
-                <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
-              </td>
-              <td><i class="material-icons">lock_open</i></td>
-            </tr>
-            <tr v-for="form in closedFormsToSelect" :key="'SC-${form.id}'">
-              <td>
-                <label class="select-form-checkbox">
-                  <input type="checkbox" :value="form" v-model="selectedClosedForms">
-                  <i class="select-form-icon"></i>
-                </label>
-              </td>
-              <td>{{ form.title }}</td>
-              <td>
-                <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
-              </td>
-              <td><i class="material-icons">lock</i></td>
-            </tr>
-          </tbody>
-        </table>
-
+        <div class="select-form-wrapper">
+          <table class="select-all-option ">
+            <thead>
+              <tr>
+                <th>
+                  <label>
+                    <input type="checkbox" v-model="selectAll" @click="select">
+                    <i class="select-form-icon"></i>
+                  </label>
+                </th>
+                <th>Nom du formulaire</th>
+                <th>Progression</th>
+                <th>État</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="form in openFormsToSelect" :key="'SO-' + form.id">
+                <td>
+                  <label class="select-form-checkbox">
+                    <input type="checkbox" :value="form" v-model="selectedForms">
+                    <i class="select-form-icon"></i>
+                  </label>
+                </td>
+                <td>{{ form.title }}</td>
+                <td>
+                  <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
+                </td>
+                <td><i class="material-icons">lock_open</i></td>
+              </tr>
+              <tr v-for="form in closedFormsToSelect" :key="'SC-' + form.id">
+                <td>
+                  <label class="select-form-checkbox">
+                    <input type="checkbox" :value="form" v-model="selectedClosedForms">
+                    <i class="select-form-icon"></i>
+                  </label>
+                </td>
+                <td>{{ form.title }}</td>
+                <td>
+                  <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
+                </td>
+                <td><i class="material-icons">lock</i></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
       </div>
 
@@ -123,6 +124,14 @@
 </script>
 
 <style scoped>
+  .select-form-wrapper{
+    overflow-y: scroll;
+
+    max-height: 450px;
+
+    margin-left: 0;
+  }
+
   .download-button {
     background: #2d8246;
     width: 40px;
