@@ -13,11 +13,11 @@
       <h1>Il n'y a aucune campagne en cours pour l'instant</h1>
     </div>
 
-    <input class="new-campaign-box"
+    <input class="create-campaign-box"
            type="text"
            placeholder="Nom de la campagne"
            v-model="newCampaignName"/>
-    <button @click="createNewCampaign">Créer une campagne</button>
+    <button class="create-campaign-button" @click="createNewCampaign">Créer une campagne</button>
 
 
   </div>
@@ -71,5 +71,7 @@
 </script>
 
 <style scoped>
-
+  .create-campaign-button{
+    cursor: pointer;
+  }
 </style>

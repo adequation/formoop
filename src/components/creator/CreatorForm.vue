@@ -37,7 +37,7 @@
             <div class="creator-form-sections-buttons-wrapper">
               <input title="" type="text" placeholder="Nom de la section" class="creator-section-name-input" v-model="newSection"/>
 
-              <button type="button" class="creator-form-entry-button"
+              <button type="button" class="creator-form-section-button"
                       @click="addSection" title="Créer une nouvelle Section">
                 <i class="material-icons md-36">create_new_folder</i>
               </button>
@@ -235,7 +235,6 @@
 
         //remove the form where we don't want it to be
         //and add it where it is not
-
         if(!isFormGeneric(this.formEntries))
           saveAndFilterCampaignsFB({id: this.formID, title: this.formTitle}, this.formCampaigns, this.publishingCampaigns);
 
@@ -385,6 +384,28 @@
   }
 
   .creator-form-entry-button {
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #4286f4;
+
+    cursor: pointer;
+    font-size: large;
+    border: none;
+
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .creator-form-entry-button:hover {
+    background: #3462ad;
+  }
+
+  .creator-form-section-button{
     margin-right: 0.5em;
     padding: 0.5em;
     color: white;
