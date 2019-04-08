@@ -2,6 +2,7 @@
   <div class="creator-form">
 
     <DockingMenu class="creator-form-top-menu"
+                 ref="top-menu"
                  top>
       <div slot="body">
         <Tabs :current-tab="currentTab" :tabs="tabs" @change-tab="currentTab = $event"/>
@@ -106,14 +107,16 @@
 
       <div v-for="(entry, i) in formEntries"
            :key="entry.id"
-           @click="focusEntry(entry)">
+           @click="focusEntry(entry)"
+           :ref="`top_${entry.id}`"
+           :class="['smooth', {focusedEntry: focusedEntry ? focusedEntry.id === entry.id : false}]">
+
         <CreatorFormEntry
           :key="entry.id"
           :entry="entry"
           :opened="focusedEntry ? focusedEntry.id === entry.id : false"
           :ref="entry.id"
           :formSections="formSections"
-
         />
       </div>
 
@@ -221,7 +224,7 @@
         showDrawer: false,
         newSection: null,
         formSections: [],
-        currentSections : [],
+        currentSections: [],
         publishingCampaigns: [],
         tabs: [
           {title: 'Créer', value: 'create', icon: 'edit'},
@@ -230,6 +233,9 @@
           {title: 'Résultats', value: 'results', icon: 'insert_chart'}
         ],
         currentTab: 'create',
+
+        //boolean to check if we scroll down on a new entry or not
+        firstMount : true
       }
     },
     methods: {
@@ -269,13 +275,64 @@
         this.showDrawer = false;
       },
 
-      focusEntry(entry) {
+      focusEntry(entry, scroll=true) {
+        if (!entry) return;
+
         if (this.focusedEntry) {
 
           if (this.focusedEntry.id === entry.id) this.focusedEntry = null;
           else this.focusedEntry = entry;
 
         } else this.focusedEntry = entry;
+
+        if(scroll) this.scrollToFocused(this.$refs[`top_${entry.id}`][0]);
+      },
+
+      isScrolledIntoView(el) {
+        const rect = el.getBoundingClientRect();
+        const elemTop = rect.top;
+        const elemBottom = rect.bottom;
+
+        // Here, only completely visible elements return true
+        //if you want partially visible elements : elemTop < window.innerHeight && elemBottom >= 0;
+        return (elemTop >= 0) && (elemBottom <= window.innerHeight);
+      },
+
+      scrollToFocused(el) {
+
+        if (!el) return;
+
+        const params = {
+          behavior: 'smooth',
+          block: "center",
+          inline: "center"
+        };
+
+
+        if (!this.isScrolledIntoView(el))
+          el.scrollIntoView(params);
+      },
+
+      getNextEntry(currentEntry) {
+        if (!currentEntry) return null;
+
+        const currentEntryIndex = this.formEntries.findIndex(fe => fe.id === currentEntry.id);
+
+        if (currentEntryIndex >= 0 && currentEntryIndex < this.formEntries.length - 1)
+          return this.formEntries[currentEntryIndex + 1];
+
+        return null;
+      },
+
+      getPreviousEntry(currentEntry) {
+        if (!currentEntry) return null;
+
+        const currentEntryIndex = this.formEntries.findIndex(fe => fe.id === currentEntry.id);
+
+        if (currentEntryIndex > 0 && currentEntryIndex < this.formEntries.length)
+          return this.formEntries[currentEntryIndex - 1];
+
+        return null;
       },
 
       disableClick(e) {
@@ -311,6 +368,8 @@
 
         //copy default answer array, and generate new option ids
         this.formEntries.push(entry);
+
+        this.firstMount = false;
       },
 
       addFormEntryAnswer(id, answer) {
@@ -380,7 +439,7 @@
           .on('value', (snapshot) => {
             const value = snapshot.val();
             if (value) {
-              this.setForm({formEntries: value.entries, formTitle: value.title, currentSections:value.sections});
+              this.setForm({formEntries: value.entries, formTitle: value.title, currentSections: value.sections});
             } else {
               this.setForm(null);
             }
@@ -407,7 +466,12 @@
 
         saveCreatorFormFB(this.creatorID,
           this.formID,
-          {id: this.formID, title: this.formTitle, entries: this.formEntries, sections:this.formSections}).then((e) => {
+          {
+            id: this.formID,
+            title: this.formTitle,
+            entries: this.formEntries,
+            sections: this.formSections
+          }).then((e) => {
 
           //if everything is done, we reset the form's data
           this.getFormFromFB(this.creatorID, this.formID);
@@ -425,6 +489,21 @@
           }, this.formCampaigns, this.publishingCampaigns);
 
       },
+
+      handleGlobalKeyDown(e) {
+        switch (e.key) {
+          case 'ArrowDown' :
+            const nextEntry = this.focusEntry(this.getNextEntry(this.focusedEntry));
+            if (nextEntry) this.focusEntry(nextEntry);
+            e.preventDefault();
+            break;
+          case 'ArrowUp' :
+            const previousEntry = this.getPreviousEntry(this.focusedEntry);
+            if (previousEntry) this.focusEntry(previousEntry);
+            e.preventDefault();
+            break;
+        }
+      }
     },
     created: function () {
       //when arriving, set the ID in the store from the router
@@ -433,6 +512,10 @@
       this.$store.dispatch('setCreatorID', {formID: null});
       this.$store.dispatch('setFormCampaigns');
 
+      //global key press handling
+      window.addEventListener('keydown', (e) => {
+        this.handleGlobalKeyDown(e)
+      });
 
       //emitting of a new entry
       this.$root.$on('add-entry-answer', (id, answer) => {
@@ -458,8 +541,16 @@
 
       //when an entry is mounted
       this.$root.$on('mounted-entry', (id) => {
-        window.scrollTo(0, document.body.scrollHeight);
-        this.focusEntry(this.formEntries.find(e => e.id === id));
+        //we don't want to be at the bottom of the page when arriving
+
+        if(!this.firstMount){
+          this.focusEntry(this.formEntries.find(e => e.id === id), false);
+          setTimeout(function() {
+            window.scrollTo({left:0, top:document.body.scrollHeight, behavior:'smooth'});
+          }, 150);
+
+        }
+
       });
 
       //emitting of a new entry option
@@ -497,7 +588,6 @@
       //retreive form
       this.getFormFromFB(this.creatorID, this.formID);
 
-
     },
     computed: {
       formID() {
@@ -517,13 +607,6 @@
       },
 
       sections() {
-        /*const sections = [];
-        this.formEntries.forEach(e => {
-          if (!sections.includes(e.section) && e.section && e.section !== '-1') sections.push(e.section);
-        });
-
-        sections.sort((a,b)=> this.formSections.indexOf(a) - this.formSections.indexOf(b));*/
-
         return this.currentSections;
       },
     },
@@ -742,5 +825,9 @@
     background: none;
     cursor: pointer;
     color: #000000aa;
+  }
+
+  .focusedEntry{
+    background: #00000015;
   }
 </style>

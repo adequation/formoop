@@ -1,6 +1,6 @@
 <template>
   <div class="full-entry-wrapper">
-    <button :style="{float:'left'}" @click.stop >^</button>
+
 
     <div class="creator-form-entry smooth"
          :style="{ borderLeft: `10px solid ${borderColor}`}">
