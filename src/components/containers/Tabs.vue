@@ -11,8 +11,7 @@
         'tabs-item',
       ]"
       :disabled="tab.disabled || false"
-      @click="handleClick(tab.value)"
-    >
+      @click="handleClick(tab.value)">
       <span class="tab-content"><i v-if="tab.icon" class="material-icons md-16">{{tab.icon}}</i>{{ tab.title }}</span>
     </div>
     <div

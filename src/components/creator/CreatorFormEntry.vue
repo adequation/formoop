@@ -167,7 +167,9 @@
 
   .creator-form-entry:hover {
     cursor: pointer;
-    transform: scale(1.01);
+    width: 87%;
+    margin: 0.7em auto;
+    padding: 0.5em;
   }
 
   .form-entry-title {

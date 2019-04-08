@@ -10,7 +10,43 @@
 
     <div class="creator-form-header"></div>
 
-    <div v-if="currentTab === 'sort'">
+    <div class="sorting-tab" v-if="currentTab === 'sort'">
+
+      <div class="sorting-section-grid-wrapper">
+        <CustomGrid
+          ref="sectionSortingGrid"
+          :center="false"
+          :draggable="true"
+          :sortable="true"
+          :items="formSections"
+          :cell-width="80"
+          :cell-height="80"
+          @change="gridChange"
+          @remove="gridRemove"
+          @click="gridClick"
+          @sort="gridSort">
+          <template slot="cell" slot-scope="props">
+            <div
+              :item="props.item"
+              :index="props.index"
+              @remove="props.remove()">
+
+              <CustomGridSection
+                :section="props.item"
+                :index="props.index"
+                :cell-width="props.cellWidth"
+                :cell-height="props.cellHeight"
+                :padding="2"
+                :color="getGridSectionColor(props.item)"/>
+
+            </div>
+
+          </template>
+        </CustomGrid>
+      </div>
+
+      <hr/>
+
       <div class="sorting-grid-wrapper">
         <CustomGrid
           ref="entrySortingGrid"
@@ -44,21 +80,22 @@
         </CustomGrid>
       </div>
 
+
       <button type="button" @click="gridRetreiveSortedItems">Trier !</button>
     </div>
 
     <div class="drawer-opener" @click="showDrawer = true"></div>
 
     <transition name="slide-animation">
-    <Drawer v-if="showDrawer" @close="closeDrawer">
+      <Drawer v-if="showDrawer" @close="closeDrawer">
 
-      <div slot="body">
+        <div slot="body">
 
-        yes
+          yes
 
-      </div>
+        </div>
 
-    </Drawer>
+      </Drawer>
     </transition>
 
     <div v-if="currentTab === 'create'">
@@ -155,12 +192,14 @@
   import Drawer from "@/components/containers/Drawer";
   import CustomGrid from "@/components/containers/CustomGrid/CustomGrid";
   import {getSectionColor} from "@/helpers/sectionsHelpers";
-  import CustomGridEntry from "@/components/general/CustomGridEntry";
+  import CustomGridEntry from "@/components/containers/CustomGrid/CustomGridEntry";
   import Tabs from "@/components/containers/Tabs";
+  import CustomGridSection from "@/components/containers/CustomGrid/CustomGridSection";
 
   export default {
     name: 'CreatorForm',
     components: {
+      CustomGridSection,
       Tabs,
       CustomGridEntry,
       CustomGrid, Drawer, CreatorPublication, CreatorFormEntry, DockingMenu, CreatorCampaignSelect
@@ -182,11 +221,12 @@
         showDrawer: false,
         newSection: null,
         formSections: [],
+        currentSections : [],
         publishingCampaigns: [],
         tabs: [
-          {title: 'Créer', value: 'create', icon:'edit'},
-          {title: 'Parramètrer', value: 'sort', icon:'settings'},
-          {title: 'Partager', value: 'share', icon:'share'},
+          {title: 'Créer', value: 'create', icon: 'edit'},
+          {title: 'Parramètrer', value: 'sort', icon: 'settings'},
+          {title: 'Partager', value: 'share', icon: 'share'},
           {title: 'Résultats', value: 'results', icon: 'insert_chart'}
         ],
         currentTab: 'create',
@@ -212,10 +252,17 @@
 
       gridRetreiveSortedItems() {
         this.formEntries = this.$refs.entrySortingGrid.getListClone();
+        this.formSections = this.$refs.sectionSortingGrid.getListClone();
+
+        console.log(this.formSections)
+        console.log(this.$refs.sectionSortingGrid.getListClone())
       },
 
       getEntryColor(entry) {
         return getSectionColor(entry.section, this.formSections) || '#aaaaaa';
+      },
+      getGridSectionColor(section) {
+        return getSectionColor(section, this.formSections) || '#aaaaaa';
       },
 
       closeDrawer() {
@@ -320,10 +367,12 @@
         if (!form) {
           this.formEntries = [];
           this.formTitle = this.defaultFormTitle;
+          this.currentSections = [];
           return;
         }
         this.formEntries = form.formEntries || [];
         this.formTitle = form.formTitle || this.defaultFormTitle;
+        this.currentSections = form.currentSections || [];
       },
 
       getFormFromFB(creatorID, formID) {
@@ -331,7 +380,7 @@
           .on('value', (snapshot) => {
             const value = snapshot.val();
             if (value) {
-              this.setForm({formEntries: value.entries, formTitle: value.title});
+              this.setForm({formEntries: value.entries, formTitle: value.title, currentSections:value.sections});
             } else {
               this.setForm(null);
             }
@@ -358,7 +407,7 @@
 
         saveCreatorFormFB(this.creatorID,
           this.formID,
-          {id: this.formID, title: this.formTitle, entries: this.formEntries}).then((e) => {
+          {id: this.formID, title: this.formTitle, entries: this.formEntries, sections:this.formSections}).then((e) => {
 
           //if everything is done, we reset the form's data
           this.getFormFromFB(this.creatorID, this.formID);
@@ -468,11 +517,14 @@
       },
 
       sections() {
-        const sections = [];
+        /*const sections = [];
         this.formEntries.forEach(e => {
           if (!sections.includes(e.section) && e.section && e.section !== '-1') sections.push(e.section);
         });
-        return sections;
+
+        sections.sort((a,b)=> this.formSections.indexOf(a) - this.formSections.indexOf(b));*/
+
+        return this.currentSections;
       },
     },
     watch: {
@@ -489,14 +541,14 @@
 
       },
 
-      formEntries() {
+      sections(value) {
         const tmp = this.sections;
 
         this.formSections.forEach(fs => {
           if (!tmp.includes(fs) && fs && fs !== '-1') tmp.push(fs);
         });
 
-        tmp.sort((a, b) => a.localeCompare(b));
+
         this.formSections = tmp.slice();
 
       }
@@ -661,11 +713,11 @@
     background: #eeeeee;
   }
 
-  .sorting-grid-wrapper {
-    margin: 1em;
+  .sorting-tab {
+    margin: 5em;
   }
 
-  .fake-entry{
+  .fake-entry {
     position: relative;
 
     margin: 1em auto;
@@ -678,18 +730,17 @@
     align-items: center;
   }
 
-  .fake-entry div{
+  .fake-entry div {
     border: none;
     background: none;
     cursor: pointer;
-    color:#00000070;
+    color: #00000070;
   }
 
-  .fake-entry div:hover{
+  .fake-entry div:hover {
     border: none;
     background: none;
     cursor: pointer;
-    color:#000000aa;
-
+    color: #000000aa;
   }
 </style>
