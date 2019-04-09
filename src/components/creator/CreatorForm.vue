@@ -198,9 +198,11 @@
   import CustomGridEntry from "@/components/containers/CustomGrid/CustomGridEntry";
   import Tabs from "@/components/containers/Tabs";
   import CustomGridSection from "@/components/containers/CustomGrid/CustomGridSection";
+  import autoScrollMixin from "@/mixins/autoScrollMixin";
 
   export default {
     name: 'CreatorForm',
+    mixins:[autoScrollMixin],
     components: {
       CustomGridSection,
       Tabs,
@@ -235,7 +237,7 @@
         currentTab: 'create',
 
         //boolean to check if we scroll down on a new entry or not
-        firstMount : true
+        firstMount: true
       }
     },
     methods: {
@@ -275,7 +277,7 @@
         this.showDrawer = false;
       },
 
-      focusEntry(entry, scroll=true) {
+      focusEntry(entry, scroll = true) {
         if (!entry) return;
 
         if (this.focusedEntry) {
@@ -285,32 +287,7 @@
 
         } else this.focusedEntry = entry;
 
-        if(scroll) this.scrollToFocused(this.$refs[`top_${entry.id}`][0]);
-      },
-
-      isScrolledIntoView(el) {
-        const rect = el.getBoundingClientRect();
-        const elemTop = rect.top;
-        const elemBottom = rect.bottom;
-
-        // Here, only completely visible elements return true
-        //if you want partially visible elements : elemTop < window.innerHeight && elemBottom >= 0;
-        return (elemTop >= 0) && (elemBottom <= window.innerHeight);
-      },
-
-      scrollToFocused(el) {
-
-        if (!el) return;
-
-        const params = {
-          behavior: 'smooth',
-          block: "center",
-          inline: "center"
-        };
-
-
-        if (!this.isScrolledIntoView(el))
-          el.scrollIntoView(params);
+        if (scroll) this.scrollToFocused(this.$refs[`top_${entry.id}`][0]);
       },
 
       getNextEntry(currentEntry) {
@@ -543,12 +520,9 @@
       this.$root.$on('mounted-entry', (id) => {
         //we don't want to be at the bottom of the page when arriving
 
-        if(!this.firstMount){
+        if (!this.firstMount) {
           this.focusEntry(this.formEntries.find(e => e.id === id), false);
-          setTimeout(function() {
-            window.scrollTo({left:0, top:document.body.scrollHeight, behavior:'smooth'});
-          }, 150);
-
+          this.scrollTo(150);
         }
 
       });
@@ -630,7 +604,6 @@
         this.formSections.forEach(fs => {
           if (!tmp.includes(fs) && fs && fs !== '-1') tmp.push(fs);
         });
-
 
         this.formSections = tmp.slice();
 
@@ -827,7 +800,7 @@
     color: #000000aa;
   }
 
-  .focusedEntry{
+  .focusedEntry {
     background: #00000015;
   }
 </style>

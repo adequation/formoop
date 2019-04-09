@@ -42,7 +42,7 @@
         if (this.newTab === newCurrentTab) return;
         this.moveActiveLine(newCurrentTab);
       },
-      windowWidth(newWidth){
+      windowWidth(newWidth) {
         this.moveActiveLine(this.newTab || this.currentTab)
       },
     },
@@ -54,8 +54,8 @@
     methods: {
       handleClick(value) {
         this.$emit('change-tab', value);
-        this.moveActiveLine(value);
         this.newTab = value;
+        this.moveActiveLine(value);
       },
 
       moveActiveLine(newValue) {
@@ -77,6 +77,7 @@
     position: relative;
     margin: 0 auto;
   }
+
   .tabs-item {
     display: inline-block;
     margin: 0 5px;
@@ -91,24 +92,30 @@
     cursor: pointer;
     transition: all 0.25s;
   }
+
   .tabs-item_active {
     color: white;
   }
+
   .tabs-item:hover {
     border-bottom: 2px solid #ffffff75;
     color: white;
   }
+
   .tabs-item:focus {
     outline: none;
     border-bottom: 2px solid #ffffff75;
     color: white;
   }
+
   .tabs-item:first-child {
     margin-left: 0;
   }
+
   .tabs-item:last-child {
     margin-right: 0;
   }
+
   .tabs-active-line {
     position: absolute;
     bottom: 0;
@@ -118,7 +125,7 @@
     transition: transform 0.4s ease, width 0.4s ease;
   }
 
-  .tab-content i{
+  .tab-content i {
     display: inline-flex;
     vertical-align: middle;
   }
