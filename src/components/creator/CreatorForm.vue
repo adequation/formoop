@@ -259,6 +259,11 @@
         this.setFormEntryType(id, type)
       });
 
+      //emitting the type of an entry
+      this.$root.$on('set-entry-type', (id, type) => {
+        this.setFormEntryType(id, type)
+      });
+
       this.$on('set-form-section', (id, section) => {
         this.setFormEntrySection(id, section)
       });
