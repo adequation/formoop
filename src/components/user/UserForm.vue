@@ -5,7 +5,14 @@
 
 
     <h1>{{formTitle}}</h1>
-    <h2>{{user ? user.name : 'Non connecté'}}</h2>
+
+    <h2 v-if="user">{{user.name}}</h2>
+
+    <div v-if="!user && sortedEntries.length > 0">
+      <h2>Aie ! Tu n'es pas connecté !</h2>
+      <UserGetFormLinkModal />
+    </div>
+
 
     <div class="user-form-section-list-wrapper">
       <UserSectionList v-if="sections.length > 0"
@@ -152,15 +159,18 @@
   import {areAnswersUpdated, isAnswered} from "@/helpers/userAnswersHelpers";
   import {decodeEmailToken} from "@/helpers/accountHelpers";
   import UserCloseForm from "./UserCloseForm";
+  import UserGetFormLinkModal from "./UserGetFormLinkModal";
 
   export default {
     name: 'UserForm',
     components: {
+      UserGetFormLinkModal,
       UserCloseForm,
       UserSectionList, UserEntryGrid, DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
     data() {
       return {
         showModal: false,
+        showIdentificationModal : false,
         selectedAnswers: {},
 
         filter: 'all',

@@ -30,3 +30,15 @@ export function isValidAddress(address) {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(address);
 }
+
+export function isInvitedMailAddress(address, invitedUsers) {
+  const usersIDs = Object.keys(invitedUsers);
+
+  const usersArray = usersIDs.map(id => {
+    return invitedUsers[id];
+  });
+
+  return usersArray.some(user => {
+    return user.email === address;
+  });
+}

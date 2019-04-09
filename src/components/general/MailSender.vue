@@ -67,7 +67,7 @@
 
 <script>
   import io from 'socket.io-client';
-  import {getFormUrlWithInvite, getFormUrlWithToken, sendMailToBack} from "@/helpers/mailHelpers";
+  import {getFormUrlWithInvite, getFormUrlWithToken, sendMailToBack , isValidAddress} from "@/helpers/mailHelpers";
   import {inviteUser, inviteEntryPoint} from "@/thunks/userAccountThunks";
   import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helpers/accountHelpers";
 
@@ -112,7 +112,7 @@
 
       addAdressToPool() {
         if (!this.mailAddresses.find(a => a === this.currentMailAdress)
-          && this.isValidAdress(this.currentMailAdress))
+          && isValidAddress(this.currentMailAdress))
           this.mailAddresses.push(this.currentMailAdress);
         this.currentMailAdress = '';
       },
@@ -121,10 +121,6 @@
         this.mailAddresses.splice(index, 1);
       },
 
-      isValidAdress(adress) {
-        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(adress);
-      },
 
       sendMail() {
 
