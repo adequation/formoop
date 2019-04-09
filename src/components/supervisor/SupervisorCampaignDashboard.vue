@@ -324,8 +324,9 @@
   }
 
   .single-form {
+
+    overflow-y:hidden;
     max-height: 75vh;
-    overflow-y: auto;
   }
 
   .single-form-wrapper {
