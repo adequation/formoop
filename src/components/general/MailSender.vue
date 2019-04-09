@@ -2,44 +2,46 @@
 
   <div class="mail-form" v-if="!selectedUser">
 
-    <div class="mail-addresses-input-wrapper">
-      <input class="mail-addresses-input"
-             type="email"
-             placeholder="Adresse email"
-             v-model="currentMailAdress"/>
-      <button type="button" @click="addAdressToPool"> +</button>
-    </div>
+    <div class="mail-form-content">
+      <div class="mail-addresses-input-wrapper">
+        <input class="mail-addresses-input"
+               type="email"
+               placeholder="Adresse email"
+               v-model="currentMailAdress"/>
+        <button type="button" @click="addAdressToPool"> +</button>
+      </div>
 
 
-    <div class="mail-addresses-input-wrapper">
-      <table class="mail-adress-table">
-        <tr v-for="(a,i) in mailAddresses">
-          <td>{{a}}</td>
-          <td>
-            <button type="button" @click="deleteAdress(i)">
-              <i class="material-icons md-18">close</i>
-            </button>
-          </td>
-        </tr>
-      </table>
-    </div>
+      <div class="mail-addresses-input-wrapper">
+        <table class="mail-adress-table">
+          <tr v-for="(a,i) in mailAddresses">
+            <td>{{clip(a, 20, true)}}</td>
+            <td>
+              <button type="button" @click="deleteAdress(i)">
+                <i class="material-icons md-18">close</i>
+              </button>
+            </td>
+          </tr>
+        </table>
+      </div>
 
-    <div class="mail-body-wrapper">
-      <input class="mail-subject-input"
-             type="text"
-             placeholder="Sujet du mail"
-             v-model="mailSubject"/>
-      <textarea class="mail-body-input"
-                title=""
-                placeholder="Contenu du mail (facultatif)"
-                v-model="mailContent"
-                rows="5"
-                cols="25"></textarea>
+      <div class="mail-body-wrapper">
+        <input class="mail-subject-input"
+               type="text"
+               placeholder="Sujet du mail"
+               v-model="mailSubject"/>
+        <textarea class="mail-body-input"
+                  title=""
+                  placeholder="Contenu du mail (facultatif)"
+                  v-model="mailContent"
+                  rows="5"
+                  cols="25"></textarea>
 
-      <button type="button" @click="sendMail" class="send-mail-button" title="Envoyer !">
-        <i class="material-icons md-36">send</i>
-      </button>
+        <button type="button" @click="sendMail" class="send-mail-button" title="Envoyer !">
+          <i class="material-icons md-36">send</i>
+        </button>
 
+      </div>
     </div>
 
 
@@ -55,7 +57,7 @@
               rows="5"
               cols="25"></textarea>
 
-    <button @click="sendMailToUser" class="send-mail-button" title="Envoyer !">
+    <button @click="sendMailToUser" class="send-mail-button smooth" title="Envoyer !">
       <i class="material-icons md-36">send</i>
     </button>
 
@@ -69,6 +71,7 @@
   import {getFormUrlWithInvite, getFormUrlWithToken, sendMailToBack} from "@/helpers/mailHelpers";
   import {inviteUser, inviteEntryPoint} from "@/thunks/userAccountThunks";
   import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helpers/accountHelpers";
+  import {clipText} from "@/helpers/generalHelpers";
 
   export default {
     name: "MailSender",
@@ -108,6 +111,10 @@
       }
     },
     methods: {
+
+      clip(text, size, dots = false) {
+        return clipText(text, size, dots);
+      },
 
       addAdressToPool() {
         if (!this.mailAddresses.find(a => a === this.currentMailAdress)
@@ -194,7 +201,7 @@
 
   .send-mail-button {
     padding: 0.5em;
-    color: #4286f4;
+    color: white;
     background: none;
 
     cursor: pointer;
@@ -204,12 +211,18 @@
   }
 
   .mail-subject-input {
-    width: 100%;
+    width: 90%;
+    color: #ffffff;
+    border: none;
+    border-bottom: 1px solid #ffffff88;
     margin-bottom: 0.5em;
+
+    background: none;
   }
 
   .send-mail-button:hover {
-    color: #3462ad;
+    color: white;
+    transform: scale(1.1);
   }
 
   .mail-form {
@@ -218,9 +231,36 @@
     justify-content: center;
     align-items: center;
 
-    overflow: auto;
-    max-height: 500px;
-    min-width: 300px;
+    width: 300px;
+    min-width: 250px;
+    height: fit-content;
+    text-align: center;
+
+    background: rgba(0, 0, 0, 0) linear-gradient(#6aa3ff, #3462ad);
+
+    border: 0 none rgb(23, 43, 77);
+    border-radius: 16px 16px 16px 16px;
+
+    overflow-y: hidden;
+    overflow-x: hidden;
+  }
+
+  .mail-form-content {
+    margin: 1em;
+
+    width: auto;
+
+    height: 90%;
+
+    overflow: scroll;
+  }
+
+  .mail-form-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mail-form::-webkit-scrollbar {
+    display: none;
   }
 
   .mail-addresses-input-wrapper {

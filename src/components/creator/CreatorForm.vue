@@ -5,11 +5,45 @@
                  ref="top-menu"
                  top>
       <div slot="body">
-        <Tabs :current-tab="currentTab" :tabs="tabs" @change-tab="currentTab = $event"/>
+        <Tabs :current-tab="currentTab" :tabs="tabs" @change-tab="changeTab($event)"/>
       </div>
     </DockingMenu>
 
     <div class="creator-form-header"></div>
+
+    <!-- ////////////////////////////////////////// CREATE AREA ////////////////////////////////////////// !-->
+
+    <div v-if="currentTab === 'create'">
+
+      <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
+
+      <CreatorCampaignSelect/>
+
+      <div v-for="(entry, i) in formEntries"
+           :key="entry.id"
+           @click="focusEntry(entry)"
+           :ref="`top_${entry.id}`"
+           :class="['smooth', {focusedEntry: focusedEntry ? focusedEntry.id === entry.id : false}]">
+
+        <CreatorFormEntry
+          :key="entry.id"
+          :entry="entry"
+          :opened="focusedEntry ? focusedEntry.id === entry.id : false"
+          :ref="entry.id"
+          :formSections="formSections"
+        />
+      </div>
+
+      <div class="fake-entry">
+        <div @click="addEntry(false)"><i class="material-icons md-48">add_circle</i></div>
+        <div @click="addEntry(true)"><i class="material-icons md-48">info</i></div>
+      </div>
+
+
+      <div class="creator-form-footer"></div>
+    </div>
+
+    <!-- ////////////////////////////////////////// SORT AREA ////////////////////////////////////////// !-->
 
     <div class="sorting-tab" v-if="currentTab === 'sort'">
 
@@ -85,48 +119,16 @@
       <button type="button" @click="gridRetreiveSortedItems">Trier !</button>
     </div>
 
-    <div class="drawer-opener" @click="showDrawer = true"></div>
 
-    <transition name="slide-animation">
-      <Drawer v-if="showDrawer" @close="closeDrawer">
+    <!-- ////////////////////////////////////////// SHARE AREA ////////////////////////////////////////// !-->
 
-        <div slot="body">
-
-          yes
-
-        </div>
-
-      </Drawer>
-    </transition>
-
-    <div v-if="currentTab === 'create'">
-
-      <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
-
-      <CreatorCampaignSelect/>
-
-      <div v-for="(entry, i) in formEntries"
-           :key="entry.id"
-           @click="focusEntry(entry)"
-           :ref="`top_${entry.id}`"
-           :class="['smooth', {focusedEntry: focusedEntry ? focusedEntry.id === entry.id : false}]">
-
-        <CreatorFormEntry
-          :key="entry.id"
-          :entry="entry"
-          :opened="focusedEntry ? focusedEntry.id === entry.id : false"
-          :ref="entry.id"
-          :formSections="formSections"
-        />
-      </div>
-
-      <div class="fake-entry">
-        <div @click="addEntry(false)"><i class="material-icons md-48">add_circle</i></div>
-        <div @click="addEntry(true)"><i class="material-icons md-48">info</i></div>
-      </div>
-
-
-      <div class="creator-form-footer"></div>
+    <div v-if="currentTab === 'share'">
+      <CreatorFormShareTab :isPublished="isPublished"
+                           :form-entries="formEntries"
+                           :publishing-campaigns="publishingCampaigns"
+                           :save-form="saveForm"
+                           :form-title="formTitle"
+                           :entryPoints="entryPoints"/>
     </div>
 
     <div v-else>
@@ -199,11 +201,13 @@
   import Tabs from "@/components/containers/Tabs";
   import CustomGridSection from "@/components/containers/CustomGrid/CustomGridSection";
   import autoScrollMixin from "@/mixins/autoScrollMixin";
+  import CreatorFormShareTab from "@/components/creator/formTabs/CreatorFormShareTab";
 
   export default {
     name: 'CreatorForm',
-    mixins:[autoScrollMixin],
+    mixins: [autoScrollMixin],
     components: {
+      CreatorFormShareTab,
       CustomGridSection,
       Tabs,
       CustomGridEntry,
@@ -242,6 +246,13 @@
     },
     methods: {
 
+      changeTab(newTab) {
+        if (this.currentTab === newTab) return;
+
+        this.firstMount = true; //prevent a full scroll down on tab change
+        this.currentTab = newTab;
+
+      },
 
       gridClick({items, index}) {
         const value = items.find(v => v.index === index);
@@ -447,7 +458,7 @@
             id: this.formID,
             title: this.formTitle,
             entries: this.formEntries,
-            sections: this.formSections
+            sections: this.formSections || []
           }).then((e) => {
 
           //if everything is done, we reset the form's data
@@ -569,8 +580,20 @@
       },
 
       isPublished() {
-        return this.$store.getters.publishedForms.find(pe => pe.id === this.formID)
+        return !!this.$store.getters.publishedForms.find(pe => pe.id === this.formID)
       },
+
+      entryPoints() {
+        const publishedForm = this.$store.getters.publishedForms.find(pe => pe.id === this.formID);
+
+        if (publishedForm) {
+          if (publishedForm.entryPoint)
+            return Object.keys(publishedForm.entryPoint).map(k => publishedForm.entryPoint[k]);
+        }
+
+        return [];
+      },
+
 
       creatorID() {
         return this.$store.getters.creatorID;
