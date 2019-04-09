@@ -1,7 +1,7 @@
 <template>
   <div class="form" v-if="formEntries">
 
-      <user-close-form class="user-form-close-button" v-if="isEntryPoint" />
+    <user-close-form class="user-form-close-button" v-if="isEntryPoint" />
 
 
     <h1>{{formTitle}}</h1>
@@ -149,7 +149,7 @@
   import UserEntryGrid from "@/components/user/UserEntryGrid";
   import UserSectionList from "@/components/user/UserSectionList";
   import {getSections} from "@/helpers/sectionsHelpers";
-  import {isAnswered} from "@/helpers/userAnswersHelpers";
+  import {areAnswersUpdated, isAnswered} from "@/helpers/userAnswersHelpers";
   import {decodeEmailToken} from "@/helpers/accountHelpers";
   import UserCloseForm from "./UserCloseForm";
 
@@ -331,6 +331,8 @@
         return this.filter !== 'all' || this.searchQuery || this.focusedSection
       },
 
+
+
     },
     created() {
 
@@ -356,7 +358,7 @@
         const tmp = {...this.selectedAnswers};
 
         if(Array.isArray(answers))  tmp[id] = answers;
-          else tmp[id] = answers;
+        else tmp[id] = answers;
 
         this.selectedAnswers = tmp;
       },
@@ -401,12 +403,25 @@
 
         return !!userAnswer
       },
+
+      redirect(event){
+
+        if(areAnswersUpdated(this.userAnswers, this.selectedAnswers, this.formEntries, this.user.id)) {
+          return "Êtes vous sûr de vouloir quitter? Certaines réponses ne sont pas enregistrées.";
+        }
+        return void(0);
+      },
+
+
     },
     watch: {
       '$route'(to, from) {
         this.$store.dispatch('setFormID', {formID: this.$route.params.formID});
         this.$store.dispatch('setUser', {userID: this.$route.params.userID});
       },
+    },
+    mounted() {
+      window.onbeforeunload = this.redirect;
     }
   }
 </script>

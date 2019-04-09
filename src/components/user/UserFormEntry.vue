@@ -1,6 +1,6 @@
 <template>
   <div
-      :class="[
+    :class="[
       'user-form-entry',
       justConflicted ? 'shake' : '',
       inConflict && user ? 'user-form-entry-conflicted' :
@@ -15,7 +15,7 @@
        hasAnswers && user ? 'answered-by-users-ok' :
        'answered-by-users-disabled'
        ]"
-      type="button" @click="switchAnswersView" title="Voir les réponses" :disabled="!user">
+              type="button" @click="switchAnswersView" title="Voir les réponses" :disabled="!user">
 
         <div class="answered-by-content" > {{!showAnswers && currentEntryAnswers ?
           Object.keys(currentEntryAnswers).length : ''}} <i class="material-icons md-18">{{!showAnswers ? 'face' : 'close'}}</i></div>
@@ -143,7 +143,7 @@
           return userA.length !== this.selectedUserAnswers.length
             || !this.selectedUserAnswers.every(a => userA.includes(a));
         }
-        return userA !== this.selectedUserAnswers;;
+        return userA !== this.selectedUserAnswers;
       }
     },
     methods: {
@@ -187,6 +187,7 @@
 
         else alert("Vous n'êtes pas connecté !");
       },
+
     },
     watch : {
       inConflict(){
