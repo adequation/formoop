@@ -9,7 +9,7 @@
       <div class="creator-form-entry-tools-wrapper">
 
         <select title="" @change="onChangeSection($event.target)" @click.stop>
-          <option value="-1">Aucune</option>
+          <option :value="null">Aucune</option>
           <option v-for="t in formSections"
                   :key="t"
                   :name="t"

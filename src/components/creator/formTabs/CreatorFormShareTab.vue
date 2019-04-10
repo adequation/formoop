@@ -23,11 +23,14 @@
 
       <div class="already-published-buttons-wrapper" v-else>
 
-        <div class="smooth publish-button bad-publish-button">
+        <div
+          class="smooth publish-button bad-publish-button"
+          @click="publishForm">
           Écraser le formulaire
         </div>
 
-        <div class="smooth publish-button good-publish-button">
+        <div class="smooth publish-button good-publish-button"
+             @click="publishForm">
           Mettre a jour le formulaire
         </div>
       </div>
