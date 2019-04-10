@@ -1,4 +1,6 @@
 export function clipText(text, size, dots=false) {
+  if(!text) return '';
+
   if(text.length <= size) return text;
 
   if(!dots)
