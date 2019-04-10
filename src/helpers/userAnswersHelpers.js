@@ -134,3 +134,24 @@ export function activeParticipantNumber(userAnswers){
 export function answeredEntries(userID, userAnswers) {
   return Object.keys(userAnswers).filter(key => Object.keys(userAnswers[key]).includes(userID));
 }
+
+export function areAnswersUpdated(userAnswers, selectedAnswers, formEntries, userID){
+  return formEntries.some(fe => {
+    const userEntryAnswers = userAnswers[fe.id] ? userAnswers[fe.id][userID] : null;
+    const selectedEntryAnswers = selectedAnswers[fe.id];
+    if(isEntryUpdated(userEntryAnswers, selectedEntryAnswers)) return true
+  });
+}
+
+export function isEntryUpdated(userEntryAnswers, selectedEntryAnswers){
+  const userA = userEntryAnswers || null;
+
+  if(selectedEntryAnswers === undefined) return false;
+
+  if(Array.isArray(selectedEntryAnswers)){
+    if(!Array.isArray(userA)) return selectedEntryAnswers.length > 0;
+    return userA.length !== selectedEntryAnswers.length
+      || !selectedEntryAnswers.every(a => userA.includes(a));
+  }
+  return userA !== selectedEntryAnswers;
+}

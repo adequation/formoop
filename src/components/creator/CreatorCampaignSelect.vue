@@ -25,6 +25,8 @@
           <i v-if="searchQuery && showList" class="material-icons md-18" role="button" @click.stop=""
              @click="searchQuery = ''">clear</i>
         </div>
+
+
       </div>
 
       <i class="material-icons" @click.stop="" @click="showList = !showList">keyboard_arrow_down</i>
@@ -43,6 +45,18 @@
           {{c.name}} ({{(c.forms || []).length}} formulaires)
 
         </div>
+
+        <div class="add-new-campaign">
+          <input class="new-campaign-box"
+                 type="text"
+                 placeholder="Ajouter une campagne"
+                 v-model="newCampaignName"
+                 @keydown.enter="createNewCampaign"
+          />
+          <i v-if="newCampaignName" class="material-icons md-18" role="button" @click.stop=""
+             @click="createNewCampaign">add</i>
+        </div>
+        <p v-if="newCampaignAlreadyExists">Cette campagne existe déjà</p>
       </div>
     </transition>
 
@@ -62,7 +76,8 @@
         showList: false,
         selectedCampaigns: (this.formCampaign || []).slice(),
         newCampaignName: null,
-        searchQuery: ''
+        searchQuery: '',
+        newCampaignAlreadyExists: false
       }
     },
     methods: {
@@ -71,19 +86,21 @@
         this.$parent.$emit('set-publishing-campaign', publishingCampaigns);
       },
 
-      addCampaign() {
+      createNewCampaign() {
+        this.newCampaignAlreadyExists = false;
         if (this.newCampaignName) {
           // Check if campaign already exists
           if (!doesCampaignExists(this.campaignsFB, this.newCampaignName)) {
             const newCampaignID = uuid.v4();
             saveFormCampaignFB(newCampaignID, {id: newCampaignID, name: this.newCampaignName});
             this.addSelected(newCampaignID);
-          } else alert("La campagne existe déjà !");
+          } else this.newCampaignAlreadyExists = true;
         }
         this.newCampaignName = null;
       },
 
       removeSelected(campaignID) {
+        this.newCampaignAlreadyExists = false;
         const index = this.selectedCampaigns.findIndex(c => c === campaignID);
 
         if (index >= 0) {
@@ -93,7 +110,7 @@
       },
 
       addSelected(campaignID) {
-
+        this.newCampaignAlreadyExists = false;
         if (!this.selectedCampaigns.find(c => c === campaignID)) {
           this.selectedCampaigns.push(campaignID);
           this.setPublishingCampaigns(this.selectedCampaigns);
@@ -149,7 +166,7 @@
 
     watch: {
       formCampaign: function (newValue) {
-        if(!sameAnswersArray(newValue,[...this.selectedCampaigns]))
+        if(![...this.selectedCampaigns].length > 0)
           this.selectedCampaigns = newValue ? newValue.slice() : [];
       }
     }
@@ -274,6 +291,30 @@
   .accordion-fade-slide-leave-to {
     transform: translateY(-10px);
     opacity: 0;
+  }
+
+  .new-campaign-box {
+    width: 100%;
+    background: none;
+    border: none;
+    border-bottom: 1px solid rgb(217, 217, 217);
+
+    font-size: 1em;
+    color: #2c3e50;
+  }
+
+  .new-campaign-box:focus {
+    outline: none;
+  }
+
+  .add-new-campaign {
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2px 10px 2px 10px;
+    padding: 2px;
   }
 
 </style>

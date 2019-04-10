@@ -23,39 +23,50 @@
       </div>
     </Modal>
 
-    <div>
-      <table class="campaign-progression-table">
-        <th>Nom du formulaire</th>
-        <th>Progression</th>
-        <th>Points d'entrée</th>
-        <th>Nombre de participants</th>
-        <th>Nombre de participants actifs</th>
-        <th>État</th>
-        <tr v-for="form in campaignFullForms" :key="'O-' + form.id" @click="openSingleForm(form)">
-          <td>{{form.title}}</td>
-          <td>
-            <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
-          </td>
-          <td><span class="tag" v-for="e in getEntryPoints(form).map(ep => ep.name)">{{e}}</span></td>
-          <td>{{(form.users ? Object.keys(form.users) : []).length}}</td>
-          <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
-          <td><i class="material-icons">lock_open</i></td>
-        </tr>
-        <tr v-for="form in campaignClosedForms" :key="'C-' + form.id" @click="openSingleForm(form)">
-          <td>{{form.title}}</td>
-          <td>
-            <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
-          </td>
-          <td><span class="tag" v-for="e in getEntryPoints(form).map(ep => ep.name)">{{e}}</span></td>
-          <td>{{(form.users ? Object.keys(form.users) : []).length}}</td>
-          <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
-          <td><i class="material-icons">lock</i></td>
-        </tr>
-      </table>
+    <div v-if="campaignFullForms.length > 0">
+
+      <div>
+        <table class="campaign-progression-table">
+          <th>Nom du formulaire</th>
+          <th>Progression</th>
+          <th>Points d'entrée</th>
+          <th>Nombre de participants</th>
+          <th>Nombre de participants actifs</th>
+          <th>État</th>
+          <tr v-for="form in campaignFullForms" :key="'O-' + form.id" @click="openSingleForm(form)">
+            <td>{{form.title}}</td>
+            <td>
+              <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
+            </td>
+            <td><span class="tag" v-for="e in getEntryPoints(form).map(ep => ep.name)">{{e}}</span></td>
+            <td>{{(form.users ? Object.keys(form.users) : []).length}}</td>
+            <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
+            <td><i class="material-icons">lock_open</i></td>
+          </tr>
+          <tr v-for="form in campaignClosedForms" :key="'C-' + form.id" @click="openSingleForm(form)">
+            <td>{{form.title}}</td>
+            <td>
+              <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
+            </td>
+            <td><span class="tag" v-for="e in getEntryPoints(form).map(ep => ep.name)">{{e}}</span></td>
+            <td>{{(form.users ? Object.keys(form.users) : []).length}}</td>
+            <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
+            <td><i class="material-icons">lock</i></td>
+          </tr>
+        </table>
+      </div>
+
+      <SupervisorProgressChart
+        :percentage="campaignFormsProgress.reduce( ( sum, { value } ) => sum + value , 0)/ campaignFormsProgress.length"></SupervisorProgressChart>
+
+      <div class="supervisor-footer">
+
+      </div>
     </div>
 
-    <SupervisorProgressChart
-      :percentage="campaignFormsProgress.reduce( ( sum, { value } ) => sum + value , 0)/ campaignFormsProgress.length"></SupervisorProgressChart>
+    <div v-else>
+      <h3>Aucun formoop dans cette campagne</h3>
+    </div>
 
     <DockingMenu class="supervisor-campaign-bottom-menu">
       <div slot="body">
@@ -66,8 +77,10 @@
           <div class="creator-form-buttons-wrapper">
 
             <div class="creator-form-buttons-type">
-              <button class="bottom-button filter-button" title="Progression"><i class="material-icons">timeline</i></button>
-              <button class="bottom-button filter-button" title="Conflits"><i class="material-icons">event_busy</i></button>
+              <button class="bottom-button filter-button" title="Progression"><i class="material-icons">timeline</i>
+              </button>
+              <button class="bottom-button filter-button" title="Conflits"><i class="material-icons">event_busy</i>
+              </button>
             </div>
 
             <div class="creator-form-buttons-sort">
@@ -83,10 +96,12 @@
 
 
           <div class="creator-form-tools-wrapper">
-            <!--<download-campaign class="bottom-button tool-button" title="Récupérer les résultats" :campaign="campaign" :campaign-forms="campaignFullForms" :campaign-closed-forms="campaignClosedForms"/>-->
+            <!--<download-campaign class="bottom-button tool-button" title="Récupérer les résultats" :campaign="campaign"
+                               :campaign-forms="campaignFullForms" :campaign-closed-forms="campaignClosedForms"/>-->
             <button class="bottom-button tool-button" title="Récupérer les résultats" @click="showDownloadForm = true"> <i class="material-icons md-36">save_alt</i></button>
             <DownloadCampaignModal :campaign="this.campaign" :open-forms-to-select="this.campaignFullForms" :closed-forms-to-select="this.campaignClosedForms" :show-modal="showDownloadForm" @close="showDownloadForm = false"/>
-            <button class="bottom-button tool-button" title="Progression"><i class="material-icons md-36">description</i></button>
+            <button class="bottom-button tool-button" title="Progression"><i
+              class="material-icons md-36">description</i></button>
           </div>
         </div>
 
@@ -117,7 +132,8 @@
       DownloadForm,
       DownloadCampaign,
       SupervisorForceDirectedGraph,
-      SupervisorBasicFormInfo, Modal, SupervisorProgressChart, SupervisorCampaignProgressChart, DockingMenu},
+      SupervisorBasicFormInfo, Modal, SupervisorProgressChart, SupervisorCampaignProgressChart, DockingMenu
+    },
 
     data() {
       return {
@@ -164,7 +180,7 @@
 
     methods: {
 
-      getFormProgress(form){
+      getFormProgress(form) {
         return {
           name: form.title,
           id: form.id,
@@ -174,21 +190,21 @@
         }
       },
 
-      getEntryPoints(form){
+      getEntryPoints(form) {
         return form.entryPoint ? Object.keys(form.entryPoint).map(key => form.entryPoint[key]) : []
       },
 
-      openSingleForm(form){
+      openSingleForm(form) {
         this.selectedForm = form;
         this.showSingleForm = true;
       },
 
-      getActivePeople(usersAnswers, totalNumberOfInvitedPeople){
+      getActivePeople(usersAnswers, totalNumberOfInvitedPeople) {
         let activePercentage = 0;
-        if(totalNumberOfInvitedPeople > 0)
-          activePercentage = activeParticipantNumber(usersAnswers)/totalNumberOfInvitedPeople;
+        if (totalNumberOfInvitedPeople > 0)
+          activePercentage = activeParticipantNumber(usersAnswers) / totalNumberOfInvitedPeople;
 
-        return `${activeParticipantNumber(usersAnswers)} (${activePercentage*100}%)`;
+        return `${activeParticipantNumber(usersAnswers)} (${activePercentage * 100}%)`;
       }
 
     },
@@ -324,8 +340,9 @@
   }
 
   .single-form {
+
+    overflow-y: hidden;
     max-height: 75vh;
-    overflow-y: auto;
   }
 
   .single-form-wrapper {
@@ -334,7 +351,7 @@
 
   .tag {
     display: inline-block;
-    white-space:nowrap;
+    white-space: nowrap;
     height: 20px;
     line-height: 20px;
     text-decoration: none solid rgba(0, 0, 0, 0.65);
@@ -347,5 +364,9 @@
     overflow: hidden;
 
     cursor: pointer;
+  }
+
+  .supervisor-footer {
+    margin: 8em;
   }
 </style>
