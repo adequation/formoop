@@ -156,7 +156,8 @@
 
             <div class="creator-form-sections-buttons-wrapper">
               <input title="" type="text" placeholder="Nom de la section" class="creator-section-name-input"
-                     v-model="newSection"/>
+                     v-model="newSection"
+                     v-on:keyup.enter="addSection"/>
 
               <button type="button" class="creator-form-section-button"
                       @click="addSection" title="Créer une nouvelle Section">
@@ -222,7 +223,7 @@
           initialyOpened: true //Opened collapse by default
         },
         defaultQuestion: {title: 'Titre de la question'},
-        defaultAnswers: [{id: "", text: 'Option 1'}],
+        defaultAnswers: [{id: "", text: 'Option'}],
         formTitle: 'Formulaire sans titre',
         defaultFormTitle: 'Formulaire sans titre',
         showDrawer: false,
@@ -358,14 +359,29 @@
         this.firstMount = false;
       },
 
-      addFormEntryAnswer(id, answer) {
+      addFormEntryAnswer(id, answer, newOptionIndex) {
         const tmp = [...this.formEntries];
         const fe = tmp.find(e => e.id === id);
         if (fe) {
-          fe.answers.push(answer);
+          fe.answers.splice(newOptionIndex, 0, answer);
           this.formEntries = tmp;
         }
 
+      },
+
+      changeOptionIndex(id, optionIndex, newOptionIndex){
+        const tmp = [...this.formEntries];
+        const fe = tmp.find(e => e.id === id);
+        if(!(optionIndex === 0 && newOptionIndex < 0)){
+          if(!(optionIndex === fe.answers.length-1 && newOptionIndex >= fe.answers.length)){
+            if (fe) {
+              const el = fe.answers[optionIndex];
+              fe.answers.splice(optionIndex,1, fe.answers[newOptionIndex]);
+              fe.answers[newOptionIndex] = el;
+              this.formEntries = tmp;
+            }
+          }
+        }
       },
 
       setFormEntryType(id, type) {
@@ -501,12 +517,23 @@
       });
 
       //emitting of a new entry
-      this.$root.$on('add-entry-answer', (id, answer) => {
-        this.addFormEntryAnswer(id, answer)
+      this.$root.$on('add-entry-answer', (id, answer, newOptionIndex) => {
+        this.addFormEntryAnswer(id, answer, newOptionIndex)
       });
+
+      this.$root.$on('option-change-index', (id, optionIndex, newOptionIndex) => {
+        this.changeOptionIndex(id, optionIndex, newOptionIndex);
+      });
+
+
 
       //emitting the type of an entry
       this.$on('set-entry-type', (id, type) => {
+        this.setFormEntryType(id, type)
+      });
+
+      //emitting the type of an entry
+      this.$root.$on('set-entry-type', (id, type) => {
         this.setFormEntryType(id, type)
       });
 

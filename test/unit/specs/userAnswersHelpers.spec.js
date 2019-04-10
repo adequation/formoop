@@ -6,7 +6,7 @@ import {
   filterEntries, getEntryAnswers,
   getPercentage,
   getRawPercentage,
-  isAnswered, isEntryInConflict, sameAnswers, sameAnswersArray, userAnswerGroup
+  isAnswered, isEntryInConflict, sameAnswers, sameAnswersArray, userAnswerGroup, isEntryUpdated, areAnswersUpdated
 } from "@/helpers/userAnswersHelpers";
 import {getEntryAnsweringPath} from "@/helpers/firebaseHelpers";
 
@@ -342,5 +342,101 @@ describe('userAnswersHelpers.js', () => {
   it('Should have only one active participants', () => {
     expect(activeParticipantNumber(userAnswersMock2)).toEqual(1);
   });
+
+  it('Should not be updated if there is no selected answers for the current entry', () => {
+    const userEntryAnswersMock = "option1";
+
+    const selectedEntryAnswersMock = undefined;
+
+    expect(isEntryUpdated(userEntryAnswersMock, selectedEntryAnswersMock)).toBe(false);
+  });
+
+  it('Should be updated if user answer and selected answer for the current entry are different', () => {
+    const userEntryAnswersMock = "option1";
+
+    const selectedEntryAnswersMock = "option2";
+
+    expect(isEntryUpdated(userEntryAnswersMock, selectedEntryAnswersMock)).toBe(true);
+  });
+
+  it('Should not be updated if user answer and selected answer for the current entry are the same', () => {
+    const userEntryAnswersMock = "option1";
+
+    const selectedEntryAnswersMock = "option1";
+
+    expect(isEntryUpdated(userEntryAnswersMock, selectedEntryAnswersMock)).toBe(false);
+  });
+
+  it('Should be updated if selected answers for the current entry are an array but user answer is not an array', () => {
+    const userEntryAnswersMock = "option1";
+
+    const selectedEntryAnswersMock = ["option1", "option2"];
+
+    expect(isEntryUpdated(userEntryAnswersMock, selectedEntryAnswersMock)).toBe(true);
+  });
+
+  it('Should not be updated if selected answers for the current entry is an empty array and the user answer is not an array', () => {
+    const userEntryAnswersMock = "option1";
+
+    const selectedEntryAnswersMock = [];
+
+    expect(isEntryUpdated(userEntryAnswersMock, selectedEntryAnswersMock)).toBe(false);
+  });
+
+  it('Should be updated if selected answers array for the current entry has different length than user answers', () => {
+    const userEntryAnswersMock = ["option1"];
+
+    const selectedEntryAnswersMock = ["option1", "option2"];
+
+    expect(isEntryUpdated(userEntryAnswersMock, selectedEntryAnswersMock)).toBe(true);
+  });
+
+  it('Should be updated if selected answers array for the current entry and user answers have same length but different answers', () => {
+    const userEntryAnswersMock = ["option1", "option3"];
+
+    const selectedEntryAnswersMock = ["option1", "option2"];
+
+    expect(isEntryUpdated(userEntryAnswersMock, selectedEntryAnswersMock)).toBe(true);
+  });
+
+  it('Should not be updated if selected answers array for the current entry and user answers have same length and same answers', () => {
+    const userEntryAnswersMock = ["option1", "option2"];
+
+    const selectedEntryAnswersMock = ["option2", "option1"];
+
+    expect(isEntryUpdated(userEntryAnswersMock, selectedEntryAnswersMock)).toBe(false);
+  });
+
+
+  const userIDMock =  "user1";
+
+  it('Should not be updated if selected answers and user answers are the same', () => {
+    const userAnswersMock = {
+      "entry1" : {"user1" : "a"},
+      "entry3" : {"user1" : ["a", "b"]}
+    };
+
+    const selectedAnswersMock = {
+      "entry1" : "a",
+      "entry3" : ["a","b"]
+    };
+
+    expect(areAnswersUpdated(userAnswersMock, selectedAnswersMock, mockedEntries, userIDMock)).toBe(false);
+  });
+
+  it('Should be updated if selected answers and user answers are different', () => {
+    const userAnswersMock = {
+      "entry1" : {"user1" : "a"},
+      "entry3" : {"user1" : ["a", "b"]}
+    };
+
+    const selectedAnswersMock = {
+      "entry1" : "a",
+      "entry3" : ["a","c"]
+    };
+
+    expect(areAnswersUpdated(userAnswersMock, selectedAnswersMock, mockedEntries, userIDMock)).toBe(true);
+  });
+
 
 });

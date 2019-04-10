@@ -1,5 +1,5 @@
 <template>
-  <div class="campaign-progress">
+  <div ref="campaignProgress" class="campaign-progress">
     <svg :id="uniqueID" class="campaign-progress-chart">
 
     </svg>
@@ -20,6 +20,8 @@
         format: d3.format(".1f"),
 
         margin: {top: 10, right: 0, bottom: 10, left: 0},
+
+        width: 0
       }
     },
 
@@ -40,9 +42,9 @@
         return this.values.length * 50 + this.margin.top + this.margin.bottom
       },
 
-      width() {
+      /*width() {
         return 500;
-      },
+      },*/
 
       x() {
         return d3.scaleLinear()
@@ -144,11 +146,21 @@
         /*const yAxEnter = yAx.enter().append("g")
           .attr('class', 'y-axis')
           .call(this.yAxis);*/
+      },
+
+      onResize(){
+        this.width = this.$refs.campaignProgress.clientWidth;
+        this.renderChart()
       }
     },
 
+    beforeDestroy() {
+        window.removeEventListener('resize', this.onResize)
+    },
+
     mounted() {
-      this.renderChart();
+      window.addEventListener('resize', this.onResize)
+      this.onResize()
     },
 
     watch: {
@@ -156,7 +168,7 @@
         this.renderChart();
       },
       width: function () {
-        this.renderChart();
+        this.onResize();
       }
     }
   }

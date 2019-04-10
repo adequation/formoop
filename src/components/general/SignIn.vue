@@ -4,7 +4,7 @@
 
     <form>
       <span><input class="loginInput" type="email" placeholder="Identifiant" v-model="login"/></span>
-      <label><input class="passwordInput" type="password" placeholder="Mot de passe" v-model="password"/></label>
+      <label><input class="passwordInput" type="password" placeholder="Mot de passe" v-model="password" @keyup.enter="signIn"/></label>
     </form>
 
     <button @click="signIn">Se connecter</button>

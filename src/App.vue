@@ -16,8 +16,16 @@
   @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
   @import url('https://fonts.googleapis.com/css?family=Lato');
 
+  .material-icons.md-16 {
+    font-size: 16px;
+  }
+
   .material-icons.md-18 {
     font-size: 18px;
+  }
+
+  .material-icons.md-20 {
+    font-size: 20px;
   }
 
   .material-icons.md-24 {

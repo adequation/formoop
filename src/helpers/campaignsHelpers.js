@@ -24,7 +24,7 @@ export function doesCampaignExists(campaignsFromFB, newCampaignName) {
   let alreadyExists = false;
 
   campaigns.forEach(campaign => {
-    if(campaign.name === newCampaignName) return alreadyExists = true
+    if(campaign.name.toLowerCase() === newCampaignName.toLowerCase()) return alreadyExists = true
   });
 
   return alreadyExists;

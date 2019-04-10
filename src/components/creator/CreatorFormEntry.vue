@@ -56,15 +56,8 @@
 
 
 
-        <select title="" @change="onChange($event.target)">
-          <option v-for="(t, i) in types"
-                  :key="i"
-                  :name="t.value"
-                  :value="t.value"
-                  :selected="t.value === entry.type">
-            {{t.displayName}}
-          </option>
-        </select>
+
+        <CreatorFormEntryTypeSelect :types="types" :type="defaultEntryType" :entryID="entry.id"/>
 
         <CreatorAnswer :answers="entry.answers" :types="types" :type="entry.type" :entryID="entry.id"></CreatorAnswer>
 
@@ -81,12 +74,13 @@
   import CreatorAnswer from './CreatorAnswer'
   import Collapse from '@/components/containers/Collapse'
   import CreatorGenericQuestionBlock from "@/components/creator/CreatorGenericQuestionBlock";
+  import CreatorFormEntryTypeSelect from "@/components/creator/CreatorFormEntryTypeSelect";
   import {getGenericQuestionTitle} from "@/helpers/genericQuestionHelpers";
   import {getSectionColor} from "@/helpers/sectionsHelpers";
   import expandAnimationMixin from "@/mixins/expandAnimationMixin";
   export default {
     name: 'CreatorFormEntry',
-    components: {CreatorGenericQuestionBlock, CreatorAnswer, Collapse},
+    components: {CreatorFormEntryTypeSelect, CreatorGenericQuestionBlock, CreatorAnswer, Collapse},
     mixins :[expandAnimationMixin],
     props: {
       entry: {
@@ -117,6 +111,9 @@
     computed: {
       borderColor() {
         return getSectionColor(this.entry.section, this.formSections) || '#aaaaaa';
+      },
+      defaultEntryType(){
+        return this.types.find(t => { if(t.value === this.entry.type) return t })
       }
     },
     methods: {
@@ -143,11 +140,11 @@
       },
       getGenericTitle(blocks) {
         return getGenericQuestionTitle(blocks);
-      }
+      },
     },
     mounted() {
       this.$root.$emit('mounted-entry', this.entry.id);
-    }
+    },
   }
 </script>
 
