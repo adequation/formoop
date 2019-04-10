@@ -1,10 +1,11 @@
 <template>
   <div>
+    <h1>Campagnes</h1>
 
     <div v-if="campaignAsArray.length > 0">
 
       <p v-for="campaign in campaignAsArray">
-        <router-link :to=getCampaignPath(campaign)>{{campaign.name}} ({{(campaign.forms || []).length}} formulaires)</router-link>
+        <router-link :to=getCampaignPath(campaign)>{{campaign.name}} ({{(campaign.forms || []).length}} Formoop)</router-link>
       </p>
 
     </div>
@@ -16,8 +17,11 @@
     <input class="create-campaign-box"
            type="text"
            placeholder="Nom de la campagne"
-           v-model="newCampaignName"/>
+           v-model="newCampaignName"
+           @keydown.enter="createNewCampaign"
+    />
     <button class="create-campaign-button" @click="createNewCampaign">Créer une campagne</button>
+    <p v-if="newCampaignAlreadyExists">Cette campagne existe déjà</p>
 
 
   </div>
@@ -32,7 +36,8 @@
     name: "FormCampaign",
     data() {
       return {
-        newCampaignName:null
+        newCampaignName: null,
+        newCampaignAlreadyExists: false
       }
     },
 
@@ -42,12 +47,13 @@
       },
 
       createNewCampaign() {
+        this.newCampaignAlreadyExists = false;
         if (this.newCampaignName) {
           // Check if campaign already exists
           if (!doesCampaignExists(this.formCampaigns, this.newCampaignName)) {
             const newCampaignID = uuid.v4();
             saveFormCampaignFB(newCampaignID, {id: newCampaignID, name: this.newCampaignName});
-          } else alert("La campagne existe déjà !");
+          } else this.newCampaignAlreadyExists = true;
         }
         this.newCampaignName = null;
       }

@@ -3,10 +3,24 @@ import {
   getInvitationEntryPointText,
   getInvitationText,
   isValidAddress,
-  sendMailWithSocket
+  sendMailWithSocket,
+  isInvitedMailAddress
 } from "@/helpers/mailHelpers";
 import {getFormUrlWithUserID} from "@/helpers/rooterHelpers";
 import {getUserIdFromEmail} from "@/helpers/accountHelpers";
+
+const mockInvitedUsers = {
+  "user1ID" : {
+    company : "aaa",
+    email : "user1@test.com",
+    name : "user 1"
+  },
+  "user2ID" : {
+    company : "bbbb",
+    email : "user2@test.com",
+    name : "user 2"
+  },
+};
 
 describe('genericQuestionTitle.js', () => {
 
@@ -64,6 +78,18 @@ describe('genericQuestionTitle.js', () => {
       .concat('En tant qu\'animateur, vous aurez la responsabilité d\'inviter vos colègues au sondage mais aussi de clore celui-ci une fois terminé. \n');
 
     expect(getInvitationEntryPointText(mockedForm)).toEqual(expected);
-  })
+  });
+
+  it('Should find mail as invited', () => {
+    const mockMailAddress = "user1@test.com";
+
+        expect(isInvitedMailAddress(mockMailAddress, mockInvitedUsers)).toBe(true);
+  });
+
+  it('Should not find mail as invited', () => {
+    const mockMailAddress = "user8@test.com";
+
+    expect(isInvitedMailAddress(mockMailAddress, mockInvitedUsers)).toBe(false);
+  });
 
 });
