@@ -12,7 +12,7 @@
         <h1>Tu n'es pas connecté &#x1F625</h1>
 
         <div v-if="!mailSend">
-          <p>Donne moi ton adresse email pour recevoir ton lien (Tu dois être invité au sondage pour y participer)</p>
+          <p>Donne moi ton adresse email pour recevoir ton lien (Tu dois être invité au formoop pour y participer)</p>
           <input
             class="mail-input"
             @keydown.enter="verifyEmail"
@@ -37,7 +37,7 @@
         </div>
 
         <div v-else>
-          <p>Ton lien d'accès au sondage a été envoyé sur ton adresse email</p>
+          <p>Ton lien d'accès au formoop a été envoyé sur ton adresse email</p>
           <button type="button" @click="closeModal">
             Ok
           </button>
@@ -84,7 +84,7 @@
       },
 
       sendMailToUser() {
-        /*sendMailToBack({
+        sendMailToBack({
           recipient: this.mailAddress,
           message: {
             html: `Comme tu l'as demandé, voici ton lien d'invitation au sondage ${this.formTitle}!`
@@ -93,7 +93,8 @@
               + getFormUrlWithInvite(this.mailAddress, this.formID, window),
             subject: `Lien d'invitation au sondage ${this.formTitle}`
           }
-        });*/
+        });
+        this.mailAddress = '';
       },
 
       closeModal() {
