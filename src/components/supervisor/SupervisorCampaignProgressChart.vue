@@ -168,7 +168,7 @@
         this.renderChart();
       },
       width: function () {
-        this.renderChart();
+        this.onResize();
       }
     }
   }
