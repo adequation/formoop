@@ -79,6 +79,7 @@
         <p>Partages le à l'aide du lien suivant :</p>
         <CopyToClipboardInput :text-to-copy="formURL"/>
       </div>
+
     </div>
 
     <div class="share-tab-footer">
@@ -226,9 +227,8 @@
 
 <style scoped>
   .entry-points-wrapper {
-    overflow: hidden;
-    max-height: 500px;
-    min-width: 300px;
+
+
 
     display: flex;
     flex-direction: row;
@@ -254,8 +254,7 @@
 
     cursor: default;
     width: 500px;
-    min-width: 400px;
-    min-height: 400px;
+    min-height: 300px;
     height: 500px;
     text-align: center;
 
@@ -317,15 +316,37 @@
   .sharing-mail {
     max-width: 200px;
     width: auto;
-    float: right;
+  }
+
+  .sharing-wrapper{
+    height: fit-content;
   }
 
   @media screen and (max-width: 600px) {
     .entry-points-wrapper {
-      float: none;
-      margin-right: 0;
+      overflow: hidden;
+
+      display: block;
+
+      margin: 0 auto;
 
     }
+
+    .entry-points-table-wrapper {
+
+      cursor: default;
+      width: 100%;
+      height: 300px;
+      text-align: center;
+
+      background: rgba(0, 0, 0, 0) linear-gradient(#6aa3ff, #3462ad);
+
+      border: none;
+      border-radius: 16px 16px 16px 16px;
+
+      margin-bottom: 10px;
+    }
+
   }
 
   .delete-entry-point-button {

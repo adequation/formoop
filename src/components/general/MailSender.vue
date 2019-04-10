@@ -240,6 +240,8 @@
 
     overflow-y: hidden;
     overflow-x: hidden;
+
+    margin: 0 auto;
   }
 
   .mail-form-content {

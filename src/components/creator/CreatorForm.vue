@@ -791,7 +791,7 @@
   }
 
   .sorting-tab {
-    margin: 5em;
+    margin: 7em 3em 3em;
   }
 
   .fake-entry {
