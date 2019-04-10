@@ -1,57 +1,69 @@
 <template>
-  <Collapse class="form-entry" :initialy-opened="initialyOpened" :showArrow="true">
+  <div class="full-entry-wrapper">
 
-    <div slot="header">
-      <h3 class="form-entry-title" v-if="entry.generic">{{getGenericTitle(entry.question.blocks)}}
-        <span v-if="entry.required" class="form-entry-required">*</span>
-      </h3>
-      <h3 class="form-entry-title" v-else>{{entry.question.title}}
-        <span v-if="entry.required" class="form-entry-required">*</span>
-      </h3>
-    </div>
 
-    <form slot="body" class="form-entry-content">
+    <div class="creator-form-entry smooth"
+         :style="{ borderLeft: `10px solid ${borderColor}`}">
 
-      <div>
 
-        <div class="creator-form-entry-tools-wrapper">
-          <div class="creator-form-entry-section-select">
-            <select title="" @change="onChangeSection($event.target)">
-              <option value="-1">Aucune</option>
-              <option v-for="t in formSections"
-                      :key="t"
-                      :name="t"
-                      :value="t"
-                      :selected="t === entry.section">
-                {{t}}
-              </option>
-            </select>
+      <div class="creator-form-entry-tools-wrapper">
+
+        <select title="" @change="onChangeSection($event.target)" @click.stop>
+          <option :value="null">Aucune</option>
+          <option v-for="t in formSections"
+                  :key="t"
+                  :name="t"
+                  :value="t"
+                  :selected="t === entry.section">
+            {{t}}
+          </option>
+        </select>
+
+        <div class="form-entry-title">
+          <h3 v-if="!opened">
+            <span v-if="entry.generic">{{getGenericTitle(entry.question.blocks)}}</span>
+            <span v-else>{{entry.question.title}}</span>
+
+            <span v-if="entry.required" class="form-entry-required">*</span>
+          </h3>
+
+          <div v-else @click.stop>
+            <CreatorGenericQuestionBlock v-if="entry.generic" :entry="entry"/>
+            <input v-else title="" type="text" class="questionTitle" v-model="entry.question.title"
+                   placeholder="Titre de la question"/>
           </div>
 
-          <button type="button"
-                  :class="['creator-form-entry-requirement', entry.required ? 'creator-form-entry-required' : 'creator-form-entry-not-required']"
-                  title="Rendre important"
-                  @click="onChangeRequirement">*
-          </button>
         </div>
 
 
-        <CreatorGenericQuestionBlock v-if="entry.generic" :entry="entry"/>
-        <input v-else title="" type="text" class="questionTitle" v-model="entry.question.title"
-               placeholder="Titre de la question"/>
-
-
-        <CreatorFormEntryTypeSelect :types="types" :type="defaultEntryType" :entryID="entry.id"/>
+        <button type="button"
+                :class="['creator-form-entry-requirement', entry.required ? 'creator-form-entry-required' : 'creator-form-entry-not-required']"
+                title="Rendre important"
+                @click="onChangeRequirement"
+                @click.stop>*
+        </button>
 
       </div>
 
-      <CreatorAnswer :answers="entry.answers" :types="types" :type="entry.type" :entryID="entry.id"></CreatorAnswer>
+      <transition
+        name="expand"
+        @enter="expandEnter"
+        @afterEnter="expandAfterEnter"
+        @beforeLeave="expandBeforeLeave"
+      >
+        <div v-if="opened" @click.stop>
 
-      <button type="button" @click="deleteEntry">Supprimer la question</button>
+          <CreatorFormEntryTypeSelect :types="types" :type="defaultEntryType" :entryID="entry.id"/>
 
-    </form>
-  </Collapse>
+          <CreatorAnswer :answers="entry.answers" :types="types" :type="entry.type" :entryID="entry.id"></CreatorAnswer>
 
+          <button type="button" @click="deleteEntry">Supprimer la question</button>
+        </div>
+
+      </transition>
+
+    </div>
+  </div>
 </template>
 
 <script>
@@ -60,27 +72,34 @@
   import CreatorGenericQuestionBlock from "@/components/creator/CreatorGenericQuestionBlock";
   import CreatorFormEntryTypeSelect from "@/components/creator/CreatorFormEntryTypeSelect";
   import {getGenericQuestionTitle} from "@/helpers/genericQuestionHelpers";
+  import {getSectionColor} from "@/helpers/sectionsHelpers";
+  import expandAnimationMixin from "@/mixins/expandAnimationMixin";
 
   export default {
     name: 'CreatorFormEntry',
     components: {CreatorFormEntryTypeSelect, CreatorGenericQuestionBlock, CreatorAnswer, Collapse},
+    mixins: [expandAnimationMixin],
     props: {
       entry: {
         type: Object,
         required: true
       },
-      initialyOpened: {
+      opened: {
         type: Boolean,
         required: false
       },
       formSections: {
         type: Array,
         required: true
+      },
+      currentSection: {
+        type: String,
+        required: false,
+        default: ''
       }
     },
     data() {
       return {
-
         // fetch types into FB later
         types: [
           {value: 'radio', displayName: 'Choix multiples'},
@@ -89,6 +108,16 @@
           {value: 'checkbox', displayName: 'Cases à cocher'},
           {value: 'select', displayName: 'Liste déroulante'}
         ]
+      }
+    },
+    computed: {
+      borderColor() {
+        return getSectionColor(this.currentSection, this.formSections) || '#aaaaaa';
+      },
+      defaultEntryType() {
+        return this.types.find(t => {
+          if (t.value === this.entry.type) return t
+        })
       }
     },
     methods: {
@@ -119,25 +148,32 @@
     },
     mounted() {
       this.$root.$emit('mounted-entry', this.entry.id);
-    },
-    computed: {
-      defaultEntryType(){
-        return this.types.find(t => { if(t.value === this.entry.type) return t })
-      }
     }
   }
 </script>
 
 <style scoped>
-  .form-entry {
-    margin-top: 0.2em;
+
+  @import '../../style/animations.css';
+
+  .creator-form-entry {
+    position: relative;
+    background-color: #f6f6f6;
+    margin: 0.5em auto;
+    padding: 0.3em;
+    width: 85%;
+
+    border-left: 7px solid #aaaaaa;
+  }
+
+  .creator-form-entry:hover {
+    cursor: pointer;
+    width: 87%;
+    margin: 0.7em auto;
+    padding: 0.5em;
   }
 
   .form-entry-title {
-
-  }
-
-  .form-entry-content {
 
   }
 
@@ -151,6 +187,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
   }
 
   .creator-form-entry-requirement {
@@ -172,6 +209,7 @@
 
   .creator-form-entry-required:hover {
     color: #dc472f;
+    cursor: pointer;
   }
 
   .creator-form-entry-not-required {
@@ -182,7 +220,8 @@
 
   .creator-form-entry-not-required:hover {
     color: #5f6c7a;
-
+    cursor: pointer;
   }
+
 
 </style>

@@ -1,19 +1,140 @@
 <template>
   <div class="creator-form">
 
-    <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
+    <DockingMenu class="creator-form-top-menu"
+                 ref="top-menu"
+                 top>
+      <div slot="body">
+        <Tabs :current-tab="currentTab" :tabs="tabs" @change-tab="changeTab($event)"/>
+      </div>
+    </DockingMenu>
 
-    <CreatorCampaignSelect/>
+    <div class="creator-form-header"></div>
 
-    <CreatorFormEntry v-for="(entry, i) in formEntries"
-                      :key="entry.id"
-                      :entry="entry"
-                      :initialyOpened="entry.initialyOpened"
-                      :ref="entry.id"
-                      :formSections="formSections"
-    />
+    <!-- ////////////////////////////////////////// CREATE AREA ////////////////////////////////////////// !-->
 
-    <div class="creator-form-footer"></div>
+    <div v-if="currentTab === 'create'">
+
+      <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
+
+      <CreatorCampaignSelect/>
+
+      <div v-for="(entry, i) in formEntries"
+           :key="entry.id"
+           @click="focusEntry(entry)"
+           :ref="`top_${entry.id}`"
+           :class="['smooth', {focusedEntry: focusedEntry ? focusedEntry.id === entry.id : false}]">
+
+        <CreatorFormEntry
+          :key="entry.id"
+          :entry="entry"
+          :opened="focusedEntry ? focusedEntry.id === entry.id : false"
+          :ref="entry.id"
+          :formSections="formSections"
+          :currentSection="entry.section"
+        />
+      </div>
+
+      <div class="fake-entry">
+        <div @click="addEntry(false)"><i class="material-icons md-48">add_circle</i></div>
+        <div @click="addEntry(true)"><i class="material-icons md-48">info</i></div>
+      </div>
+
+
+      <div class="creator-form-footer"></div>
+    </div>
+
+    <!-- ////////////////////////////////////////// SORT AREA ////////////////////////////////////////// !-->
+
+    <div class="sorting-tab" v-if="currentTab === 'sort'">
+
+      <div class="sorting-section-grid-wrapper">
+        <CustomGrid
+          ref="sectionSortingGrid"
+          :center="false"
+          :draggable="true"
+          :sortable="true"
+          :items="formSections"
+          :cell-width="80"
+          :cell-height="80"
+          @change="gridChange"
+          @remove="gridRemove"
+          @click="gridClick"
+          @sort="gridSort">
+          <template slot="cell" slot-scope="props">
+            <div
+              :item="props.item"
+              :index="props.index"
+              @remove="props.remove()">
+
+              <CustomGridSection
+                :section="props.item"
+                :index="props.index"
+                :cell-width="props.cellWidth"
+                :cell-height="props.cellHeight"
+                :padding="2"
+                :color="getGridSectionColor(props.item)"/>
+
+            </div>
+
+          </template>
+        </CustomGrid>
+      </div>
+
+      <hr/>
+
+      <div class="sorting-grid-wrapper">
+        <CustomGrid
+          ref="entrySortingGrid"
+          :center="false"
+          :draggable="true"
+          :sortable="true"
+          :items="formEntries"
+          :cell-width="112"
+          :cell-height="62"
+          @change="gridChange"
+          @remove="gridRemove"
+          @click="gridClick"
+          @sort="gridSort">
+          <template slot="cell" slot-scope="props">
+            <div
+              :item="props.item"
+              :index="props.index"
+              @remove="props.remove()">
+
+              <CustomGridEntry
+                :entry="props.item"
+                :index="props.index"
+                :cell-width="props.cellWidth"
+                :cell-height="props.cellHeight"
+                :padding="2"
+                :color="getEntryColor(props.item)"/>
+
+            </div>
+
+          </template>
+        </CustomGrid>
+      </div>
+
+
+      <button type="button" @click="gridRetreiveSortedItems">Trier !</button>
+    </div>
+
+
+    <!-- ////////////////////////////////////////// SHARE AREA ////////////////////////////////////////// !-->
+
+    <div v-if="currentTab === 'share'">
+      <CreatorFormShareTab :isPublished="isPublished"
+                           :form-entries="formEntries"
+                           :publishing-campaigns="publishingCampaigns"
+                           :save-form="saveForm"
+                           :form-title="formTitle"
+                           :entryPoints="entryPoints"/>
+    </div>
+
+    <div v-else>
+
+    </div>
 
     <DockingMenu class="creator-form-bottom-menu">
       <div slot="body">
@@ -35,7 +156,9 @@
 
 
             <div class="creator-form-sections-buttons-wrapper">
-              <input title="" type="text" placeholder="Nom de la section" class="creator-section-name-input" v-model="newSection" v-on:keyup.enter="addSection"/>
+              <input title="" type="text" placeholder="Nom de la section" class="creator-section-name-input"
+                     v-model="newSection"
+                     v-on:keyup.enter="addSection"/>
 
               <button type="button" class="creator-form-section-button"
                       @click="addSection" title="Créer une nouvelle Section">
@@ -51,7 +174,6 @@
               <i class="material-icons md-36">save</i>
             </button>
 
-            <CreatorPublication :form-entries="formEntries" :publishing-campaigns="publishingCampaigns" :save-form="saveForm" :form-title="formTitle"/>
           </div>
         </div>
 
@@ -72,12 +194,28 @@
   import DockingMenu from "@/components/containers/DockingMenu";
   import CreatorCampaignSelect from "@/components/creator/CreatorCampaignSelect";
   import {isFormGeneric} from "@/helpers/genericQuestionHelpers";
+  import Drawer from "@/components/containers/Drawer";
+  import CustomGrid from "@/components/containers/CustomGrid/CustomGrid";
+  import {getSectionColor} from "@/helpers/sectionsHelpers";
+  import CustomGridEntry from "@/components/containers/CustomGrid/CustomGridEntry";
+  import Tabs from "@/components/containers/Tabs";
+  import CustomGridSection from "@/components/containers/CustomGrid/CustomGridSection";
+  import autoScrollMixin from "@/mixins/autoScrollMixin";
+  import CreatorFormShareTab from "@/components/creator/formTabs/CreatorFormShareTab";
 
   export default {
     name: 'CreatorForm',
-    components: {CreatorPublication, CreatorFormEntry, DockingMenu, CreatorCampaignSelect},
+    mixins: [autoScrollMixin],
+    components: {
+      CreatorFormShareTab,
+      CustomGridSection,
+      Tabs,
+      CustomGridEntry,
+      CustomGrid, Drawer, CreatorPublication, CreatorFormEntry, DockingMenu, CreatorCampaignSelect
+    },
     data() {
       return {
+        focusedEntry: null,
         formEntries: [],
         defaultFormEntry: {
           question: {title: ''},
@@ -89,14 +227,101 @@
         defaultAnswers: [{id: "", text: 'Option'}],
         formTitle: 'Formulaire sans titre',
         defaultFormTitle: 'Formulaire sans titre',
-        showModal: false,
+        showDrawer: false,
         newSection: null,
         formSections: [],
-        publishingCampaigns: []
+        currentSections: [],
+        publishingCampaigns: [],
+        tabs: [
+          {title: 'Créer', value: 'create', icon: 'edit'},
+          {title: 'Parramètrer', value: 'sort', icon: 'settings'},
+          {title: 'Partager', value: 'share', icon: 'share'},
+          {title: 'Résultats', value: 'results', icon: 'insert_chart'}
+        ],
+        currentTab: 'create',
 
+        //boolean to check if we scroll down on a new entry or not
+        firstMount: true
       }
     },
     methods: {
+
+      changeTab(newTab) {
+        if (this.currentTab === newTab) return;
+
+        this.firstMount = true; //prevent a full scroll down on tab change
+        this.currentTab = newTab;
+
+      },
+
+      gridClick({items, index}) {
+        const value = items.find(v => v.index === index);
+        this.selected = value.item;
+      },
+
+      gridChange(event) {
+      },
+
+      gridRemove(itemIndex) {
+        this.items.splice(itemIndex, 1);
+      },
+
+      gridSort(event) {
+      },
+
+      gridRetreiveSortedItems() {
+        this.formEntries = this.$refs.entrySortingGrid.getListClone();
+        this.formSections = this.$refs.sectionSortingGrid.getListClone();
+
+        console.log(this.formSections)
+        console.log(this.$refs.sectionSortingGrid.getListClone())
+      },
+
+      getEntryColor(entry) {
+        return getSectionColor(entry.section, this.formSections) || '#aaaaaa';
+      },
+      getGridSectionColor(section) {
+        return getSectionColor(section, this.formSections) || '#aaaaaa';
+      },
+
+      closeDrawer() {
+        this.showDrawer = false;
+      },
+
+      focusEntry(entry, scroll = true) {
+        if (!entry) return;
+
+        if (this.focusedEntry) {
+
+          if (this.focusedEntry.id === entry.id) this.focusedEntry = null;
+          else this.focusedEntry = entry;
+
+        } else this.focusedEntry = entry;
+
+        if (scroll) this.scrollToFocused(this.$refs[`top_${entry.id}`][0]);
+      },
+
+      getNextEntry(currentEntry) {
+        if (!currentEntry) return null;
+
+        const currentEntryIndex = this.formEntries.findIndex(fe => fe.id === currentEntry.id);
+
+        if (currentEntryIndex >= 0 && currentEntryIndex < this.formEntries.length - 1)
+          return this.formEntries[currentEntryIndex + 1];
+
+        return null;
+      },
+
+      getPreviousEntry(currentEntry) {
+        if (!currentEntry) return null;
+
+        const currentEntryIndex = this.formEntries.findIndex(fe => fe.id === currentEntry.id);
+
+        if (currentEntryIndex > 0 && currentEntryIndex < this.formEntries.length)
+          return this.formEntries[currentEntryIndex - 1];
+
+        return null;
+      },
 
       disableClick(e) {
         e.preventDefault();
@@ -131,6 +356,8 @@
 
         //copy default answer array, and generate new option ids
         this.formEntries.push(entry);
+
+        this.firstMount = false;
       },
 
       addFormEntryAnswer(id, answer, newOptionIndex) {
@@ -140,6 +367,7 @@
           fe.answers.splice(newOptionIndex, 0, answer);
           this.formEntries = tmp;
         }
+
       },
 
       changeOptionIndex(id, optionIndex, newOptionIndex){
@@ -180,11 +408,11 @@
         const fe = tmp.find(e => e.id === id);
         if (fe) {
           fe.section = section;
-          this.formEntries = tmp;
+          this.formEntries = [...tmp];
         }
       },
 
-      setFormEntryRequirement(id, requirement){
+      setFormEntryRequirement(id, requirement) {
         const tmp = [...this.formEntries];
         const fe = tmp.find(e => e.id === id);
         if (fe) {
@@ -193,7 +421,7 @@
         }
       },
 
-      setFormPublishingCampaign(publishingCampaigns){
+      setFormPublishingCampaign(publishingCampaigns) {
         this.publishingCampaigns = publishingCampaigns;
       },
 
@@ -201,18 +429,20 @@
         if (!form) {
           this.formEntries = [];
           this.formTitle = this.defaultFormTitle;
+          this.currentSections = [];
           return;
         }
         this.formEntries = form.formEntries || [];
         this.formTitle = form.formTitle || this.defaultFormTitle;
+        this.currentSections = form.currentSections || [];
       },
 
-      getFormFromFB(creatorID, formID) {
-        Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
+      async getFormFromFB(creatorID, formID) {
+        await Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
           .on('value', (snapshot) => {
             const value = snapshot.val();
             if (value) {
-              this.setForm({formEntries: value.entries, formTitle: value.title});
+              this.setForm({formEntries: value.entries, formTitle: value.title, currentSections: value.sections || []});
             } else {
               this.setForm(null);
             }
@@ -234,26 +464,46 @@
 
       //save form into firebase
       //then reset data from what we saved on firebase to stay in sync
-      saveForm() {
+      async saveForm() {
         this.validateEntries();
 
-        saveCreatorFormFB(this.creatorID,
+        await saveCreatorFormFB(this.creatorID,
           this.formID,
-          {id: this.formID, title: this.formTitle, entries: this.formEntries}).then((e) => {
+          {
+            id: this.formID,
+            title: this.formTitle,
+            entries: this.formEntries,
+            sections: this.formSections || []
+          });
 
-          //if everything is done, we reset the form's data
-          this.getFormFromFB(this.creatorID, this.formID);
+        //if everything is done, we reset the form's data
+        await this.getFormFromFB(this.creatorID, this.formID);
 
-        }).catch((e) => {
-          console.log(e);
-        });
 
         //remove the form where we don't want it to be
         //and add it where it is not
-        if(!isFormGeneric(this.formEntries))
-          saveAndFilterCampaignsFB({id: this.formID, title: this.formTitle}, this.formCampaigns, this.publishingCampaigns);
+        if (!isFormGeneric(this.formEntries))
+          saveAndFilterCampaignsFB({
+            id: this.formID,
+            title: this.formTitle
+          }, this.formCampaigns, this.publishingCampaigns);
 
       },
+
+      handleGlobalKeyDown(e) {
+        switch (e.key) {
+          case 'ArrowDown' :
+            const nextEntry = this.focusEntry(this.getNextEntry(this.focusedEntry));
+            if (nextEntry) this.focusEntry(nextEntry);
+            e.preventDefault();
+            break;
+          case 'ArrowUp' :
+            const previousEntry = this.getPreviousEntry(this.focusedEntry);
+            if (previousEntry) this.focusEntry(previousEntry);
+            e.preventDefault();
+            break;
+        }
+      }
     },
     created: function () {
       //when arriving, set the ID in the store from the router
@@ -261,6 +511,11 @@
       this.$store.dispatch('setPublishedForms');
       this.$store.dispatch('setCreatorID', {formID: null});
       this.$store.dispatch('setFormCampaigns');
+
+      //global key press handling
+      window.addEventListener('keydown', (e) => {
+        this.handleGlobalKeyDown(e)
+      });
 
       //emitting of a new entry
       this.$root.$on('add-entry-answer', (id, answer, newOptionIndex) => {
@@ -297,7 +552,13 @@
 
       //when an entry is mounted
       this.$root.$on('mounted-entry', (id) => {
-        window.scrollTo(0, document.body.scrollHeight);
+        //we don't want to be at the bottom of the page when arriving
+
+        if (!this.firstMount) {
+          this.focusEntry(this.formEntries.find(e => e.id === id), false);
+          this.scrollTo(150);
+        }
+
       });
 
       //emitting of a new entry option
@@ -335,7 +596,6 @@
       //retreive form
       this.getFormFromFB(this.creatorID, this.formID);
 
-
     },
     computed: {
       formID() {
@@ -343,8 +603,20 @@
       },
 
       isPublished() {
-        return this.$store.getters.publishedForms.find(pe => pe.id === this.formID)
+        return !!this.$store.getters.publishedForms.find(pe => pe.id === this.formID)
       },
+
+      entryPoints() {
+        const publishedForm = this.$store.getters.publishedForms.find(pe => pe.id === this.formID);
+
+        if (publishedForm) {
+          if (publishedForm.entryPoint)
+            return Object.keys(publishedForm.entryPoint).map(k => publishedForm.entryPoint[k]);
+        }
+
+        return [];
+      },
+
 
       creatorID() {
         return this.$store.getters.creatorID;
@@ -355,11 +627,7 @@
       },
 
       sections() {
-        const sections = [];
-        this.formEntries.forEach(e => {
-          if (!sections.includes(e.section) && e.section && e.section !== '-1') sections.push(e.section);
-        });
-        return sections;
+        return this.currentSections;
       },
     },
     watch: {
@@ -376,13 +644,14 @@
 
       },
 
-      formEntries() {
+      sections(value) {
         const tmp = this.sections;
 
         this.formSections.forEach(fs => {
           if (!tmp.includes(fs) && fs && fs !== '-1') tmp.push(fs);
         });
-        this.formSections = tmp;
+
+        this.formSections = tmp.slice();
 
       }
     }
@@ -390,13 +659,23 @@
 </script>
 
 <style scoped>
+  @import '../../style/animations.css';
 
   .creator-form {
     background-color: white;
   }
 
+  .creator-form-top-menu {
+    background-color: #4286f4 !important;
+    padding-bottom: 2px;
+  }
+
   .creator-form-footer {
     margin: 9em;
+  }
+
+  .creator-form-header {
+    margin: 4em;
   }
 
   .creator-form-buttons-wrapper {
@@ -430,7 +709,7 @@
     background: #3462ad;
   }
 
-  .creator-form-section-button{
+  .creator-form-section-button {
     margin-right: 0.5em;
     padding: 0.5em;
     color: white;
@@ -509,14 +788,13 @@
     outline: none;
   }
 
-
   .creator-section-name-input {
     background: none;
     border: none;
     width: auto;
   }
 
-  .creator-section-name-input::placeholder{
+  .creator-section-name-input::placeholder {
     color: white;
     opacity: 0.8;
   }
@@ -528,4 +806,47 @@
     top: 10px;
   }
 
+  .drawer-opener {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 15px;
+    background: #eeeeee;
+  }
+
+  .sorting-tab {
+    margin: 7em 3em 3em;
+  }
+
+  .fake-entry {
+    position: relative;
+
+    margin: 1em auto;
+    padding: 0.3em;
+    width: 85%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+  }
+
+  .fake-entry div {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #00000070;
+  }
+
+  .fake-entry div:hover {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #000000aa;
+  }
+
+  .focusedEntry {
+    background: #00000015;
+  }
 </style>

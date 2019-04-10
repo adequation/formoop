@@ -14,6 +14,7 @@
 
 <style>
   @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+  @import url('https://fonts.googleapis.com/css?family=Lato');
 
   .material-icons.md-16 {
     font-size: 16px;
@@ -56,7 +57,7 @@
   }
 
   #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    font-family: 'Lato', sans-serif, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;

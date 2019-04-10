@@ -1,10 +1,11 @@
 import * as Firebase from 'firebase'
-import {campaignPath, getCreatedFormFromID, publishingPath} from "@/helpers/firebaseHelpers";
+import {campaignPath, getCreatedFormFromID, getPublishedFormFromID, publishingPath} from "@/helpers/firebaseHelpers";
 import * as uuid from "uuid";
 import {addFormToWantedCampaigns, removeFormFromUnwantedCampaigns} from "@/helpers/campaignsHelpers";
 import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helpers/accountHelpers";
 import {getFormUrlWithInvite, getInvitationEntryPointText, isValidAddress, sendMailToBack} from "@/helpers/mailHelpers";
 import {getFormURL} from "@/helpers/rooterHelpers";
+import {areUserEntriesDifferent, updateAnswers, updateEntry, updatePublishedForm} from "@/helpers/generalHelpers";
 
 export const saveCreatorFormFB = (creatorID, formID, form) => {
 
@@ -79,14 +80,38 @@ export const setFormCampaignFB = (campaignID, form) => {
 
 };
 
-const writePublishedCreatorFormFB = (form) => {
-  return Firebase.database().ref(publishingPath.concat(form.id))
-    .set(form);
+const writePublishedCreatorFormFB = (form, override = false) => {
+
+  //if we want to keep answers and invited people
+  if (!override) {
+
+    return Firebase.database().ref(publishingPath.concat(form.id))
+      .once('value').then(function (snapshot) {
+        const currentForm = snapshot.val();
+
+        const updatedForm = updatePublishedForm({...form}, currentForm);
+
+
+        //we set the new form
+        return Firebase.database().ref(publishingPath.concat(form.id))
+          .set(updatedForm);
+
+      }, function (error) {
+        console.log(error);
+      });
+  }else{
+
+    return Firebase.database().ref(publishingPath.concat(form.id))
+      .set(form);
+
+  }
+
+
 };
 
 
 const parseFormToUser = (form) => {
-  const parsedForm = {id: form.id, title: form.title};
+  const parsedForm = {id: form.id, title: form.title, sections: form.sections || []};
 
   //parse entries
   const entriesObject = {};
@@ -163,7 +188,7 @@ const parseGenericEntry = (entry, entity) => {
 
 //be careful, we put the "nom" property (non open source perspective here...)
 const parseGenericFormToUser = (form, entity) => {
-  const parsedForm = {id: uuid.v4(), title: `${form.title} - ${entity.nom}`};
+  const parsedForm = {id: uuid.v4(), title: `${form.title} - ${entity.nom}`, sections: form.sections || []};
 
   //if there is a contact, add it as an entry point and send him an email
   if (entity.contact) {
@@ -228,12 +253,12 @@ const parseGenericFormToUser = (form, entity) => {
   return parsedForm;
 };
 
-const generateAndPublishForms = (creatorForm, entities) => {
+const generateAndPublishForms = (creatorForm, entities, override=false) => {
   const createdForms = [];
 
   Object.keys(entities).forEach(entityKey => {
     const parsedForm = parseGenericFormToUser(creatorForm, entities[entityKey]);
-    writePublishedCreatorFormFB(parsedForm);
+    writePublishedCreatorFormFB(parsedForm, override);
 
     createdForms.push({id: parsedForm.id, title: parsedForm.title});
   });
@@ -242,7 +267,7 @@ const generateAndPublishForms = (creatorForm, entities) => {
 };
 
 
-export const publishGenericFormsFB = (creatorID, formID, entities, formCampaigns = []) => {
+export const publishGenericFormsFB = (creatorID, formID, entities, formCampaigns = [], override=false) => {
 
   //we fetch the form in firebase
   //then we publish it
@@ -251,7 +276,7 @@ export const publishGenericFormsFB = (creatorID, formID, entities, formCampaigns
     .on('value', function (snapshot) {
       const value = snapshot.val();
       if (value) {
-        const createdForms = generateAndPublishForms(value, entities);
+        const createdForms = generateAndPublishForms(value, entities, override);
 
         formCampaigns.forEach(campaignID => setFormsCampaignFB(campaignID, createdForms));
 
@@ -260,7 +285,7 @@ export const publishGenericFormsFB = (creatorID, formID, entities, formCampaigns
 
 };
 
-export const publishCreatorFormFB = (creatorID, formID) => {
+export const publishCreatorFormFB = (creatorID, formID, override=false) => {
 
   //we fetch the form in firebase
   //then we publish it
@@ -269,7 +294,7 @@ export const publishCreatorFormFB = (creatorID, formID) => {
       const value = snapshot.val();
       if (value) {
         const parsedForm = parseFormToUser(value);
-        writePublishedCreatorFormFB(parsedForm);
+        writePublishedCreatorFormFB(parsedForm, override);
       }
     });
 

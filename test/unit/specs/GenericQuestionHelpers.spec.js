@@ -13,7 +13,7 @@ describe('genericQuestionTitle.js', () => {
       {type: 'text', content: '?'},
     ];
 
-    const expected = 'Mocked (generic) question (with) (variables) ?';
+    const expected = 'Mocked @(generic) question @(with) @(variables) ?';
 
     expect(getGenericQuestionTitle(mockBlocks)).toEqual(expected);
   });
