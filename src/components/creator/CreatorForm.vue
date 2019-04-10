@@ -31,6 +31,7 @@
           :opened="focusedEntry ? focusedEntry.id === entry.id : false"
           :ref="entry.id"
           :formSections="formSections"
+          :currentSection="entry.section"
         />
       </div>
 
@@ -407,7 +408,7 @@
         const fe = tmp.find(e => e.id === id);
         if (fe) {
           fe.section = section;
-          this.formEntries = tmp;
+          this.formEntries = [...tmp];
         }
       },
 

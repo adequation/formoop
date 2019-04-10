@@ -58,7 +58,7 @@
   @import '../../style/animations.css';
 
   .copy-link-wrapper {
-    width: 90%;
+    width: fit-content;
     margin:0 auto;
 
     border-radius: 10px;

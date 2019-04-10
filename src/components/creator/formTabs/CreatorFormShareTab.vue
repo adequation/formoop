@@ -26,12 +26,12 @@
         <div
           class="smooth publish-button bad-publish-button"
           @click="publishForm(true)">
-          Écraser le formulaire
+          Écraser le Formoop
         </div>
 
         <div class="smooth publish-button good-publish-button"
              @click="publishForm(false)">
-          Mettre a jour le formulaire
+          Mettre a jour le Formoop
         </div>
       </div>
     </div>

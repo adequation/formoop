@@ -51,18 +51,14 @@
         @afterEnter="expandAfterEnter"
         @beforeLeave="expandBeforeLeave"
       >
-      <div v-if="opened" @click.stop>
+        <div v-if="opened" @click.stop>
 
+          <CreatorFormEntryTypeSelect :types="types" :type="defaultEntryType" :entryID="entry.id"/>
 
+          <CreatorAnswer :answers="entry.answers" :types="types" :type="entry.type" :entryID="entry.id"></CreatorAnswer>
 
-
-
-        <CreatorFormEntryTypeSelect :types="types" :type="defaultEntryType" :entryID="entry.id"/>
-
-        <CreatorAnswer :answers="entry.answers" :types="types" :type="entry.type" :entryID="entry.id"></CreatorAnswer>
-
-        <button type="button" @click="deleteEntry">Supprimer la question</button>
-      </div>
+          <button type="button" @click="deleteEntry">Supprimer la question</button>
+        </div>
 
       </transition>
 
@@ -78,10 +74,11 @@
   import {getGenericQuestionTitle} from "@/helpers/genericQuestionHelpers";
   import {getSectionColor} from "@/helpers/sectionsHelpers";
   import expandAnimationMixin from "@/mixins/expandAnimationMixin";
+
   export default {
     name: 'CreatorFormEntry',
     components: {CreatorFormEntryTypeSelect, CreatorGenericQuestionBlock, CreatorAnswer, Collapse},
-    mixins :[expandAnimationMixin],
+    mixins: [expandAnimationMixin],
     props: {
       entry: {
         type: Object,
@@ -94,6 +91,11 @@
       formSections: {
         type: Array,
         required: true
+      },
+      currentSection: {
+        type: String,
+        required: false,
+        default: ''
       }
     },
     data() {
@@ -110,10 +112,12 @@
     },
     computed: {
       borderColor() {
-        return getSectionColor(this.entry.section, this.formSections) || '#aaaaaa';
+        return getSectionColor(this.currentSection, this.formSections) || '#aaaaaa';
       },
-      defaultEntryType(){
-        return this.types.find(t => { if(t.value === this.entry.type) return t })
+      defaultEntryType() {
+        return this.types.find(t => {
+          if (t.value === this.entry.type) return t
+        })
       }
     },
     methods: {
@@ -144,7 +148,7 @@
     },
     mounted() {
       this.$root.$emit('mounted-entry', this.entry.id);
-    },
+    }
   }
 </script>
 
