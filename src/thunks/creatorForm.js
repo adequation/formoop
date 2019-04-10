@@ -86,7 +86,7 @@ const writePublishedCreatorFormFB = (form) => {
 
 
 const parseFormToUser = (form) => {
-  const parsedForm = {id: form.id, title: form.title, sections:form.sections};
+  const parsedForm = {id: form.id, title: form.title, sections:form.sections || []};
 
   //parse entries
   const entriesObject = {};
@@ -163,7 +163,7 @@ const parseGenericEntry = (entry, entity) => {
 
 //be careful, we put the "nom" property (non open source perspective here...)
 const parseGenericFormToUser = (form, entity) => {
-  const parsedForm = {id: uuid.v4(), title: `${form.title} - ${entity.nom}`};
+  const parsedForm = {id: uuid.v4(), title: `${form.title} - ${entity.nom}`, sections:form.sections || []};
 
   //if there is a contact, add it as an entry point and send him an email
   if (entity.contact) {

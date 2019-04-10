@@ -3,12 +3,14 @@
   <div class="mail-form" v-if="!selectedUser">
 
     <div class="mail-form-content">
-      <div class="mail-addresses-input-wrapper">
+      <div class="mail-address-input-wrapper">
         <input class="mail-addresses-input"
                type="email"
                placeholder="Adresse email"
                v-model="currentMailAdress"/>
-        <button type="button" @click="addAdressToPool"> +</button>
+        <button type="button" class="mail-adresses-button" @click="addAdressToPool">
+          <i class="material-icons md-16">add</i>
+        </button>
       </div>
 
 
@@ -17,19 +19,24 @@
           <tr v-for="(a,i) in mailAddresses">
             <td>{{clip(a, 20, true)}}</td>
             <td>
-              <button type="button" @click="deleteAdress(i)">
+              <div class="mail-adress-remove-button"
+                   title="retirer l'adresse mail"
+                   @click="deleteAdress(i)">
                 <i class="material-icons md-18">close</i>
-              </button>
+              </div>
             </td>
           </tr>
         </table>
       </div>
 
       <div class="mail-body-wrapper">
-        <input class="mail-subject-input"
-               type="text"
-               placeholder="Sujet du mail"
-               v-model="mailSubject"/>
+        <div class="mail-subject-wrapper">
+          <input class="mail-subject-input"
+                 type="text"
+                 placeholder="Sujet du mail"
+                 v-model="mailSubject"/>
+        </div>
+
         <textarea class="mail-body-input"
                   title=""
                   placeholder="Contenu du mail (facultatif)"
@@ -210,16 +217,6 @@
     border: none;
   }
 
-  .mail-subject-input {
-    width: 90%;
-    color: #ffffff;
-    border: none;
-    border-bottom: 1px solid #ffffff88;
-    margin-bottom: 0.5em;
-
-    background: none;
-  }
-
   .send-mail-button:hover {
     color: white;
     transform: scale(1.1);
@@ -263,32 +260,39 @@
     display: none;
   }
 
-  .mail-addresses-input-wrapper {
+  .mail-address-input-wrapper {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 
     margin-bottom: 0.5em;
+    width: auto;
+  }
+
+  .mail-addresses-input-wrapper {
+
+    margin: 0 auto;
+    max-height: 100px;
+    overflow-y: scroll;
+
+    width: auto;
+  }
+
+  .mail-addresses-input-wrapper::-webkit-scrollbar {
+    display: none;
   }
 
   .mail-adress-table {
     overflow-y: scroll;
-    max-width: 50%;
+    max-width: 60%;
     max-height: 500px;
+
+    margin: 0 auto;
 
     text-align: left;
     border-collapse: collapse;
     table-layout: fixed;
-  }
-
-  .mail-adress-table tr:hover {
-    background-color: #eeeeee;
-  }
-
-  .mail-adress-table caption {
-    font-weight: bold;
-    font-size: large;
   }
 
   .mail-adress-table td {
@@ -301,7 +305,31 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    color: white;
 
+  }
+
+  .mail-subject-input {
+    width: 100%;
+    border: none;
+
+    height: 20px;
+
+    background: #eeeeee;
+    padding: 5px;
+    border-radius: 6px;
+  }
+
+  .mail-body-input {
+    margin-top: 5px;
+    width: 90%;
+    border: none;
+    padding: 5px;
+
+    background: #eeeeee;
+    border-radius: 6px;
+
+    resize:none;
   }
 
   .mail-body-wrapper {
@@ -309,14 +337,18 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-bottom: 0.5em;
 
+    margin-top: 5px;
   }
 
-  .mail-body-input {
-    border: 1px solid #00000033;
-    resize: none;
-    width: 100%;
+  .mail-subject-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    width: auto;
+    margin: 0;
   }
 
   .mail-adress-table button {
@@ -326,6 +358,58 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
+    border-radius: 0 10px 10px 0;
+  }
+
+  .mail-addresses-input {
+    width: 80%;
+    height: 30px;
+    border: none;
+    padding: 0;
+    margin: 0;
+
+    background: #eeeeee;
+    border-radius: 10px 0 0 10px;
+
+    text-align: center;
+  }
+
+  .mail-adresses-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    width: 50px;
+    height: 30px;
+
+    min-width: 50px;
+    min-height: 30px;
+
+    border-radius: 0 10px 10px 0;
+
+    padding: 0;
+    margin: 0;
+
+    color: white;
+
+    background: #4286f4;
+    border: none;
+
+    outline: none;
+
+    cursor: pointer;
+  }
+
+  .mail-adress-remove-button {
+    color: white;
+  }
+
+  .mail-adress-remove-button:hover {
+    transform: scale(1.1);
+    color: tomato;
+    cursor: pointer;
   }
 
 

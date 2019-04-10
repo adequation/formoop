@@ -58,7 +58,7 @@
   @import '../../style/animations.css';
 
   .copy-link-wrapper {
-    width: fit-content;
+    width: 90%;
     margin:0 auto;
 
     border-radius: 10px;
@@ -75,7 +75,7 @@
   .copy-link-input {
     height: 50px;
 
-    width: auto;
+    width: 75%;
 
     border: none;
     background: #eeeeee;
@@ -99,6 +99,9 @@
 
     width: 50px;
     height: 50px;
+
+    min-width: 50px;
+    min-height: 50px;
 
     border-radius: 0 10px 10px 0;
 

@@ -172,8 +172,6 @@
               <i class="material-icons md-36">save</i>
             </button>
 
-            <CreatorPublication :form-entries="formEntries" :publishing-campaigns="publishingCampaigns"
-                                :save-form="saveForm" :form-title="formTitle"/>
           </div>
         </div>
 
@@ -427,7 +425,7 @@
           .on('value', (snapshot) => {
             const value = snapshot.val();
             if (value) {
-              this.setForm({formEntries: value.entries, formTitle: value.title, currentSections: value.sections});
+              this.setForm({formEntries: value.entries, formTitle: value.title, currentSections: value.sections || []});
             } else {
               this.setForm(null);
             }

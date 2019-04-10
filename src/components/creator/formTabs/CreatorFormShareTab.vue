@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div class="share-tab-header"> </div>
 
     <h1 class="share-form-title">
       <span v-if="isPublished" class="published-form-title">
@@ -11,7 +12,28 @@
       </span>
     </h1>
 
-    <div class="sharing-wrapper" v-if="isPublished" >
+    <CSVImportModal :show-modal="showCSVImportModal" :form-entries="this.formEntries" :save-form="this.saveForm" :publishing-campaigns="publishingCampaigns" @close="closeJsonImportModal"/>
+
+    <div class="publish-wrapper">
+      <div class="smooth publish-button good-publish-button"
+           @click="publishForm"
+           v-if="!isPublished">
+        Publier le Formoop !
+      </div>
+
+      <div class="already-published-buttons-wrapper" v-else>
+
+        <div class="smooth publish-button bad-publish-button">
+          Écraser le formulaire
+        </div>
+
+        <div class="smooth publish-button good-publish-button">
+          Mettre a jour le formulaire
+        </div>
+      </div>
+    </div>
+
+    <div class="sharing-wrapper" v-if="isPublished">
 
       <div class="entry-points-wrapper">
 
@@ -59,6 +81,9 @@
       </div>
     </div>
 
+    <div class="share-tab-footer">
+
+    </div>
 
   </div>
 </template>
@@ -70,13 +95,14 @@
   import {inviteEntryPoint, inviteUser} from "@/thunks/userAccountThunks";
   import CopyToClipboardInput from "@/components/general/CopyToClipboardInput";
   import MailSender from "@/components/general/MailSender";
+  import CSVImportModal from "@/components/creator/CSVImportModal";
   import {getFormURL} from "@/helpers/rooterHelpers";
   import {getInvitationEntryPointText} from "@/helpers/mailHelpers";
   import {clipText} from "@/helpers/generalHelpers";
 
   export default {
     name: "CreatorFormShareTab",
-    components: {CopyToClipboardInput, MailSender},
+    components: {CopyToClipboardInput, MailSender, CSVImportModal},
     data() {
       return {
         justCopied: false,
@@ -239,8 +265,6 @@
     border-radius: 16px 16px 16px 16px;
   }
 
-
-
   .entry-points-table-wrapper h2 {
     margin: auto;
 
@@ -315,8 +339,68 @@
     color: tomato;
   }
 
-  .sharing-link{
+  .sharing-link {
     width: auto;
-    margin:0 auto;
+    margin: 0 auto;
   }
+
+  .publish-button {
+    color: white;
+    padding: .5rem 1rem;
+    font-size: 1.5625rem;
+    line-height: 1.5;
+    text-align: center;
+
+    width: fit-content;
+
+    cursor: pointer;
+    border: none;
+    border-radius: 16px 16px 16px 16px;
+
+    margin-right: 0.5em;
+    margin-left: 0.5em;
+  }
+
+  .good-publish-button {
+    background: #42b983;
+  }
+
+  .good-publish-button:hover {
+    background: #2f883f;
+  }
+
+  .bad-publish-button {
+    background: tomato;
+  }
+
+  .bad-publish-button:hover {
+    background: #dc472f;
+  }
+
+  .publish-wrapper{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    margin: 2em;
+  }
+
+  .already-published-buttons-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    margin: 3em;
+  }
+
+  .share-tab-footer{
+    margin-bottom: 9em;
+  }
+
+  .share-tab-header{
+    margin-bottom: 6.5em;
+  }
+
 </style>
