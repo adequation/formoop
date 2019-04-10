@@ -228,6 +228,10 @@
 <style scoped>
   .entry-points-wrapper {
 
+    width: 85%;
+
+    margin: 0 auto;
+
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -260,8 +264,8 @@
 
     border: none;
     border-radius: 16px 16px 16px 16px;
+    margin-right: 10px;
 
-    margin-right: 0.5em;
   }
 
   .entry-points-table-wrapper h2 {
@@ -275,6 +279,7 @@
     background: rgba(11, 86, 139, 0.25);
     border-radius: 6px;
     color: white;
+
   }
 
   .entry-points-table td {
@@ -284,6 +289,7 @@
     padding-bottom: 0.25em;
 
     color: white;
+
   }
 
   .entry-point-icon {
@@ -309,11 +315,6 @@
     overflow: scroll;
     text-align: left;
 
-    width: auto;
-  }
-
-  .sharing-mail {
-    max-width: 200px;
     width: auto;
   }
 
