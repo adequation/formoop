@@ -15,6 +15,10 @@
 <style>
   @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
+  .material-icons.md-16 {
+    font-size: 16px;
+  }
+
   .material-icons.md-18 {
     font-size: 18px;
   }

@@ -142,6 +142,21 @@
         }
       },
 
+      changeOptionIndex(id, optionIndex, newOptionIndex){
+        const tmp = [...this.formEntries];
+        const fe = tmp.find(e => e.id === id);
+        if(!(optionIndex === 0 && newOptionIndex < 0)){
+          if(!(optionIndex === fe.answers.length-1 && newOptionIndex >= fe.answers.length)){
+            if (fe) {
+              const el = fe.answers[optionIndex];
+              fe.answers.splice(optionIndex,1, fe.answers[newOptionIndex]);
+              fe.answers[newOptionIndex] = el;
+              this.formEntries = tmp;
+            }
+          }
+        }
+      },
+
       setFormEntryType(id, type) {
         const tmp = [...this.formEntries];
         const fe = tmp.find(e => e.id === id);
@@ -250,6 +265,10 @@
       //emitting of a new entry
       this.$root.$on('add-entry-answer', (id, answer, newOptionIndex) => {
         this.addFormEntryAnswer(id, answer, newOptionIndex)
+      });
+
+      this.$root.$on('option-change-index', (id, optionIndex, newOptionIndex) => {
+        this.changeOptionIndex(id, optionIndex, newOptionIndex);
       });
 
 

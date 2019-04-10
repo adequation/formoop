@@ -3,6 +3,16 @@
     <form>
 
       <div class="option" v-for="(a,i) in answers" :key="i">
+        <div class="change-option-position-button-container">
+          <button class="change-option-position-button" type="button" @click="optionGoUp(a.id, i)" :disabled="i === 0">
+            <i class="material-icons md-16">keyboard_arrow_up</i>
+          </button>
+          <button class="change-option-position-button" type="button" @click="optionGoDown(a.id, i)"
+                  :disabled="i === answers.length-1">
+            <i class="material-icons md-16">keyboard_arrow_down</i>
+          </button>
+        </div>
+
 
         <span class="option-type-identifier">
           <i v-if="type==='checkbox'" class="material-icons md-16">check_box_outline_blank</i>
@@ -21,6 +31,9 @@
       </div>
 
       <div class="fake-option">
+        <div class="space-fake-option">
+
+        </div>
 
         <span class="option-type-identifier">
           <i v-if="type==='checkbox'" class="material-icons md-16">check_box_outline_blank</i>
@@ -117,6 +130,14 @@
 
       disableClick(e) {
         e.preventDefault();
+      },
+
+      optionGoUp(optionID, optionIndex) {
+        this.$root.$emit('option-change-index', this.entryID, optionIndex, optionIndex - 1);
+      },
+
+      optionGoDown(optionID, optionIndex) {
+        this.$root.$emit('option-change-index', this.entryID, optionIndex, optionIndex + 1);
       }
 
     }
@@ -126,7 +147,7 @@
 <style scoped>
 
   .option {
-    margin-top: 0.5em;
+
 
     width: auto;
     display: flex;
@@ -137,7 +158,6 @@
   }
 
   .fake-option {
-    margin-top: 0.5em;
 
     width: auto;
     display: flex;
@@ -182,12 +202,12 @@
   }
 
 
-  .option-list-input{
+  .option-list-input {
     color: #00000077;
     outline: none;
   }
 
-  .new-option-input{
+  .new-option-input {
     color: #00000077;
     outline: none;
   }
@@ -199,5 +219,30 @@
   .option-type-identifier {
     color: rgba(0, 0, 0, 0.4);
     margin: 0.2em;
+  }
+
+
+  .change-option-position-button {
+    background: none;
+    color: rgba(0, 0, 0, 0.7);
+    font-size: large;
+    border: none;
+
+    outline-style: none;
+    box-shadow: none;
+    display: block;
+  }
+
+  .change-option-position-button:hover {
+    cursor: pointer;
+  }
+
+  .change-option-position-button:disabled {
+    color: rgba(0, 0, 0, 0.3);
+    cursor: default;
+  }
+
+  .space-fake-option{
+    margin:1em;
   }
 </style>
