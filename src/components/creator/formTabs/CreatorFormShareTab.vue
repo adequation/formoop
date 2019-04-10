@@ -228,11 +228,9 @@
 <style scoped>
   .entry-points-wrapper {
 
-
-
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: center;
   }
 
@@ -262,6 +260,8 @@
 
     border: none;
     border-radius: 16px 16px 16px 16px;
+
+    margin-right: 0.5em;
   }
 
   .entry-points-table-wrapper h2 {
@@ -284,7 +284,6 @@
     padding-bottom: 0.25em;
 
     color: white;
-
   }
 
   .entry-point-icon {
@@ -322,7 +321,7 @@
     height: fit-content;
   }
 
-  @media screen and (max-width: 600px) {
+  @media screen and (max-width: 800px) {
     .entry-points-wrapper {
       overflow: hidden;
 
