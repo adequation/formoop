@@ -420,8 +420,8 @@
         this.currentSections = form.currentSections || [];
       },
 
-      getFormFromFB(creatorID, formID) {
-        Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
+      async getFormFromFB(creatorID, formID) {
+        await Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
           .on('value', (snapshot) => {
             const value = snapshot.val();
             if (value) {
@@ -447,24 +447,21 @@
 
       //save form into firebase
       //then reset data from what we saved on firebase to stay in sync
-      saveForm() {
+      async saveForm() {
         this.validateEntries();
 
-        saveCreatorFormFB(this.creatorID,
+        await saveCreatorFormFB(this.creatorID,
           this.formID,
           {
             id: this.formID,
             title: this.formTitle,
             entries: this.formEntries,
             sections: this.formSections || []
-          }).then((e) => {
+          });
 
-          //if everything is done, we reset the form's data
-          this.getFormFromFB(this.creatorID, this.formID);
+        //if everything is done, we reset the form's data
+        await this.getFormFromFB(this.creatorID, this.formID);
 
-        }).catch((e) => {
-          console.log(e);
-        });
 
         //remove the form where we don't want it to be
         //and add it where it is not

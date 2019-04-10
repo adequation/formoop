@@ -16,7 +16,7 @@
 
     <div class="publish-wrapper">
       <div class="smooth publish-button good-publish-button"
-           @click="publishForm"
+           @click="publishForm(true)"
            v-if="!isPublished">
         Publier le Formoop !
       </div>
@@ -25,12 +25,12 @@
 
         <div
           class="smooth publish-button bad-publish-button"
-          @click="publishForm">
+          @click="publishForm(true)">
           Écraser le formulaire
         </div>
 
         <div class="smooth publish-button good-publish-button"
-             @click="publishForm">
+             @click="publishForm(false)">
           Mettre a jour le formulaire
         </div>
       </div>
@@ -175,13 +175,14 @@
         inviteEntryPoint(userID, formID, metadata);
       },
 
-      publishForm() {
-        this.saveForm();
+      async publishForm(override = false) {
+        await this.saveForm();
+
         if (this.formContainsGenericQuestion()) {
           this.showCSVImportModal = true;
         }
         else {
-          this.directPublishForm();
+          this.directPublishForm(override);
 
           //remove the form where we don't want it to be
           //and add it where it is not
@@ -195,9 +196,10 @@
         }
       },
 
-      directPublishForm() {
-        publishCreatorFormFB(this.creatorID, this.formID);
-        //Ajoute l'admin en user
+      async directPublishForm(override = false) {
+        await publishCreatorFormFB(this.creatorID, this.formID, override);
+
+        //add admin as an user
         const userID = getUserIdFromEmail(this.user.email);
         inviteUser(userID, this.formID, {
           email: this.user.email,
