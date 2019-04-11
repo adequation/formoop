@@ -43,6 +43,5 @@
 <style scoped>
  a {
    color: #fff;
-   height: 36px;
  }
 </style>

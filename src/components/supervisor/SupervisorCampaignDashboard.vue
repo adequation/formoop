@@ -33,7 +33,7 @@
           <th>Nombre de participants</th>
           <th>Nombre de participants actifs</th>
           <th>État</th>
-          <tr v-for="form in campaignFullForms" :key="form.id" @click="openSingleForm(form)">
+          <tr v-for="form in campaignFullForms" :key="'O-' + form.id" @click="openSingleForm(form)">
             <td>{{form.title}}</td>
             <td>
               <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
@@ -43,7 +43,7 @@
             <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
             <td><i class="material-icons">lock_open</i></td>
           </tr>
-          <tr v-for="form in campaignClosedForms" :key="form.id" @click="openSingleForm(form)">
+          <tr v-for="form in campaignClosedForms" :key="'C-' + form.id" @click="openSingleForm(form)">
             <td>{{form.title}}</td>
             <td>
               <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
@@ -96,9 +96,10 @@
 
 
           <div class="creator-form-tools-wrapper">
-            <download-campaign class="bottom-button tool-button" title="Récupérer les résultats" :campaign="campaign"
-                               :campaign-forms="campaignFullForms" :campaign-closed-forms="campaignClosedForms"/>
-            <!-- <button class="bottom-button tool-button" title="Récupérer les résultats"> <i class="material-icons md-36">save_alt</i></button> -->
+            <!--<download-campaign class="bottom-button tool-button" title="Récupérer les résultats" :campaign="campaign"
+                               :campaign-forms="campaignFullForms" :campaign-closed-forms="campaignClosedForms"/>-->
+            <button class="bottom-button tool-button" title="Récupérer les résultats" @click="showDownloadForm = true"> <i class="material-icons md-36">save_alt</i></button>
+            <DownloadCampaignModal :campaign="this.campaign" :open-forms-to-select="this.campaignFullForms" :closed-forms-to-select="this.campaignClosedForms" :show-modal="showDownloadForm" @close="showDownloadForm = false"/>
             <button class="bottom-button tool-button" title="Progression"><i
               class="material-icons md-36">description</i></button>
           </div>
@@ -122,10 +123,12 @@
   import SupervisorForceDirectedGraph from "@/components/supervisor/SupervisorForceDirectedGraph";
   import DownloadCampaign from "../general/DownloadCampaign";
   import DownloadForm from "../general/DownloadForm";
+  import DownloadCampaignModal from "./DownloadCampaignModal";
 
   export default {
     name: "SupervisorCampaignDashboard",
     components: {
+      DownloadCampaignModal,
       DownloadForm,
       DownloadCampaign,
       SupervisorForceDirectedGraph,
@@ -134,8 +137,9 @@
 
     data() {
       return {
-        showSingleForm: false,
-        selectedForm: null,
+        showSingleForm : false,
+        showDownloadForm: false,
+        selectedForm : null,
       }
     },
 
