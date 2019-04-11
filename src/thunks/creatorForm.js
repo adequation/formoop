@@ -85,7 +85,6 @@ export const setFormCampaignFB = (campaignID, form) => {
 
 const writePublishedCreatorFormFB = (form, override = false) => {
 
-  console.log(form.title)
 
   //if we want to keep answers and invited people
   if (!override) {
@@ -146,6 +145,8 @@ const parseGenericEntry = (entry, entity) => {
   //answers are all the same
   const answer = {type: parsedEntry.type, answers: parsedEntry.answers};
 
+  console.log(prop)
+
   //create a question for each property element
   if (prop.constructor === Array) {
     prop.map(p => {
@@ -158,10 +159,16 @@ const parseGenericEntry = (entry, entity) => {
         }).join(' ')
       };
 
+      //to generate a recurring but unique id, we need something to grab
+      //we choose to concat all the current variable content together, and parse it
+      const variables = parsedEntry.question.blocks.filter(block => (block.type === 'variable'));
+      const variablesContent = variables.map(v => getEntityToken(p[v.content]));
+       const uniqueID = `${entry.id}-${variablesContent.join('-')}`;
+
       parsedEntries.push(
         {
           ...parsedEntry,
-          id: uuid.v4(),
+          id: uniqueID,
           question: {...question},
           answers: null,
           answer: {...answer}
@@ -277,7 +284,6 @@ export const publishGenericFormsFB = (creatorID, formID, entities, formCampaigns
   //we fetch the form in firebase
   //then we publish it
 
-  console.log('oh oh')
 
   return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
     .once('value', function (snapshot) {
