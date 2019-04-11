@@ -1,6 +1,6 @@
 import {filterEntries, getEntryAnswers, answerAmount, answeredEntries} from '@/helpers/userAnswersHelpers'
 
-function entryResult(entry, usersAnswers) {
+export function entryResult(entry, usersAnswers) {
   let answersAmount = answerAmount(entry, usersAnswers);
   let result = [];
   if( entry.type === 'textarea' || entry.type === 'text'){
