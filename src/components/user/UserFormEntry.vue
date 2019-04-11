@@ -204,7 +204,7 @@
   .user-form-entry {
     position:relative;
     background-color: #f6f6f6;
-    margin: 0.5em auto;
+    margin: 0.5em 0 auto;
     padding: 0.3em;
 
     width: 75%;

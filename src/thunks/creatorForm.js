@@ -209,7 +209,8 @@ const parseGenericEntry = (entry, entity) => {
 
   } else {
     const question = {
-      title: fullBlocks.map(block => {
+      title
+        : fullBlocks.map(block => {
         return block.content
       }).join(' ')
     };
