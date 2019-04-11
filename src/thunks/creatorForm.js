@@ -6,8 +6,11 @@ import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helper
 import {getFormUrlWithInvite, getInvitationEntryPointText, isValidAddress, sendMailToBack} from "@/helpers/mailHelpers";
 import {getFormURL} from "@/helpers/rooterHelpers";
 import {areUserEntriesDifferent, updateAnswers, updateEntry, updatePublishedForm} from "@/helpers/generalHelpers";
+import {getEntityToken} from "@/helpers/csvParserHelpers";
+import {getPropArrayFromBlock} from "@/helpers/genericQuestionHelpers";
 
 export const saveCreatorFormFB = (creatorID, formID, form) => {
+
 
   return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
     .set(form);
@@ -82,6 +85,7 @@ export const setFormCampaignFB = (campaignID, form) => {
 
 const writePublishedCreatorFormFB = (form, override = false) => {
 
+
   //if we want to keep answers and invited people
   if (!override) {
 
@@ -99,7 +103,7 @@ const writePublishedCreatorFormFB = (form, override = false) => {
       }, function (error) {
         console.log(error);
       });
-  }else{
+  } else {
 
     return Firebase.database().ref(publishingPath.concat(form.id))
       .set(form);
@@ -128,54 +132,98 @@ const parseFormToUser = (form) => {
   return parsedForm;
 };
 
+function getFullBlocks(blocks, entity) {
+
+  return blocks.map(block => {
+    const b = {...block};
+
+    if (b.type === 'variable'){
+      const variableBlockPath = getPropArrayFromBlock(b);
+
+      if (variableBlockPath.length === 1)
+        b.content = entity[variableBlockPath[0]];
+
+      if (variableBlockPath.length === 2) {
+        const firstLevel = entity[variableBlockPath[0]];
+
+        b.content = firstLevel[variableBlockPath[1]];
+
+        if (Array.isArray(firstLevel))
+          b.content = firstLevel.map(p => p[variableBlockPath[1]]);
+
+      }
+    }
+
+    return b;
+  });
+}
+
 
 const parseGenericEntry = (entry, entity) => {
   const parsedEntries = [];
   let parsedEntry = {...entry};
-
-  //we get the desired property
-  const prop = entity[parsedEntry.genericProperty];
 
   delete parsedEntry.generic;
 
   //answers are all the same
   const answer = {type: parsedEntry.type, answers: parsedEntry.answers};
 
-  //create a question for each property element
-  if (prop.constructor === Array) {
-    prop.map(p => {
+
+  const fullBlocks = getFullBlocks(parsedEntry.question.blocks, entity);
+
+  const iterableBlocks = fullBlocks.filter(b => Array.isArray(b.content));
+
+  if (iterableBlocks.length > 0) {
+    const order = iterableBlocks.map(ib => ib.id);
+
+    //we consider using only the same entity array
+    iterableBlocks[0].content.forEach((v, i) => {
       const question = {
-        title: parsedEntry.question.blocks.map(block => {
-          if (block.type === 'variable') {
-            return p[block.content];
-          }
-          return block.content
+        title: fullBlocks.map(block => {
+          if (Array.isArray(block.content)) return iterableBlocks[order.indexOf(block.id)].content[i];
+          return block.content;
         }).join(' ')
       };
+      //to generate a recurring but unique id, we need something to grab
+      //we choose to concat all the current variable content together, and parse it
+      const fullBlocksParsed = fullBlocks.filter(fb => fb.type === 'variable')
+        .map(block => {
+
+          if (Array.isArray(block.content))
+            return getEntityToken(iterableBlocks[order.indexOf(block.id)].content[i]);
+          return getEntityToken(block.content);
+
+        });
+      const uniqueID = `${entry.id}-${fullBlocksParsed.join('-')}`;
 
       parsedEntries.push(
         {
           ...parsedEntry,
-          id: uuid.v4(),
+          id: uniqueID,
           question: {...question},
           answers: null,
           answer: {...answer}
         }
       );
-    })
+    });
+
   } else {
     const question = {
-      title: parsedEntry.question.blocks.map(block => {
-        if (block.type === 'variable') {
-          return prop[block.content];
-        }
+      title
+        : fullBlocks.map(block => {
         return block.content
       }).join(' ')
     };
 
+    //to generate a recurring but unique id, we need something to grab
+    //we choose to concat all the current variable content together, and parse it
+    const fullBlocksParsed = fullBlocks.filter(fb => fb.type === 'variable').map(fbv => getEntityToken(fbv.content));
+    const uniqueID = `${entry.id}-${fullBlocksParsed.join('-')}`;
+
     parsedEntries.push(
       {
         ...parsedEntry,
+        id: uniqueID,
         question: {...question},
         answers: null,
         answer: {...answer}
@@ -184,13 +232,16 @@ const parseGenericEntry = (entry, entity) => {
   }
 
   return parsedEntries;
+
 };
 
 //be careful, we put the "nom" property (non open source perspective here...)
 const parseGenericFormToUser = (form, entity) => {
-  const parsedForm = {id: uuid.v4(), title: `${form.title} - ${entity.nom}`, sections: form.sections || []};
+  const uniqueID = `${form.id}-${getEntityToken(entity.nom)}`;
+  const parsedForm = {id: uniqueID, title: `${form.title} - ${entity.nom}`, sections: form.sections || []};
 
   //if there is a contact, add it as an entry point and send him an email
+
   if (entity.contact) {
     const emailAdress = entity.contact;
 
@@ -211,7 +262,6 @@ const parseGenericFormToUser = (form, entity) => {
 
       parsedForm.entryPoint[userID] = user;
       parsedForm.users[userID] = user;
-
 
       //send an email !
       const formURL = getFormUrlWithInvite(emailAdress, parsedForm.id, window);
@@ -235,7 +285,7 @@ const parseGenericFormToUser = (form, entity) => {
   form.entries.forEach(e => {
 
     if (e.generic) {
-      if (e.grouped) e.group = uuid.v4();
+      if (e.grouped) e.group = `${e.id}-group`;
 
       const parsedEntries = parseGenericEntry(e, entity);
       parsedEntries.forEach(pe => {
@@ -253,7 +303,7 @@ const parseGenericFormToUser = (form, entity) => {
   return parsedForm;
 };
 
-const generateAndPublishForms = (creatorForm, entities, override=false) => {
+const generateAndPublishForms = (creatorForm, entities, override = false) => {
   const createdForms = [];
 
   Object.keys(entities).forEach(entityKey => {
@@ -267,13 +317,14 @@ const generateAndPublishForms = (creatorForm, entities, override=false) => {
 };
 
 
-export const publishGenericFormsFB = (creatorID, formID, entities, formCampaigns = [], override=false) => {
+export const publishGenericFormsFB = (creatorID, formID, entities, formCampaigns = [], override = false) => {
 
   //we fetch the form in firebase
   //then we publish it
 
+
   return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
-    .on('value', function (snapshot) {
+    .once('value', function (snapshot) {
       const value = snapshot.val();
       if (value) {
         const createdForms = generateAndPublishForms(value, entities, override);
@@ -285,12 +336,12 @@ export const publishGenericFormsFB = (creatorID, formID, entities, formCampaigns
 
 };
 
-export const publishCreatorFormFB = (creatorID, formID, override=false) => {
+export const publishCreatorFormFB = (creatorID, formID, override = false) => {
 
   //we fetch the form in firebase
   //then we publish it
   return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
-    .on('value', function (snapshot) {
+    .once('value', function (snapshot) {
       const value = snapshot.val();
       if (value) {
         const parsedForm = parseFormToUser(value);
@@ -412,7 +463,7 @@ export const generateGenericFormsFB = (creatorID, formID, entities, publishingCa
   //we fetch the form in firebase
   //then we save it into user's datas
   return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
-    .on('value', function (snapshot) {
+    .once('value', function (snapshot) {
       const value = snapshot.val();
 
       if (value) {
