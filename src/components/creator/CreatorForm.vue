@@ -378,12 +378,12 @@
             {
               id: uuid.v4(),
               type: 'text',
-              content: "Texte standard"
+              content: "Un titre avec une"
             },
             {
               id: uuid.v4(),
               type: 'variable',
-              content: "nom_variable"
+              content: "variable.nichée"
             }
           ];
         }

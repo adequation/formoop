@@ -2,7 +2,7 @@
   <div class="generic-question-block">
 
     <div class="generic-question-block-grouped">
-      <input title="" type="checkbox" v-model="entry.grouped"> Question groupée ?
+      <input title="" class="grouped-checkbox" type="checkbox" v-model="entry.grouped"> Question groupée ?
       <input v-if="entry.grouped"
              class="generic-question-block-group-question"
              type="text"
@@ -257,6 +257,10 @@
   .variable-block-title {
     color: steelBlue;
     font-weight: bold;
+  }
+
+  .grouped-checkbox{
+    margin-bottom: 15px;
   }
 
 </style>
