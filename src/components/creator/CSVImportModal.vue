@@ -5,6 +5,11 @@
       <h1 slot="header">Génération du formulaire</h1>
 
       <div slot="body">
+        <div class="override-warning-message">
+          <h2 v-if="override" class="override-message">Écrasement des Formoops déjà générés et publiés</h2>
+          <h2 v-else class="update-message">Mise à jour des Formoops déjà publiés</h2>
+        </div>
+
         <p>Fichier .csv de génération :
           <CSVParser/>
         </p>
@@ -12,8 +17,6 @@
         <div v-if="publishable">
 
           <p>Publication et création de {{Object.keys(importedEntities).length}} formulaires</p>
-
-
 
           <button type="button" @click="generateAndPublishForms">Générer !</button>
         </div>
@@ -61,6 +64,10 @@
         publishingCampaigns: {
           type: Array,
           required: true
+        },
+        override: {
+          type: Boolean,
+          required: true
         }
       },
 
@@ -93,8 +100,8 @@
         generateAndPublishForms() {
 
 
-          publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.publishingCampaigns || []);
 
+          publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.publishingCampaigns || [], this.override);
 
           /*
                   if(this.formCampaign.publishingCampaign){ //all forms will be under the same campaign
@@ -114,6 +121,7 @@
                     generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities);
                   }
           */
+
           this.closeModal();
         },
 
@@ -171,5 +179,15 @@
 </script>
 
 <style scoped>
+  .override-warning-message{
+    margin: 0 auto;
+  }
 
+  .override-message{
+    color : tomato;
+  }
+
+  .update-message{
+    color : #42b983;
+  }
 </style>

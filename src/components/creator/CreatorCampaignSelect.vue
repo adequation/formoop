@@ -175,7 +175,6 @@
 
 <style scoped>
   .campaign-select {
-    position: fixed;
     top: 5px;
     left: 5px;
 

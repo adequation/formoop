@@ -17,7 +17,7 @@
 
       <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
 
-      <CreatorCampaignSelect/>
+
 
       <div v-for="(entry, i) in formEntries"
            :key="entry.id"
@@ -34,7 +34,7 @@
           :currentSection="entry.section"
         />
       </div>
-
+      <CreatorCampaignSelect/>
       <div class="fake-entry">
         <div @click="addEntry(false)"><i class="material-icons md-48">add_circle</i></div>
         <div @click="addEntry(true)"><i class="material-icons md-48">info</i></div>
@@ -273,8 +273,6 @@
         this.formEntries = this.$refs.entrySortingGrid.getListClone();
         this.formSections = this.$refs.sectionSortingGrid.getListClone();
 
-        console.log(this.formSections)
-        console.log(this.$refs.sectionSortingGrid.getListClone())
       },
 
       getEntryColor(entry) {
@@ -439,7 +437,7 @@
 
       async getFormFromFB(creatorID, formID) {
         await Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
-          .on('value', (snapshot) => {
+          .once('value', (snapshot) => {
             const value = snapshot.val();
             if (value) {
               this.setForm({formEntries: value.entries, formTitle: value.title, currentSections: value.sections || []});
@@ -465,6 +463,7 @@
       //save form into firebase
       //then reset data from what we saved on firebase to stay in sync
       async saveForm() {
+
         this.validateEntries();
 
         await saveCreatorFormFB(this.creatorID,
@@ -479,10 +478,9 @@
         //if everything is done, we reset the form's data
         await this.getFormFromFB(this.creatorID, this.formID);
 
-
         //remove the form where we don't want it to be
         //and add it where it is not
-        if (!isFormGeneric(this.formEntries))
+        //if (!isFormGeneric(this.formEntries))
           saveAndFilterCampaignsFB({
             id: this.formID,
             title: this.formTitle
@@ -603,7 +601,25 @@
       },
 
       isPublished() {
-        return !!this.$store.getters.publishedForms.find(pe => pe.id === this.formID)
+        return !!this.$store.getters.publishedForms.find(pe => pe.id === this.formID) || this.hasPublishedGenericForms;
+      },
+
+      hasPublishedGenericForms(){
+        if(this.containsGenericQuestion){
+          return !!this.$store.getters.publishedForms.find(pe => pe.id.includes(this.formID));
+        }
+
+        return false;
+      },
+
+      containsGenericQuestion() {
+        let containsGenericQuestion = false;
+
+        this.formEntries.forEach(fe => {
+          if (fe.generic) containsGenericQuestion = true;
+        });
+
+        return containsGenericQuestion;
       },
 
       entryPoints() {

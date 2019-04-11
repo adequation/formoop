@@ -6,8 +6,11 @@ import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helper
 import {getFormUrlWithInvite, getInvitationEntryPointText, isValidAddress, sendMailToBack} from "@/helpers/mailHelpers";
 import {getFormURL} from "@/helpers/rooterHelpers";
 import {areUserEntriesDifferent, updateAnswers, updateEntry, updatePublishedForm} from "@/helpers/generalHelpers";
+import {getEntityToken} from "@/helpers/csvParserHelpers";
 
 export const saveCreatorFormFB = (creatorID, formID, form) => {
+
+
 
   return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
     .set(form);
@@ -81,6 +84,8 @@ export const setFormCampaignFB = (campaignID, form) => {
 };
 
 const writePublishedCreatorFormFB = (form, override = false) => {
+
+  console.log(form.title)
 
   //if we want to keep answers and invited people
   if (!override) {
@@ -188,7 +193,8 @@ const parseGenericEntry = (entry, entity) => {
 
 //be careful, we put the "nom" property (non open source perspective here...)
 const parseGenericFormToUser = (form, entity) => {
-  const parsedForm = {id: uuid.v4(), title: `${form.title} - ${entity.nom}`, sections: form.sections || []};
+  const uniqueID = `${form.id}-${getEntityToken(entity.nom)}`;
+  const parsedForm = {id: uniqueID, title: `${form.title} - ${entity.nom}`, sections: form.sections || []};
 
   //if there is a contact, add it as an entry point and send him an email
   if (entity.contact) {
@@ -211,7 +217,6 @@ const parseGenericFormToUser = (form, entity) => {
 
       parsedForm.entryPoint[userID] = user;
       parsedForm.users[userID] = user;
-
 
       //send an email !
       const formURL = getFormUrlWithInvite(emailAdress, parsedForm.id, window);
@@ -272,8 +277,10 @@ export const publishGenericFormsFB = (creatorID, formID, entities, formCampaigns
   //we fetch the form in firebase
   //then we publish it
 
+  console.log('oh oh')
+
   return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
-    .on('value', function (snapshot) {
+    .once('value', function (snapshot) {
       const value = snapshot.val();
       if (value) {
         const createdForms = generateAndPublishForms(value, entities, override);
@@ -290,7 +297,7 @@ export const publishCreatorFormFB = (creatorID, formID, override=false) => {
   //we fetch the form in firebase
   //then we publish it
   return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
-    .on('value', function (snapshot) {
+    .once('value', function (snapshot) {
       const value = snapshot.val();
       if (value) {
         const parsedForm = parseFormToUser(value);
@@ -412,7 +419,7 @@ export const generateGenericFormsFB = (creatorID, formID, entities, publishingCa
   //we fetch the form in firebase
   //then we save it into user's datas
   return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
-    .on('value', function (snapshot) {
+    .once('value', function (snapshot) {
       const value = snapshot.val();
 
       if (value) {
