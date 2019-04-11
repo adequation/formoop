@@ -38,12 +38,12 @@ export function parsePromoteurCSV(rawFile) {
 
           promoteurs[row.nom] = {
             nom: row.nom,
-            programmes: [{programme: row.programme, ville: row.ville}],
+            programmes: [{nom: row.programme, ville: row.ville}],
             contact: row.contact ? row.contact.trim() : row.contact
           };
 
         } else { //we already encountered it, so we just add it
-          promoteurs[row.nom].programmes.push({programme: row.programme, ville: row.ville});
+          promoteurs[row.nom].programmes.push({nom: row.programme, ville: row.ville});
 
           if (!promoteurs[row.nom].contact && !!row.contact)
             promoteurs[row.nom].contact = row.contact.trim();
@@ -53,7 +53,6 @@ export function parsePromoteurCSV(rawFile) {
           promoteurs[row.nom][dk] = rowAdditionalData[dk];
         });
 
-        console.log(row.nom, promoteurs[row.nom]);
       }
     }
 
@@ -71,7 +70,6 @@ export function formatUppercaseLowerCase(word) {
 
 //format a string to be fancy when displayed
 export function cleanWord(word) {
-  console.log(word)
   return formatUppercaseLowerCase(word.trim());
 }
 

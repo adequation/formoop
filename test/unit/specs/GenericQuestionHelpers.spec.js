@@ -1,4 +1,4 @@
-import {getGenericQuestionTitle, isFormGeneric} from "@/helpers/genericQuestionHelpers";
+import {getGenericQuestionTitle, getPropArrayFromBlock, isFormGeneric} from "@/helpers/genericQuestionHelpers";
 
 
 describe('genericQuestionTitle.js', () => {
@@ -13,7 +13,7 @@ describe('genericQuestionTitle.js', () => {
       {type: 'text', content: '?'},
     ];
 
-    const expected = 'Mocked @(generic) question @(with) @(variables) ?';
+    const expected = 'Mocked @generic question @with @variables ?';
 
     expect(getGenericQuestionTitle(mockBlocks)).toEqual(expected);
   });
@@ -40,6 +40,31 @@ describe('genericQuestionTitle.js', () => {
       ];
 
     expect(isFormGeneric(mockEntries)).toEqual(false);
+  });
+
+  it('Should get the correct props path', ()=> {
+    const mockBlock = {
+      id:'block1',
+      type: 'variable',
+      content:'firstProp.secondProp.thirdProp.fourthProp'
+    };
+
+    const expectedPath = ['firstProp', 'secondProp', 'thirdProp', 'fourthProp'];
+
+    expect(getPropArrayFromBlock(mockBlock)).toEqual(expectedPath);
+  })
+
+  it('Should get no props path if block is not a variable', ()=> {
+    const mockBlock = {
+      id:'block1',
+      type: 'test',
+      content:'firstProp.secondProp.thirdProp.fourthProp'
+    };
+
+    const expectedPath = [];
+
+    expect(getPropArrayFromBlock(mockBlock)).toEqual(expectedPath);
+    expect(getPropArrayFromBlock(null)).toEqual(expectedPath);
   })
 
 });

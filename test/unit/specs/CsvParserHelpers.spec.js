@@ -29,18 +29,20 @@ describe('csvParserHelpers.js', () => {
 
   const resultParseMock = {
     'Promoteur1': {
+      PRCLEUNIK:"  0",
       nom: 'Promoteur1',
       programmes: [
-        {programme: 'Prog1', ville: 'Ville1'},
-        {programme: 'Prog2', ville: 'Ville2'},
+        {nom: 'Prog1', ville: 'Ville1'},
+        {nom: 'Prog2', ville: 'Ville2'},
       ],
       contact: 'mock@mock.com'
     },
     'Promoteur2': {
+      PRCLEUNIK:"  1",
       nom: 'Promoteur2',
       programmes: [
-        {programme: 'Prog3', ville: 'Ville3'},
-        {programme: 'Prog4', ville: 'Ville4'},
+        {nom: 'Prog3', ville: 'Ville3'},
+        {nom: 'Prog4', ville: 'Ville4'},
       ],
       contact: 'mock2@mock.com'
     }

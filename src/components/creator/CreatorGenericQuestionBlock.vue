@@ -4,13 +4,24 @@
     <div class="generic-question-block-grouped">
       <input title="" type="checkbox" v-model="entry.grouped"> Question groupée ?
       <input v-if="entry.grouped"
-        class="generic-question-block-group-question"
+             class="generic-question-block-group-question"
              type="text"
              placeholder="Question générale"
              v-model="entry.groupQuestion"/>
     </div>
 
 
+    <div contenteditable
+         class="generic-question-block-input"
+         ref="genericTitleInput"
+         @input="textUpdate($event)"
+         @keypress.enter="setBlocks"
+         @blur="setBlocks($event)">
+
+    </div>
+
+
+    <!--
     <input class="generic-question-block-property" type="text" placeholder="Champ concerné"
            v-model="entry.genericProperty"/>
 
@@ -21,7 +32,7 @@
            @contextmenu="swapType(block, $event)">
 
         <input title="" type="text" v-model="block.content" size="12"/>
-        <button type="button" class="generic-question-delete-block"@click="deleteBlock(block)">
+        <button type="button" class="generic-question-delete-block" @click="deleteBlock(block)">
           <i class="material-icons md-18">close</i>
         </button>
 
@@ -30,6 +41,8 @@
       <button type="button" @click="addVariable">variable</button>
       <button type="button" @click="addText">texte</button>
     </div>
+
+    !-->
   </div>
 </template>
 
@@ -39,7 +52,11 @@
   export default {
     name: "CreatorGenericQuestionBlock",
     data() {
-      return {}
+      return {
+        variableFinder: /(?<before>(?:^|[^@]*))@(?<variable>[^@| ]+)(?!\w)/g,
+        rawTextContent: '',
+        defaultContent: 'Question avec @variable.nichée ?'
+      }
     },
     props: {
       entry: {
@@ -47,9 +64,85 @@
         required: true
       },
     },
-    methods: {
+    mounted() {
+      const blocksAsText = this.entry.question.blocks.map(b =>
+        `${b.type === 'variable' ? '@' : ''}${b.content}`
+      ).join(' ');
 
-      addVariable() {
+      if (!this.entry.question.blocks) {
+        this.textUpdate({target: {innerText: this.defaultContent}});
+      } else {
+        this.textUpdate({
+          target: {
+            innerText: blocksAsText
+          }
+        });
+      }
+      this.setBlocks();
+    },
+    methods: {
+      textUpdate(event) {
+        this.rawTextContent = event.target.innerText;
+      },
+
+      setBlocks(e) {
+        if (e) e.preventDefault();
+        const input = this.$refs.genericTitleInput;
+
+        const blocks = this.splitIntoBlocks(this.rawTextContent.trim()).map(b => b.trim()).filter(b => !!b);
+
+        input.innerHTML =
+          blocks.map(b => this.isVariableBlock(b) ?
+            `<span style="color: dodgerblue; font-weight: bold;">${b}</span>`
+            : b
+          ).join(' ');
+
+        this.entry.question.blocks = [];
+
+        blocks.forEach(b => {
+          this.entry.question.blocks.push({
+            id: uuid.v4(),
+            type: this.isVariableBlock(b) ? 'variable' : 'text',
+            content: this.isVariableBlock(b) ? b.substring(1)  : b,
+          });
+        });
+
+
+      },
+
+      isVariableBlock(block) {
+        if (block.length > 2) return block[0] === '@' && block[1] !== '@';
+        return block[0] === '@';
+      },
+
+      splitIntoBlocks(rawText) {
+        const matches = [];
+        let match;
+        let lastMatch = null;
+        while (match = this.variableFinder.exec(rawText)) {
+
+          //what is between 2 variables
+          matches.push(match.groups.before);
+
+          //what is in a variable
+          matches.push(`@${match.groups.variable}`);
+          lastMatch = match;
+        }
+
+        let lastCheckIndex = 0;
+
+        if (lastMatch) {
+          lastCheckIndex = lastMatch.index + lastMatch.groups.before.length + lastMatch.groups.variable.length + 1;
+        }
+
+        if (rawText.length > lastCheckIndex) {
+          matches.push(rawText.substring(lastCheckIndex));
+        }
+
+        return matches;
+      },
+
+      /*addVariable() {
         const newVariable = {
           id: uuid.v4(),
           type: 'variable',
@@ -70,7 +163,7 @@
       },
 
       deleteBlock(block) {
-        if(this.entry.question.blocks.length >1){
+        if (this.entry.question.blocks.length > 1) {
           const blocIndex = this.entry.question.blocks.findIndex(b => b.id === block.id);
 
           if (blocIndex >= 0) this.entry.question.blocks.splice(blocIndex, 1);
@@ -91,12 +184,21 @@
       getClassFromType(type) {
         if (type === 'variable') return 'block variable-block-input';
         return 'block text-block-input';
-      }
+      }*/
     }
   }
 </script>
 
 <style scoped>
+
+  .generic-question-block-input {
+    border: 1px solid #00000033;
+    border-radius: 5px;
+    background: white;
+    padding: 5px;
+
+    cursor: text;
+  }
 
   .generic-question-block {
     margin-bottom: 0.5em;
@@ -150,6 +252,11 @@
 
   .generic-question-block-grouped {
 
+  }
+
+  .variable-block-title {
+    color: steelBlue;
+    font-weight: bold;
   }
 
 </style>
