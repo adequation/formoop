@@ -17,8 +17,6 @@
 
       <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
 
-      <CreatorCampaignSelect/>
-
       <div v-for="(entry, i) in formEntries"
            :key="entry.id"
            @click="focusEntry(entry)"
@@ -132,6 +130,14 @@
                            :entryPoints="entryPoints"/>
     </div>
 
+    <!-- ////////////////////////////////////////// CAMPAIGNS AREA ////////////////////////////////////////// !-->
+
+    <div v-if="currentTab === 'campaigns'">
+
+      <CreatorCampaignSelect/>
+
+    </div>
+
     <div v-else>
 
     </div>
@@ -234,9 +240,9 @@
         publishingCampaigns: [],
         tabs: [
           {title: 'Créer', value: 'create', icon: 'edit'},
-          {title: 'Parramètrer', value: 'sort', icon: 'settings'},
+          {title: 'Paramétrer', value: 'sort', icon: 'settings'},
+          {title: 'Campagnes', value: 'campaigns', icon: 'insert_chart'},
           {title: 'Partager', value: 'share', icon: 'share'},
-          {title: 'Résultats', value: 'results', icon: 'insert_chart'}
         ],
         currentTab: 'create',
 
@@ -370,14 +376,14 @@
 
       },
 
-      changeOptionIndex(id, optionIndex, newOptionIndex){
+      changeOptionIndex(id, optionIndex, newOptionIndex) {
         const tmp = [...this.formEntries];
         const fe = tmp.find(e => e.id === id);
-        if(!(optionIndex === 0 && newOptionIndex < 0)){
-          if(!(optionIndex === fe.answers.length-1 && newOptionIndex >= fe.answers.length)){
+        if (!(optionIndex === 0 && newOptionIndex < 0)) {
+          if (!(optionIndex === fe.answers.length - 1 && newOptionIndex >= fe.answers.length)) {
             if (fe) {
               const el = fe.answers[optionIndex];
-              fe.answers.splice(optionIndex,1, fe.answers[newOptionIndex]);
+              fe.answers.splice(optionIndex, 1, fe.answers[newOptionIndex]);
               fe.answers[newOptionIndex] = el;
               this.formEntries = tmp;
             }
@@ -525,7 +531,6 @@
       this.$root.$on('option-change-index', (id, optionIndex, newOptionIndex) => {
         this.changeOptionIndex(id, optionIndex, newOptionIndex);
       });
-
 
 
       //emitting the type of an entry
