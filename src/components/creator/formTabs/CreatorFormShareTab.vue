@@ -255,7 +255,7 @@
 
     height: 90%;
 
-    overflow: scroll;
+    overflow: auto;
   }
 
   .entry-points-table-wrapper-content::-webkit-scrollbar {

@@ -170,7 +170,6 @@
     data() {
       return {
         showModal: false,
-        showIdentificationModal : false,
         selectedAnswers: {},
 
         filter: 'all',

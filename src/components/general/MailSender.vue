@@ -248,7 +248,7 @@
 
     height: 90%;
 
-    overflow: scroll;
+    overflow: auto;
   }
 
   .mail-form-content::-webkit-scrollbar {
@@ -273,7 +273,7 @@
 
     margin: 0 auto;
     max-height: 100px;
-    overflow-y: scroll;
+    overflow-y: auto;
 
     width: auto;
   }
