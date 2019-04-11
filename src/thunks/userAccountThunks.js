@@ -26,7 +26,7 @@ export function inviteUser(userID, formID, metadata) {
   const ref =  Firebase.database().ref(getPublishedFormUserPath(formID, userID));
   return ref.once('value', (snapshot) => {
     if( snapshot.val() === null ) {
-      ref.set( metadata );
+      return ref.set( metadata );
     }
   });
 }

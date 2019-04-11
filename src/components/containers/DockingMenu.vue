@@ -1,5 +1,5 @@
 <template>
-    <div class="docking-menu">
+    <div :class="['docking-menu', top ? 'position-top' : 'position-bottom']">
 
       <div class="docking-menu-body">
         <slot name="body">
@@ -12,7 +12,14 @@
 
 <script>
     export default {
-        name: "DockingMenu"
+        name: "DockingMenu",
+      props: {
+          top:{
+            type: Boolean,
+            required: false,
+            default: false
+          }
+      }
     }
 </script>
 
@@ -25,13 +32,21 @@
   border-top: 1px solid #00000055;
 
   position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
 
+  width: 100%;
+  left: 0;
 
   background-color: #c0c0c0;
 
   z-index: 12;
 }
+
+  .position-bottom {
+    bottom: 0;
+  }
+
+
+  .position-top {
+    top: 0;
+  }
 </style>
