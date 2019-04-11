@@ -241,6 +241,7 @@ const parseGenericFormToUser = (form, entity) => {
   const parsedForm = {id: uniqueID, title: `${form.title} - ${entity.nom}`, sections: form.sections || []};
 
   //if there is a contact, add it as an entry point and send him an email
+
   if (entity.contact) {
     const emailAdress = entity.contact;
 
