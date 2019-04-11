@@ -86,24 +86,12 @@
 
         <div class="user-form-menu-items">
           <div class="user-form-filter-buttons-wrapper">
-            <button v-for="f in filters" @click="changeFilter(f.name)"
-                    type="button"
-                    :class="filter===f.name ? 'user-form-filter-button-selected' : 'user-form-filter-button'"
-                    :title=f.description>
-              <i class="material-icons">{{f.icon}}</i>
-            </button>
+
+            <drop-up-menu class="filters-menu" :list-of-elements="filters" :selected-element="filter" @dropupMenu-selected="changeFilter($event)"/>
+
+            <drop-up-menu class="sorters-menu" :list-of-elements="sorters" :selected-element="selectedSorter.name" @dropupMenu-selected="changeSorter($event)"/>
 
             <div class="vertical-separator"></div>
-
-            <button v-for="s in sorters" @click="selectedSorter = s"
-                    type="button"
-                    class="user-form-sort-button"
-                    :title="s.description">
-              <i class="material-icons">{{s.icon}}</i>
-            </button>
-
-            <div class="vertical-separator"></div>
-
 
             <button @click="cleanAllFilters"
                     type="button"
@@ -160,10 +148,12 @@
   import {decodeEmailToken} from "@/helpers/accountHelpers";
   import UserCloseForm from "./UserCloseForm";
   import UserGetFormLinkModal from "./UserGetFormLinkModal";
+  import DropUpMenu from "../containers/DropUpMenu";
 
   export default {
     name: 'UserForm',
     components: {
+      DropUpMenu,
       UserGetFormLinkModal,
       UserCloseForm,
       UserSectionList, UserEntryGrid, DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
@@ -181,7 +171,13 @@
           {name: 'grid', description: 'Afficher en grille', icon: 'apps'},
         ],
 
-        selectedSorter: '',
+        selectedSorter: {
+          name: 'alphabetical',
+          description: 'Filtrer par ordre alphabetique',
+          icon: 'sort_by_alpha',
+          sortingLayer: 0,
+          sort: (a, b) => a.question.title.localeCompare(b.question.title)
+        },
         sorters: [
           {
             name: 'alphabetical',
@@ -404,6 +400,10 @@
         }
       },
 
+      changeSorter (sorter){
+        this.selectedSorter = this.sorters.find(s => s.name === sorter);
+      },
+
       cleanAllFilters() {
         this.filter = 'all';
         this.searchQuery = '';
@@ -555,32 +555,26 @@
     align-items: center;
   }
 
-  .user-form-filter-button-selected {
-    margin-right: 0.5em;
-    padding: 0.5em;
-    color: white;
+  .filters-menu {
     background: #4286f4;
+    color: white;
+    margin-right: 0.5em;
+
+    border-radius: 5px;
 
     cursor: pointer;
-    font-size: large;
-    border-radius: 5px;
+
+    border: none;
 
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-
-    border: 2px solid #ffffff;
   }
 
-  .user-form-filter-button:hover {
-    background: #3462ad;
-  }
-
-  .user-form-sort-button {
+  .sorters-menu {
     margin-left: 0.5em;
     margin-right: 0.5em;
-    padding: 0.5em;
     color: white;
     background: #fa7d32;
 
@@ -596,9 +590,6 @@
     align-items: center;
   }
 
-  .user-form-sort-button:hover {
-    background: #c86428;
-  }
 
   .user-form-clean-filters-button {
     margin-right: 0.5em;
