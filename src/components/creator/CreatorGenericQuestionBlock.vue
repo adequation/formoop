@@ -53,7 +53,7 @@
     name: "CreatorGenericQuestionBlock",
     data() {
       return {
-        variableFinder: /(?<before>(?:^|[^@]*))@(?<variable>[^@| ]+)(?!\w)/g,
+        variableFinder: /((?:^|[^@]*))@([^@| ]+)(?!\w)/g,
         rawTextContent: '',
         defaultContent: 'Question avec @variable.nichée ?'
       }
@@ -122,17 +122,17 @@
         while (match = this.variableFinder.exec(rawText)) {
 
           //what is between 2 variables
-          matches.push(match.groups.before);
+          matches.push(match[1]);
 
           //what is in a variable
-          matches.push(`@${match.groups.variable}`);
+          matches.push(`@${match[2]}`);
           lastMatch = match;
         }
 
         let lastCheckIndex = 0;
 
         if (lastMatch) {
-          lastCheckIndex = lastMatch.index + lastMatch.groups.before.length + lastMatch.groups.variable.length + 1;
+          lastCheckIndex = lastMatch.index + lastMatch[1].length + lastMatch[2].length + 1;
         }
 
         if (rawText.length > lastCheckIndex) {
