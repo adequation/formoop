@@ -12,7 +12,12 @@
       </span>
     </h1>
 
-    <CSVImportModal :show-modal="showCSVImportModal" :form-entries="this.formEntries" :save-form="this.saveForm" :publishing-campaigns="publishingCampaigns" @close="closeJsonImportModal"/>
+    <CSVImportModal :show-modal="showCSVImportModal"
+                    :form-entries="this.formEntries"
+                    :save-form="this.saveForm"
+                    :publishing-campaigns="publishingCampaigns"
+                    @close="closeCSVImportModal"
+    :override="this.overrideCSVForm"/>
 
     <div class="publish-wrapper">
       <div class="smooth publish-button good-publish-button"
@@ -112,6 +117,7 @@
         justCopied: false,
         showCSVImportModal: false,
         showEntryPointModal: false,
+        overrideCSVForm: false,
       }
     },
     props: {
@@ -158,7 +164,17 @@
       },
       invitationContent() {
         return getInvitationEntryPointText(this.formTitle, this.user.displayName, this.formURL)
-      }
+      },
+      containsGenericQuestion() {
+        let containsGenericQuestion = false;
+
+        this.formEntries.forEach(fe => {
+          if (fe.generic) containsGenericQuestion = true;
+        });
+
+        return containsGenericQuestion;
+      },
+
     },
     methods: {
       getShortName(name) {
@@ -178,7 +194,9 @@
       async publishForm(override = false) {
         await this.saveForm();
 
-        if (this.formContainsGenericQuestion()) {
+
+        if (this.containsGenericQuestion) {
+          this.overrideCSVForm = override;
           this.showCSVImportModal = true;
         }
         else {
@@ -191,12 +209,11 @@
             title: this.formTitle
           }, this.formCampaigns, this.publishingCampaigns);
 
-          this.showEntryPointModal = true;
-
         }
       },
 
       async directPublishForm(override = false) {
+
         await publishCreatorFormFB(this.creatorID, this.formID, override);
 
         //add admin as an user
@@ -209,20 +226,8 @@
         });
       },
 
-      formContainsGenericQuestion() {
-        let containsGenericQuestion = false;
 
-        this.formEntries.forEach(fe => {
-          if (fe.generic) containsGenericQuestion = true;
-        });
-
-        return containsGenericQuestion;
-      },
-
-      closeEntryPointModal() {
-        this.showEntryPointModal = false;
-      },
-      closeJsonImportModal() {
+      closeCSVImportModal() {
         this.showCSVImportModal = false;
       },
     },
@@ -250,7 +255,7 @@
 
     height: 90%;
 
-    overflow: scroll;
+    overflow: auto;
   }
 
   .entry-points-table-wrapper-content::-webkit-scrollbar {

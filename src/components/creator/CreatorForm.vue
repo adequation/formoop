@@ -17,22 +17,42 @@
 
       <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
 
-      <CreatorCampaignSelect/>
 
-      <div v-for="(entry, i) in formEntries"
-           :key="entry.id"
-           @click="focusEntry(entry)"
-           :ref="`top_${entry.id}`"
-           :class="['smooth', {focusedEntry: focusedEntry ? focusedEntry.id === entry.id : false}]">
+      <div v-for="(entry, i) in formEntries">
+        <!--<div v-if="i <= 0">
+          <div v-for="label in labels" v-if="label.under < 0">
+            <button type="button" @click="addLabel(i)">+label</button>
+            <CreatorFormLabel :label="label"/>
+          </div>
+        </div>!-->
 
-        <CreatorFormEntry
-          :key="entry.id"
-          :entry="entry"
-          :opened="focusedEntry ? focusedEntry.id === entry.id : false"
-          :ref="entry.id"
-          :formSections="formSections"
-          :currentSection="entry.section"
-        />
+        <div
+             :key="entry.id"
+             @click="focusEntry(entry)"
+             :ref="`top_${entry.id}`"
+             :class="['smooth', {focusedEntry: focusedEntry ? focusedEntry.id === entry.id : false}]">
+
+          <CreatorFormEntry
+            :key="entry.id"
+            :entry="entry"
+            :opened="focusedEntry ? focusedEntry.id === entry.id : false"
+            :ref="entry.id"
+            :formSections="formSections"
+            :currentSection="entry.section"
+          />
+        </div>
+
+        <!--<div class="label-buttons-wrapper">
+          <div class="smooth add-label-button-left" title="ajouter un label" @click="addLabel(i)"></div>
+          <div class="smooth add-label-button-right" title="ajouter un label" @click="addLabel(i)"></div>
+        </div>
+
+
+        <div v-if="!!labels.find(l => l.under === i)">
+          <div v-for="label in labels" v-if="label.under === i">
+            <CreatorFormLabel :label="label"/>
+          </div>
+        </div>!-->
       </div>
 
       <div class="fake-entry">
@@ -132,6 +152,14 @@
                            :entryPoints="entryPoints"/>
     </div>
 
+    <!-- ////////////////////////////////////////// CAMPAIGNS AREA ////////////////////////////////////////// !-->
+
+    <div v-if="currentTab === 'campaigns'">
+
+      <CreatorCampaignSelect/>
+
+    </div>
+
     <div v-else>
 
     </div>
@@ -202,11 +230,13 @@
   import CustomGridSection from "@/components/containers/CustomGrid/CustomGridSection";
   import autoScrollMixin from "@/mixins/autoScrollMixin";
   import CreatorFormShareTab from "@/components/creator/formTabs/CreatorFormShareTab";
+  import CreatorFormLabel from "@/components/creator/CreatorFormLabel";
 
   export default {
     name: 'CreatorForm',
     mixins: [autoScrollMixin],
     components: {
+      CreatorFormLabel,
       CreatorFormShareTab,
       CustomGridSection,
       Tabs,
@@ -217,6 +247,7 @@
       return {
         focusedEntry: null,
         formEntries: [],
+        labels: [],
         defaultFormEntry: {
           question: {title: ''},
           type: 'radio',
@@ -234,9 +265,9 @@
         publishingCampaigns: [],
         tabs: [
           {title: 'Créer', value: 'create', icon: 'edit'},
-          {title: 'Parramètrer', value: 'sort', icon: 'settings'},
+          {title: 'Paramétrer', value: 'sort', icon: 'settings'},
+          {title: 'Campagnes', value: 'campaigns', icon: 'insert_chart'},
           {title: 'Partager', value: 'share', icon: 'share'},
-          {title: 'Résultats', value: 'results', icon: 'insert_chart'}
         ],
         currentTab: 'create',
 
@@ -273,8 +304,6 @@
         this.formEntries = this.$refs.entrySortingGrid.getListClone();
         this.formSections = this.$refs.sectionSortingGrid.getListClone();
 
-        console.log(this.formSections)
-        console.log(this.$refs.sectionSortingGrid.getListClone())
       },
 
       getEntryColor(entry) {
@@ -327,6 +356,19 @@
         e.preventDefault();
       },
 
+      addLabel(under){
+        const id = uuid.v4();
+
+        const label = {
+          title: 'Séparateur !',
+          content: 'Avec du contenu !',
+          id,
+          under
+        };
+
+        //this.labels.push(label);
+      },
+
       addEntry(generic) {
         const id = uuid.v4();
 
@@ -344,12 +386,12 @@
             {
               id: uuid.v4(),
               type: 'text',
-              content: "Texte standard"
+              content: "Un titre avec une"
             },
             {
               id: uuid.v4(),
               type: 'variable',
-              content: "nom_variable"
+              content: "variable.nichée"
             }
           ];
         }
@@ -370,14 +412,14 @@
 
       },
 
-      changeOptionIndex(id, optionIndex, newOptionIndex){
+      changeOptionIndex(id, optionIndex, newOptionIndex) {
         const tmp = [...this.formEntries];
         const fe = tmp.find(e => e.id === id);
-        if(!(optionIndex === 0 && newOptionIndex < 0)){
-          if(!(optionIndex === fe.answers.length-1 && newOptionIndex >= fe.answers.length)){
+        if (!(optionIndex === 0 && newOptionIndex < 0)) {
+          if (!(optionIndex === fe.answers.length - 1 && newOptionIndex >= fe.answers.length)) {
             if (fe) {
               const el = fe.answers[optionIndex];
-              fe.answers.splice(optionIndex,1, fe.answers[newOptionIndex]);
+              fe.answers.splice(optionIndex, 1, fe.answers[newOptionIndex]);
               fe.answers[newOptionIndex] = el;
               this.formEntries = tmp;
             }
@@ -439,7 +481,7 @@
 
       async getFormFromFB(creatorID, formID) {
         await Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
-          .on('value', (snapshot) => {
+          .once('value', (snapshot) => {
             const value = snapshot.val();
             if (value) {
               this.setForm({formEntries: value.entries, formTitle: value.title, currentSections: value.sections || []});
@@ -465,6 +507,7 @@
       //save form into firebase
       //then reset data from what we saved on firebase to stay in sync
       async saveForm() {
+
         this.validateEntries();
 
         await saveCreatorFormFB(this.creatorID,
@@ -479,10 +522,9 @@
         //if everything is done, we reset the form's data
         await this.getFormFromFB(this.creatorID, this.formID);
 
-
         //remove the form where we don't want it to be
         //and add it where it is not
-        if (!isFormGeneric(this.formEntries))
+        //if (!isFormGeneric(this.formEntries))
           saveAndFilterCampaignsFB({
             id: this.formID,
             title: this.formTitle
@@ -525,7 +567,6 @@
       this.$root.$on('option-change-index', (id, optionIndex, newOptionIndex) => {
         this.changeOptionIndex(id, optionIndex, newOptionIndex);
       });
-
 
 
       //emitting the type of an entry
@@ -572,6 +613,16 @@
         }
       });
 
+      //emitting of the removal of a label
+      this.$on('delete-label', (labelID) => {
+        const tmp = [...this.labels];
+        const labelToDeleteIndex = tmp.findIndex(l => l.id === labelID);
+        if (labelToDeleteIndex >= 0) {
+          tmp.splice(labelToDeleteIndex, 1);
+          this.labels = tmp;
+        }
+      });
+
       //emitting of the removal of an entry
       this.$on('delete-entry', (entryID) => {
         const tmp = [...this.formEntries];
@@ -603,7 +654,25 @@
       },
 
       isPublished() {
-        return !!this.$store.getters.publishedForms.find(pe => pe.id === this.formID)
+        return !!this.$store.getters.publishedForms.find(pe => pe.id === this.formID) || this.hasPublishedGenericForms;
+      },
+
+      hasPublishedGenericForms(){
+        if(this.containsGenericQuestion){
+          return !!this.$store.getters.publishedForms.find(pe => pe.id.includes(this.formID));
+        }
+
+        return false;
+      },
+
+      containsGenericQuestion() {
+        let containsGenericQuestion = false;
+
+        this.formEntries.forEach(fe => {
+          if (fe.generic) containsGenericQuestion = true;
+        });
+
+        return containsGenericQuestion;
       },
 
       entryPoints() {
@@ -848,5 +917,60 @@
 
   .focusedEntry {
     background: #00000015;
+  }
+
+  .label-buttons-wrapper{
+    width : 90%;
+    margin: 5px auto;
+
+    height: 0;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+  }
+
+  .add-label-button-left {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+
+    border-left: 15px solid #00000000;
+  }
+
+
+  .add-label-button-left:hover{
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+
+    border-left:20px solid #00000090;
+
+    cursor: pointer;
+  }
+
+  .add-label-button-right {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+
+    border-right: 15px solid #00000000;
+  }
+
+
+  .add-label-button-right:hover{
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+
+    border-right:15px solid #00000090;
+
+    cursor: pointer;
   }
 </style>

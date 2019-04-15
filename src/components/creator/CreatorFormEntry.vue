@@ -1,7 +1,6 @@
 <template>
   <div class="full-entry-wrapper">
 
-
     <div class="creator-form-entry smooth"
          :style="{ borderLeft: `10px solid ${borderColor}`}">
 

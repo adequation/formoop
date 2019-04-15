@@ -38,6 +38,7 @@
   import {nativeFbFunctions} from "../../helpers/firebaseHelpers";
   import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helpers/accountHelpers";
   import {generateGenericFormsFB} from "../../thunks/creatorForm";
+  import {getPropArrayFromBlock} from "@/helpers/genericQuestionHelpers";
 
   export default {
     name: "JsonImportModal",
@@ -128,10 +129,12 @@
       },
 
       verifyEntitiesIntegrity(entities, entries) {
-        const fields = Object.keys(entries).every(
+        /*const fields = Object.keys(entries).every(
           entryKey => this.verifyFields(entities, entries[entryKey].genericProperty)
         );
-        if (!fields) return false;
+        if (!fields) return false;*/
+
+
 
         const titles = Object.keys(entries).every(
           entryKey => this.verifyTitles(entities, entries[entryKey].genericProperty, entries[entryKey].question.blocks)
@@ -147,18 +150,22 @@
       },
 
       verifyTitles(entities, property, blocks) {
-        const variableBlocks = blocks.filter(b => b.type === 'variable');
+        const variableBlocksPath = blocks.filter(b => b.type === 'variable').map(v => getPropArrayFromBlock(v));
 
         return Object.keys(entities).every(
           entityKey => (
-            variableBlocks.every(vb => {
-              const propertyValue = entities[entityKey][property];
+            variableBlocksPath.every(vbp => {
 
-              if (propertyValue.length) return propertyValue.every(v => {
+              let currentValue = entities[entityKey];
 
-                return v[vb.content];
+              vbp.forEach(key => {
+                if(!currentValue) return;
+                currentValue = currentValue.get(key);
               });
-              return propertyValue[vb.content];
+
+              if(!currentValue) return false;
+
+              return !!currentValue;
             })
           )
         )

@@ -58,7 +58,7 @@
     components: {Modal},
     data() {
       return {
-        showIdentificationModal: false,
+        showIdentificationModal: true,
         mailAddress: "",
         invalidAddress: false,
         notInvited: false,
@@ -113,9 +113,17 @@
 
       formTitle() {
         return this.$store.getters.getFormTitle;
-      }
+      },
+      user() {
+        return this.$store.getters.user;
+      },
 
-    }
+    },
+    watch: {
+      user(){
+        if(user) this.showIdentificationModal = false
+      }
+  }
   }
 </script>
 

@@ -34,6 +34,7 @@
 
           reader.onerror = function (evt) {
             this.errors = evt.target;
+            console.log(this.errors);
           }
 
         }
