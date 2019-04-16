@@ -2,7 +2,7 @@
   <div class="csv-import-modal">
 
     <Modal v-if="showModal" @close="closeModal">
-      <h1 slot="header">Génération du formulaire</h1>
+      <h1 slot="header"> </h1>
 
       <div slot="body">
         <div class="override-warning-message">
@@ -21,10 +21,7 @@
           <button type="button" @click="generateAndPublishForms">Générer !</button>
         </div>
 
-        <div v-else-if="errors || warnings">
-          <p v-for="e in errors">{{e.message}}({{e.place}})</p>
-          <p v-for="w in warnings">{{w.message}}({{w.place}})</p>
-        </div>
+        <CsvErrorAndWarning class="csv-messages-container" v-if="this.errors || this.warnings" :errors="errors || []" :warnings="warnings || []"/>
 
       </div>
     </Modal>
@@ -39,10 +36,11 @@
   import CSVParser from "@/components/general/CSVParser";
   import {getPropArrayFromBlock} from "@/helpers/genericQuestionHelpers";
   import {MISSING_COLUMN, NON_EXISTING_VARIABLE, VARIABLE_PATH_TOO_LONG} from "@/helpers/csvParserHelpers";
+  import CsvErrorAndWarning from "@/components/creator/CsvErrorAndWarning";
 
   export default {
     name: "CSVImportModal",
-    components: {Modal, CSVParser},
+    components: {CsvErrorAndWarning, Modal, CSVParser},
     data() {
       return {
         importedEntities: {},
@@ -115,7 +113,7 @@
         let warnings = [];
 
         Object.keys(entries).forEach(entryKey => {
-            const verifyTitles = this.verifyTitles(entities, entries[entryKey].question.blocks);
+            const verifyTitles = this.checkEntityIntegrity(entities, entries[entryKey].question.blocks);
 
             errors = errors.concat(verifyTitles.errors);
             warnings = warnings.concat(verifyTitles.warnings);
@@ -126,7 +124,7 @@
 
       },
 
-      verifyTitles(entities, blocks) {
+      checkEntityIntegrity(entities, blocks) {
 
         const feedBack = {errors: [], warnings: []};
 
@@ -181,9 +179,7 @@
         this.errors = this.importedEntities.errors.concat(this.entitiesIntegrity.errors);
         this.warnings = this.importedEntities.warnings.concat(this.entitiesIntegrity.warnings);
 
-
         this.publishable = this.errors.length <= 0;
-
       });
 
       this.$store.dispatch('setFormCampaigns')
@@ -193,6 +189,10 @@
 </script>
 
 <style scoped>
+  .csv-import-modal{
+    height: 80%;
+  }
+
   .override-warning-message {
     margin: 0 auto;
   }
@@ -203,5 +203,10 @@
 
   .update-message {
     color: #42b983;
+  }
+
+  .csv-messages-container{
+    min-height: 100px;
+    max-height: 300px;
   }
 </style>

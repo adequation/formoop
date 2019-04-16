@@ -2,7 +2,7 @@ import * as d3 from "d3";
 
 //parsing errors
 export const NO_ROWS_PARSED = "Aucune ligne du CSV n'as pu être traité. Peut être que la colonne d'indentifiant unique saisie n'existe pas ?";
-export const MISSING_ID = "Ligne ignorée : la ligne ne contient pas de valeur dans sa colonne d'identifiant unique. Celle-ci est surement vide.";
+export const MISSING_ID = "Ligne ignorée : la ligne ne contient pas de valeur dans sa colonne d'identifiant unique. \nCelle-ci est surement vide.";
 
 //generating errors
 export const NON_EXISTING_VARIABLE = "Variable manquante.";
