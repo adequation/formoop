@@ -23,6 +23,8 @@
 
         <CsvErrorAndWarning class="csv-messages-container" v-if="this.errors || this.warnings" :errors="errors || []" :warnings="warnings || []"/>
 
+        <button type="button" @click="$router.push({ name: 'CsvHelp'})">Un peu d'aide pour le CSV ?</button>
+
       </div>
     </Modal>
 
@@ -34,7 +36,7 @@
   import {publishGenericFormsFB} from "@/thunks/creatorForm";
   import Modal from "@/components/containers/Modal";
   import CsvParser from "@/components/general/CsvParser";
-  import {MISSING_COLUMN, NON_EXISTING_VARIABLE, VARIABLE_PATH_TOO_LONG} from "@/helpers/csvParserHelpers";
+  import {NON_EXISTING_VARIABLE} from "@/helpers/csvParserHelpers";
   import CsvErrorAndWarning from "@/components/creator/CsvErrorAndWarning";
 
   export default {
