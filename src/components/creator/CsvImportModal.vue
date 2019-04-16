@@ -11,7 +11,7 @@
         </div>
 
         <p>Fichier .csv de génération :
-          <CSVParser/>
+          <CsvParser/>
         </p>
 
         <div v-if="publishable">
@@ -31,16 +31,15 @@
 
 <script>
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
-  import {generateGenericFormsFB, publishGenericFormsFB} from "@/thunks/creatorForm";
+  import {publishGenericFormsFB} from "@/thunks/creatorForm";
   import Modal from "@/components/containers/Modal";
-  import CSVParser from "@/components/general/CSVParser";
-  import {getPropArrayFromBlock} from "@/helpers/genericQuestionHelpers";
+  import CsvParser from "@/components/general/CsvParser";
   import {MISSING_COLUMN, NON_EXISTING_VARIABLE, VARIABLE_PATH_TOO_LONG} from "@/helpers/csvParserHelpers";
   import CsvErrorAndWarning from "@/components/creator/CsvErrorAndWarning";
 
   export default {
-    name: "CSVImportModal",
-    components: {CsvErrorAndWarning, Modal, CSVParser},
+    name: "CsvImportModal",
+    components: {CsvErrorAndWarning, Modal, CsvParser},
     data() {
       return {
         importedEntities: {},

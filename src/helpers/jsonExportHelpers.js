@@ -57,7 +57,7 @@ function convertAnswerIdToText(answer, entry){
     return textAnswer;
   }
   if(entry.type === 'radio' || entry.type === 'select') return entry.answer.answers.find(a => a.id === answer).text;
-  if(entry.type === 'text' || entry.type === 'textarea') return answer;
+  if(entry.type === 'text' || entry.type ==='textarea') return answer;
   return answer;
 }
 
