@@ -36,6 +36,10 @@
         <tr><td><strong>Établissement n°1</strong></td><td><strong>Bruxelles</strong></td><td>Lassie</td><td>Border Collie</td></tr>
       </table>
 
+      <p>
+        Dans le cas ou les valeurs ne sont pas redondantes, une erreur te le signalera.
+      </p>
+
     </div>
 </template>
 
