@@ -13,12 +13,14 @@
                placeholder="Rechercher un formoop"
                v-model="searchQuery"
                @click.stop=""/>
-        <i v-if="searchQuery" class="material-icons md-18" role="button" @click.stop=""
-           @click="searchQuery = ''">clear</i>
+        <div class="clean-search-button">
+          <i v-if="searchQuery" class="material-icons md-18" role="button" @click.stop=""
+             @click="searchQuery = ''">clear</i>
+        </div>
       </div>
 
       <div class="create-form">
-        <div @click="createNewForm"><i class="material-icons md-48" title="Créer un formulaire">add_circle</i></div>
+        <div @click="createNewForm"><i class="material-icons md-36" title="Créer un formulaire">add_circle</i></div>
       </div>
 
     </div>
@@ -48,7 +50,7 @@
 
             <div class="form-grid-description">
               <div class="form-question-number">
-                {{form.questionNumber}} questions
+                {{form.questionNumber}} question(s)
               </div>
 
               <div v-if="containsGenericQuestion(form)" class="form-is-generic">
@@ -95,7 +97,7 @@
       }
     },
     computed: {
-      user(){
+      user() {
         return this.$store.getters.creatorID;
       },
 
@@ -114,7 +116,7 @@
         return this.searchQuery.split(' ');
       },
 
-      formCampaigns(){
+      formCampaigns() {
         return this.$store.getters.formCampaigns;
       }
 
@@ -141,7 +143,7 @@
 
       deleteForm(form) {
 
-        if(confirm(`Etes vous sur de vouloir supprimer ce formulaire? \nCelui-ci perdra ses questions, et sera supprimé des campagnes et des formoops publiés `)){
+        if (confirm(`Etes vous sur de vouloir supprimer ce formulaire? \nCelui-ci perdra ses questions, et sera supprimé des campagnes et des formoops publiés `)) {
 
           //delete from created forms
           const createdFormsChanged = deleteForm(this.createdForms, form.id);
@@ -174,7 +176,7 @@
 </script>
 
 <style scoped>
-  .creator-home-header{
+  .creator-home-header {
     margin-left: 20%;
     margin-right: 20%;
     display: flex;
@@ -185,8 +187,6 @@
   }
 
   .search-form {
-
-
     width: 100%;
     height: 10%;
     display: flex;
@@ -196,7 +196,7 @@
   }
 
   .search-box {
-    width: 25%;
+    width: 150px;
     background: none;
     border: none;
     border-bottom: 2px solid rgb(217, 217, 217);
@@ -207,6 +207,10 @@
 
   .search-box:focus {
     outline: none;
+  }
+
+  .search-box::placeholder {
+    font-size: 0.9em;
   }
 
   .forms-grid {
@@ -228,6 +232,7 @@
   }
 
   .form-content {
+    height: 100%;
     position: relative;
     top: 50%;
     transform: translateY(-50%);
@@ -275,10 +280,17 @@
 
   }
 
-  .form-is-generic{
+  .form-is-generic {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 0.8em;
+    position: absolute;
+    margin-right: 10px;
+    bottom: 15px;
+    right: 0;
   }
 
   .form-publication-state-published {
+    font-size: 0.8em;
     position: absolute;
     bottom: 0;
     right: 0;
@@ -287,6 +299,7 @@
   }
 
   .form-publication-state-not-published {
+    font-size: 0.8em;
     position: absolute;
     bottom: 0;
     right: 0;
@@ -297,18 +310,22 @@
     padding: 1em;
   }
 
-  .create-form > div{
+  .create-form > div {
     cursor: pointer;
     color: #00000070;
   }
 
-  .create-form > div :hover{
+  .create-form > div :hover {
     cursor: pointer;
     color: #000000aa;
   }
 
-  .space-header{
+  .space-header {
     margin-bottom: 5em;
+  }
+
+  .clean-search-button :hover{
+    cursor: pointer;
   }
 
 
