@@ -16,13 +16,14 @@
 
         <div v-if="publishable">
 
-          <p>Publication et création de {{Object.keys(importedEntities).length}} formulaires</p>
+          <p>Publication et création de {{Object.keys(importedEntities.data).length}} formulaires</p>
 
           <button type="button" @click="generateAndPublishForms">Générer !</button>
         </div>
 
-        <div v-else-if="!publishable && errors">
-          ERREURS
+        <div v-else-if="errors || warnings">
+          <p v-for="e in errors">{{e.message}}({{e.place}})</p>
+          <p v-for="w in warnings">{{w.message}}({{w.place}})</p>
         </div>
 
       </div>
@@ -37,6 +38,7 @@
   import Modal from "@/components/containers/Modal";
   import CSVParser from "@/components/general/CSVParser";
   import {getPropArrayFromBlock} from "@/helpers/genericQuestionHelpers";
+  import {MISSING_COLUMN, NON_EXISTING_VARIABLE, VARIABLE_PATH_TOO_LONG} from "@/helpers/csvParserHelpers";
 
   export default {
     name: "CSVImportModal",
@@ -44,8 +46,10 @@
     data() {
       return {
         importedEntities: {},
+        entitiesIntegrity: {},
         publishable: false,
         errors: false,
+        warnings: false
       }
     },
 
@@ -91,6 +95,7 @@
       closeModal() {
         this.publishable = false;
         this.errors = false;
+        this.warnings = false;
         this.$emit('close');
       },
 
@@ -100,89 +105,85 @@
 
       generateAndPublishForms() {
 
-
-        publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.publishingCampaigns || [], this.override);
-
-        /*
-                if(this.formCampaign.publishingCampaign){ //all forms will be under the same campaign
-
-                  if(this.newPublishingCampaign){ // we create a new campaign
-                    saveFormCampaignFB(this.formCampaign.publishingCampaign, {id: this.formCampaign.publishingCampaign, name:this.formCampaign.newPublishingCampaignName}).then((e) => {
-
-                      generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.formCampaign.publishingCampaign);
-
-                    }).catch((e) => {
-                      console.log(e);
-                    });
-                  }else{ //we use an existing campaign
-                    generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities, this.formCampaign.publishingCampaign);
-                  }
-                }else{ // no campaigns
-                  generateGenericFormsFB(this.creatorID, this.formID, this.importedEntities);
-                }
-        */
+        publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities.data, this.publishingCampaigns || [], this.override);
 
         this.closeModal();
       },
 
       verifyEntitiesIntegrity(entities, entries) {
+        let errors = [];
+        let warnings = [];
 
-        return Object.keys(entries).every(
-          entryKey => this.verifyTitles(entities, entries[entryKey].question.blocks)
+        Object.keys(entries).forEach(entryKey => {
+            const verifyTitles = this.verifyTitles(entities, entries[entryKey].question.blocks);
+
+            errors = errors.concat(verifyTitles.errors);
+            warnings = warnings.concat(verifyTitles.warnings);
+          }
         );
+
+        return {errors, warnings}
 
       },
 
       verifyTitles(entities, blocks) {
-        const variableBlocksPath = blocks.filter(b => b.type === 'variable').map(v => getPropArrayFromBlock(v));
 
-        return Object.keys(entities).every(
+        const feedBack = {errors: [], warnings: []};
+
+        const valuesLength = {};
+
+        Object.keys(entities).forEach(
           entityKey => {
-            return variableBlocksPath.every(vbp => {
-
-
-              if (vbp.length > 2) return false;
+            blocks.filter(b => b.type === 'variable').forEach(b => {
 
               let currentValue = entities[entityKey];
 
-              //we only go to 2 lvl of depth.
-              if (vbp.length === 1) {
-                return !!currentValue[vbp[0]];
-              }
-
-              if (vbp.length === 2) {
-                const firstLevel = currentValue[vbp[0]];
-
-
-
-                if (firstLevel) {
-
-
-
-                  if (Array.isArray(firstLevel))
-                    return firstLevel.every(p => !!p[vbp[1]]);
-
-
-                  return !!currentValue[vbp[1]];
+              if (!currentValue[b.content]) {
+                feedBack.errors.push({
+                  message: NON_EXISTING_VARIABLE,
+                  place: `variable ${b.content} pour ${entityKey}`
+                });
+              } else if (currentValue[b.content].length <= 0) {
+                feedBack.errors.push({
+                  message: NON_EXISTING_VARIABLE,
+                  place: `variable ${b.content} pour ${entityKey}`
+                });
+              } else {
+                const nullIndex = currentValue[b.content].findIndex(value => value === '' || undefined || null);
+                if (nullIndex >= 0) {
+                  feedBack.errors.push({
+                    message: NON_EXISTING_VARIABLE,
+                    place: `variable ${b.content} pour ${entityKey}`
+                  });
                 }
-
-
-                return false;
               }
+
             });
 
-
           });
+
+
+        return feedBack;
       }
     },
 
     created: function () {
 
       this.$root.$on('csv-parsed', (parsed) => {
-        this.importedEntities = parsed;
+        this.importedEntities = parsed.data;
 
-        this.publishable = !!this.verifyEntitiesIntegrity(this.importedEntities, this.getGenericEntries());
-        this.errors = !this.publishable
+        this.errors = this.importedEntities.errors;
+        this.warnings = this.importedEntities.warnings;
+
+        this.entitiesIntegrity = this.verifyEntitiesIntegrity(this.importedEntities.data, this.getGenericEntries());
+
+
+        this.errors = this.importedEntities.errors.concat(this.entitiesIntegrity.errors);
+        this.warnings = this.importedEntities.warnings.concat(this.entitiesIntegrity.warnings);
+
+
+        this.publishable = this.errors.length <= 0;
+
       });
 
       this.$store.dispatch('setFormCampaigns')
