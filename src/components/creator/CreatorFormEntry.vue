@@ -4,7 +4,7 @@
     <div class="creator-form-entry smooth"
          :style="{ borderLeft: `10px solid ${borderColor}`}">
 
-      <CustomSelect :options="formSections" :optionType="optionType" :selected="entry.section"/>
+      <CustomSelect :options="formSections" :optionType="optionType" :selected="entry.section" class="section-select"/>
 
       <div class="creator-form-entry-tools-wrapper">
 
@@ -229,6 +229,16 @@
   .creator-form-entry-not-required:hover {
     color: #5f6c7a;
     cursor: pointer;
+  }
+
+  .section-select{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 180px;
+    margin-top: 0.5em;
+    margin-right: auto;
+    margin-left: 10px;
   }
 
 

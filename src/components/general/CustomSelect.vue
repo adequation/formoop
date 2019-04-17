@@ -13,14 +13,14 @@
 
     <transition name="accordion-fade-slide" mode="out-in">
       <div class="options-list" v-if="showList">
-
+        <div class="option-to-select" @click="onChangeOption(null)">
+          <span class="list-option-text">Aucune {{optionType.toLowerCase()}}</span>
+        </div>
         <div class="option-to-select"
              v-for="option in options"
              @click="onChangeOption(option)"
         >
           <span class="list-option-text">{{option}}</span>
-
-
         </div>
       </div>
     </transition>
@@ -33,7 +33,7 @@
     name: "CustomSelect",
     data() {
       return {
-        selectedOption: '',
+        selectedOption: this.selected,
         showList: false
       }
     },
@@ -49,31 +49,34 @@
       selected: {
         type: String,
         required: false,
-        default : ''
+        default: ''
       }
     },
-    methods:{
-      onChangeOption(option){
-        this.selectedOption = option;
-        this.showList = false;
+    methods: {
+      onChangeOption(option) {
+        if(option === null){
+          this.selectedOption = "Aucune " + this.optionType.toLowerCase() ;
+        }
+        else{
+          this.selectedOption = option;
+        }
         this.$parent.$emit('set-option-selection', option);
+        this.showList = false;
       }
-    }
+    },
+    watch: {
+      selected: function (val) {
+        this.selectedOption = val || null;
+      }
+    },
   }
 </script>
 
 <style scoped>
 
   .custom-select {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 180px;
-    margin-top: 0.5em;
-    margin-right: auto;
-    margin-left: 10px;
-  }
 
+  }
 
   .selected-option-display {
     width: 100%;
@@ -83,14 +86,13 @@
     margin-left: 5px;
   }
 
-  .selected-option-text{
+  .selected-option-text {
     margin-left: 3px;
   }
 
-  .list-option-text{
+  .list-option-text {
     margin-left: 3px;
   }
-
 
   .select-box {
     width: 100%;
