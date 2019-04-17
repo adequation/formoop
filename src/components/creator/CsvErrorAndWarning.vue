@@ -42,7 +42,7 @@
 <style scoped>
 
   .csv-errors-container {
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 
   .csv-message {

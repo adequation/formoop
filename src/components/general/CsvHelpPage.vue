@@ -5,7 +5,7 @@
 
     <p>
       Dans le fichier, chaque ligne représente une entité.
-      Lors de la génération des formulaires, tu dois rentrer qu'elle est la colonne qui permet d'identifier chaque
+      Lors de la génération des formulaires, tu dois rentrer quelle est la colonne qui permet d'identifier chaque
       entité.
     </p>
     <p>
@@ -23,7 +23,7 @@
       Une ligne aurait donc l'aspect suivant : NOM_ETABLISSEMENT, VILLE, CHIEN, RACE.
       Étant donné que l'on a plusieurs chiens par etablissement,
       les valeurs NOM et VILLE <strong>doivent être redondantes</strong>.
-      par exemple, pour 3 chiens <i>Milou, Rex et Lassie</i> dans l'établissement <i>Établissement n°1</i> on aurait :
+      Par exemple, pour 3 chiens <i>Milou, Rex et Lassie</i> dans l'établissement <i>Établissement n°1</i> on aurait :
     </p>
 
     <table>
