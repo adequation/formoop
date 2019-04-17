@@ -99,7 +99,7 @@
     },
     data() {
       return {
-        // fetch types into FB later
+        // maybe put the types into FB later
         types: [
           {value: 'radio', displayName: 'Choix multiples'},
           {value: 'text', displayName: 'Réponse courte'},

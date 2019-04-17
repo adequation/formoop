@@ -2,7 +2,7 @@
   <div class="csv-import-modal">
 
     <Modal v-if="showModal" @close="closeModal">
-      <h1 slot="header"> </h1>
+      <h1 slot="header"></h1>
 
       <div slot="body">
         <div class="override-warning-message">
@@ -16,12 +16,19 @@
 
         <div v-if="publishable">
 
-          <p>Publication et création de {{Object.keys(importedEntities.data).length}} formulaires</p>
+          <h3>Publication et création de {{Object.keys(importedEntities.data).length}} formulaires</h3>
 
-          <button type="button" @click="generateAndPublishForms">Générer !</button>
+          <button type="button"
+                  @click="generateAndPublishForms"
+                  class="generate-forms-button">Générer !
+          </button>
         </div>
 
-        <CsvErrorAndWarning class="csv-messages-container" v-if="this.errors || this.warnings" :errors="errors || []" :warnings="warnings || []"/>
+        <hr v-if="this.errors || this.warnings"/>
+        <CsvErrorAndWarning class="csv-messages-container"
+                            v-if="this.errors || this.warnings"
+                            :errors="errors || []"
+                            :warnings="warnings || []"/>
 
         <button type="button" @click="$router.push({ name: 'CsvHelp'})">Un peu d'aide pour le CSV ?</button>
 
@@ -140,19 +147,19 @@
               if (!currentValue[b.content]) {
                 feedBack.errors.push({
                   message: NON_EXISTING_VARIABLE,
-                  place: `variable ${b.content} pour ${entityKey}`
+                  place: `variable @${b.content} pour ${entityKey}`
                 });
               } else if (currentValue[b.content].length <= 0) {
                 feedBack.errors.push({
                   message: NON_EXISTING_VARIABLE,
-                  place: `variable ${b.content} pour ${entityKey}`
+                  place: `variable @${b.content} pour ${entityKey}`
                 });
               } else {
                 const nullIndex = currentValue[b.content].findIndex(value => value === '' || undefined || null);
                 if (nullIndex >= 0) {
                   feedBack.errors.push({
                     message: NON_EXISTING_VARIABLE,
-                    place: `variable ${b.content} pour ${entityKey}`
+                    place: `variable @${b.content} pour ${entityKey}`
                   });
                 }
               }
@@ -190,7 +197,7 @@
 </script>
 
 <style scoped>
-  .csv-import-modal{
+  .csv-import-modal {
     height: 80%;
   }
 
@@ -206,8 +213,30 @@
     color: #42b983;
   }
 
-  .csv-messages-container{
+  .csv-messages-container {
     min-height: 100px;
     max-height: 300px;
+  }
+
+  .generate-forms-button {
+    background: #4286f4;
+    color: white;
+    padding: .5rem 1rem;
+    font-size: 1.5625rem;
+    line-height: 1.5;
+    text-align: center;
+
+    width: fit-content;
+
+    cursor: pointer;
+    border: none;
+    border-radius: 16px 16px 16px 16px;
+
+    margin: 0.5em;
+  }
+
+  .generate-forms-button:hover {
+    background: #3462ad;
+    cursor: pointer;
   }
 </style>

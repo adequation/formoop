@@ -10,7 +10,6 @@
              v-model="entry.groupQuestion"/>
     </div>
 
-
     <div contenteditable
          class="generic-question-block-input"
          ref="genericTitleInput"
@@ -20,29 +19,6 @@
 
     </div>
 
-
-    <!--
-    <input class="generic-question-block-property" type="text" placeholder="Champ concerné"
-           v-model="entry.genericProperty"/>
-
-    <div class="generic-question-block-question-title">
-
-      <div v-for="block in entry.question.blocks"
-           :class="getClassFromType(block.type)"
-           @contextmenu="swapType(block, $event)">
-
-        <input title="" type="text" v-model="block.content" size="12"/>
-        <button type="button" class="generic-question-delete-block" @click="deleteBlock(block)">
-          <i class="material-icons md-18">close</i>
-        </button>
-
-      </div>
-
-      <button type="button" @click="addVariable">variable</button>
-      <button type="button" @click="addText">texte</button>
-    </div>
-
-    !-->
   </div>
 </template>
 
@@ -55,7 +31,7 @@
       return {
         variableFinder: /((?:^|[^@]*))@([^@| ]+)(?!\w)/g,
         rawTextContent: '',
-        defaultContent: 'Question avec @variable.nichée ?'
+        defaultContent: 'Question avec @variable ?'
       }
     },
     props: {
@@ -142,49 +118,6 @@
         return matches;
       },
 
-      /*addVariable() {
-        const newVariable = {
-          id: uuid.v4(),
-          type: 'variable',
-          content: "nom_variable"
-        };
-
-        this.entry.question.blocks.push(newVariable);
-      },
-
-      addText() {
-        const newText = {
-          id: uuid.v4(),
-          type: 'text',
-          content: "Texte standard"
-        };
-
-        this.entry.question.blocks.push(newText);
-      },
-
-      deleteBlock(block) {
-        if (this.entry.question.blocks.length > 1) {
-          const blocIndex = this.entry.question.blocks.findIndex(b => b.id === block.id);
-
-          if (blocIndex >= 0) this.entry.question.blocks.splice(blocIndex, 1);
-        }
-      },
-
-      swapType(block, e) {
-        const blockIndex = this.entry.question.blocks.findIndex(b => b.id === block.id);
-
-        if (blockIndex >= 0) {
-          const foundBlock = this.entry.question.blocks[blockIndex];
-          this.entry.question.blocks[blockIndex].type = foundBlock.type === 'text' ? 'variable' : 'text';
-        }
-
-        e.preventDefault();
-      },
-
-      getClassFromType(type) {
-        if (type === 'variable') return 'block variable-block-input';
-        return 'block text-block-input';
-      }*/
     }
   }
 </script>
@@ -204,60 +137,6 @@
     margin-bottom: 0.5em;
   }
 
-  .generic-question-block-question-title {
-    margin-top: 0.5em;
-  }
-
-  .block {
-    width: auto;
-    display: inline-block;
-    padding: 0.2em 0.5em 0.2em 0.5em;
-    margin: 0.1em;
-    font-size: large;
-    border-radius: 20px 20px 20px 20px;
-  }
-
-  .block input[type=text] {
-    background: none;
-    border: none;
-    width: auto;
-  }
-
-  .block button {
-    border: none;
-    background: none;
-    font-size: large;
-    color: rgba(0, 0, 0, 0.3);
-  }
-
-  .block button:hover {
-    color: rgba(0, 0, 0, 0.7);
-  }
-
-  .text-block-input {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-
-  .text-block-input:focus {
-    background-color: rgba(0, 0, 0, 0.2);
-  }
-
-  .variable-block-input {
-    background-color: rgba(100, 175, 255, 0.5);
-  }
-
-  .variable-block-input:focus {
-    background-color: rgba(100, 175, 255, 1);
-  }
-
-  .generic-question-block-grouped {
-
-  }
-
-  .variable-block-title {
-    color: steelBlue;
-    font-weight: bold;
-  }
 
   .grouped-checkbox{
     margin-bottom: 15px;
