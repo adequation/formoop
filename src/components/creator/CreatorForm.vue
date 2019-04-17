@@ -386,12 +386,12 @@
             {
               id: uuid.v4(),
               type: 'text',
-              content: "Un titre avec une"
+              content: "Une question avec"
             },
             {
               id: uuid.v4(),
               type: 'variable',
-              content: "variable.nichée"
+              content: "variable"
             }
           ];
         }
