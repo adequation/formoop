@@ -1,4 +1,4 @@
-import {deleteForm, deleteFormFromCampaigns} from "@/helpers/creatorHelpers";
+import {deleteFormFromCreated, deleteFormFromCampaigns} from "@/helpers/creatorHelpers";
 
 const mockCreatedForms =
   {
@@ -60,14 +60,14 @@ describe('creatorHelpers.js', () => {
           }
       };
 
-    expect(deleteForm(mockCreatedForms, mockFormID)).toEqual(mockCreatedFormsAfterDelete);
+    expect(deleteFormFromCreated(mockCreatedForms, mockFormID)).toEqual(mockCreatedFormsAfterDelete);
   });
 
   it('Should not delete the form from created forms when it does not exists', () => {
 
     const mockFormID = "008";
 
-    expect(deleteForm(mockCreatedForms, mockFormID)).toEqual(mockCreatedForms);
+    expect(deleteFormFromCreated(mockCreatedForms, mockFormID)).toEqual(mockCreatedForms);
   });
 
   it('Should delete the form from campaigns', () => {

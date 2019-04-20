@@ -93,3 +93,24 @@ export function getCampaignWithForms( campaign, publishedForms, closedForms){
     closedForms: closedForms? closedForms: [] ,
   }
 }
+
+export function deleteCampaignFromFormCampaigns(formCampaigns, campaignID){
+  let formCampaignsCopy = {...formCampaigns};
+
+  const campaigns = Object.keys(formCampaigns).map(id => {
+    return formCampaignsCopy[id];
+  });
+
+  const index = campaigns.findIndex(c => c.id === campaignID);
+  if (index >= 0) {
+    campaigns.splice(index, 1);
+  }
+
+  let formCampaignsChanged = {};
+
+  campaigns.forEach(c => {
+    formCampaignsChanged[c.id] = {...c}
+  });
+
+  return formCampaignsChanged;
+}

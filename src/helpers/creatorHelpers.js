@@ -1,4 +1,4 @@
-export function deleteForm(createdForms, formID) {
+export function deleteFormFromCreated(createdForms, formID) {
   let createdFormsCopy = {...createdForms};
 
   const forms = Object.keys(createdForms).map(id => {

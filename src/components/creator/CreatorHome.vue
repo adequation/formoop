@@ -87,7 +87,7 @@
   import * as uuid from "uuid";
   import {getCreatedForms} from "@/helpers/firebaseHelpers";
   import {saveCreatedFormsFB, saveFormCampaignsFB} from "@/thunks/creatorForm"
-  import {deleteForm, deleteFormFromCampaigns} from "@/helpers/creatorHelpers";
+  import {deleteFormFromCreated, deleteFormFromCampaigns} from "@/helpers/creatorHelpers";
 
   export default {
     name: "CreatorHome",
@@ -143,10 +143,10 @@
 
       deleteForm(form) {
 
-        if (confirm(`Etes vous sur de vouloir supprimer ce formulaire? \nCelui-ci perdra ses questions, et sera supprimé des campagnes et des formoops publiés `)) {
+        if (confirm(`Etes vous sur de vouloir supprimer ce formoop? \nCelui-ci perdra ses questions, et sera supprimé des campagnes et des formoops publiés `)) {
 
           //delete from created forms
-          const createdFormsChanged = deleteForm(this.createdForms, form.id);
+          const createdFormsChanged = deleteFormFromCreated(this.createdForms, form.id);
           saveCreatedFormsFB(this.user, createdFormsChanged);
 
           //delete from campaigns
