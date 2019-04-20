@@ -102,7 +102,7 @@
             </drawer>
 
             <button class="user-form-filter-button" type="button" @click="showFilterDrawer=true">
-              <i v-if="filters.find(f => f.name === filter).icon" class="material-icons md-16">{{filters.find(f => f.name === filter).icon}}</i>
+              <i v-if="filters.find(f => f.name === filter).icon" class="material-icons md-24">{{filters.find(f => f.name === filter).icon}}</i>
             </button>
 
             <drawer v-if="showSorterDrawer" @close="showSorterDrawer=false">
@@ -120,7 +120,7 @@
             </drawer>
 
             <button class="user-form-sort-button" type="button" @click="showSorterDrawer=true">
-              <i v-if="selectedSorter.icon" class="material-icons md-16">{{selectedSorter.icon}}</i>
+              <i v-if="selectedSorter.icon" class="material-icons md-24">{{selectedSorter.icon}}</i>
             </button>
 
             <!-- <drop-up-menu class="filters-menu" :list-of-elements="filters" :selected-element="filter" @dropupMenu-selected="changeFilter($event)"/>

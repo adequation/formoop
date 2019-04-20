@@ -64,7 +64,7 @@
 
   .drawer-container {
     z-index: 9999;
-    width: 15%;
+    width: 20%;
     height: 100%;
     margin: 0;
     padding: 1em;
