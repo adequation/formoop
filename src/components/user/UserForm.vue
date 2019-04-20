@@ -87,9 +87,45 @@
         <div class="user-form-menu-items">
           <div class="user-form-filter-buttons-wrapper">
 
-            <drop-up-menu class="filters-menu" :list-of-elements="filters" :selected-element="filter" @dropupMenu-selected="changeFilter($event)"/>
+            <drawer v-if="showFilterDrawer" @close="showFilterDrawer=false">
+              <div slot="header">
+                <h1> Filters</h1>
+              </div>
+              <div slot="body">
+                <div v-for="elem in filters"
+                     v-if="elem.name !== filter"
+                     :title="elem.description"
+                     @click="changeFilter(elem.name); showFilterDrawer=false">
+                  <span class="drawer-content"><i v-if="elem.icon" class="material-icons md-16">{{elem.icon}}</i> {{elem.description}}</span>
+                </div>
+              </div>
+            </drawer>
 
-            <drop-up-menu class="sorters-menu" :list-of-elements="sorters" :selected-element="selectedSorter.name" @dropupMenu-selected="changeSorter($event)"/>
+            <button class="user-form-filter-button" type="button" @click="showFilterDrawer=true">
+              <i v-if="filters.find(f => f.name === filter).icon" class="material-icons md-16">{{filters.find(f => f.name === filter).icon}}</i>
+            </button>
+
+            <drawer v-if="showSorterDrawer" @close="showSorterDrawer=false">
+              <div slot="header">
+                <h1> Sorters </h1>
+              </div>
+              <div slot="body">
+                <div v-for="elem in sorters"
+                     v-if="elem.name !== selectedSorter.name"
+                     :title="elem.description"
+                     @click="changeSorter(elem.name); showSorterDrawer=false">
+                  <span class="drawer-content"><i v-if="elem.icon" class="material-icons md-16">{{elem.icon}}</i> {{elem.description}}</span>
+                </div>
+              </div>
+            </drawer>
+
+            <button class="user-form-sort-button" type="button" @click="showSorterDrawer=true">
+              <i v-if="selectedSorter.icon" class="material-icons md-16">{{selectedSorter.icon}}</i>
+            </button>
+
+            <!-- <drop-up-menu class="filters-menu" :list-of-elements="filters" :selected-element="filter" @dropupMenu-selected="changeFilter($event)"/>
+
+            <drop-up-menu class="sorters-menu" :list-of-elements="sorters" :selected-element="selectedSorter.name" @dropupMenu-selected="changeSorter($event)"/> -->
 
             <div class="vertical-separator"></div>
 
@@ -149,10 +185,12 @@
   import UserCloseForm from "./UserCloseForm";
   import UserGetFormLinkModal from "./UserGetFormLinkModal";
   import DropUpMenu from "../containers/DropUpMenu";
+  import Drawer from "../containers/Drawer";
 
   export default {
     name: 'UserForm',
     components: {
+      Drawer,
       DropUpMenu,
       UserGetFormLinkModal,
       UserCloseForm,
@@ -160,6 +198,8 @@
     data() {
       return {
         showModal: false,
+        showFilterDrawer: false,
+        showSorterDrawer: false,
         selectedAnswers: {},
 
         filter: 'all',
@@ -554,26 +594,14 @@
     align-items: center;
   }
 
-  .filters-menu {
-    background: #4286f4;
-    color: white;
-    margin-right: 0.5em;
-
-    border-radius: 5px;
-
-    cursor: pointer;
-
-    border: none;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+  .user-form-filter-button:hover {
+    background: #3462ad;
   }
 
-  .sorters-menu {
+  .user-form-sort-button {
     margin-left: 0.5em;
     margin-right: 0.5em;
+    padding: 0.5em;
     color: white;
     background: #fa7d32;
 
@@ -582,13 +610,15 @@
     border: none;
 
     border-radius: 5px;
-
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
 
+  .user-form-sort-button:hover {
+    background: #c86428;
+  }
 
   .user-form-clean-filters-button {
     margin-right: 0.5em;
@@ -640,6 +670,17 @@
     border-right: 1px solid #00000055;
     height: 60px;
     top: 10px;
+  }
+
+  .drawer-content{
+    float: left;
+    font-size: large;
+    cursor: pointer;
+    padding: 8px 8px 8px 10px;
+  }
+
+  .drawer-content:hover{
+    color: rgba(0, 0, 0, .5);
   }
 
 

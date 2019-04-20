@@ -38,7 +38,7 @@
 
 <script>
     export default {
-        name: "Drawer"
+        name: "Drawer",
     }
 </script>
 
@@ -51,7 +51,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: none;
+    background-color: rgba(0, 0, 0, .5);
     display: table;
     transition: opacity .3s ease;
   }
@@ -64,7 +64,7 @@
 
   .drawer-container {
     z-index: 9999;
-    width: 20%;
+    width: 15%;
     height: 100%;
     margin: 0;
     padding: 1em;
