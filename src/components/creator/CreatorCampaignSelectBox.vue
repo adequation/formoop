@@ -51,7 +51,7 @@
           if (index >= 0) {
             this.selectedCampaigns.splice(index, 1);
             this.$refs.campaignsToSelect[i].style.background = "";
-            this.$refs.campaignsToSelect[i].style.color = "#2c3e50";
+            this.$refs.campaignsToSelect[i].style.color = "";
           }
         } else {
           this.selectedCampaigns.push(campaignID);
@@ -65,7 +65,7 @@
         this.selectedCampaigns = [];
         this.$refs.campaignsToSelect.forEach(ca => {
           ca.style.background = "";
-          ca.style.color = "#2c3e50";
+          ca.style.color = "";
         })
       },
 
@@ -74,7 +74,7 @@
         this.selectedCampaigns = [];
         this.$refs.campaignsToSelect.forEach(ca => {
           ca.style.background = "";
-          ca.style.color = "#2c3e50";
+          ca.style.color = "";
         })
       }
 
