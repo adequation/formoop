@@ -21,6 +21,10 @@ export const saveCreatedFormsFB = (creatorID, forms) => {
   return Firebase.database().ref(getCreatedForms(creatorID)).set(forms);
 };
 
+export const savePublishedFormsFB = (forms) => {
+  return Firebase.database().ref(publishingPath).set(forms);
+};
+
 export const saveFormCampaignFB = (campaignID, campaign) => {
 
   return Firebase.database().ref(campaignPath.concat(campaignID))

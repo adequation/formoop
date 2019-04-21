@@ -86,8 +86,8 @@
 <script>
   import * as uuid from "uuid";
   import {getCreatedForms} from "@/helpers/firebaseHelpers";
-  import {saveCreatedFormsFB, saveFormCampaignsFB} from "@/thunks/creatorForm"
-  import {deleteFormFromCreated, deleteFormFromCampaigns} from "@/helpers/creatorHelpers";
+  import {saveCreatedFormsFB, saveFormCampaignsFB, savePublishedFormsFB} from "@/thunks/creatorForm"
+  import {deleteFormFromCreated, deleteFormFromPublished, deleteFormFromCampaigns} from "@/helpers/creatorHelpers";
 
   export default {
     name: "CreatorHome",
@@ -103,6 +103,10 @@
 
       createdForms() {
         return this.$store.getters.createdForms || [];
+      },
+
+      publishedForms(){
+        return this.$store.getters.publishedForms || [];
       },
 
       searchedForm() {
@@ -143,7 +147,10 @@
 
       deleteForm(form) {
 
-        if (confirm(`Etes vous sur de vouloir supprimer ce formoop? \nCelui-ci perdra ses questions, et sera supprimé des campagnes et des formoops publiés `)) {
+        if (confirm(`Etes vous sur de vouloir supprimer ce formoop?
+                      \nAttention!
+                      \nCelui-ci perdra ses questions, et sera supprimé des campagnes et des formoops publiés.
+                      \n Vous n'aurez plus accès aux réponse du formoop `)) {
 
           //delete from created forms
           const createdFormsChanged = deleteFormFromCreated(this.createdForms, form.id);
@@ -154,6 +161,9 @@
           saveFormCampaignsFB(campaignsChanged);
 
           //delete published form
+          console.log(JSON.stringify(this.publishedForms))
+          const publishedFormsChanged = deleteFormFromPublished(this.publishedForms, form.id);
+          savePublishedFormsFB(publishedFormsChanged)
         }
       },
 

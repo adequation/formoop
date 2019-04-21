@@ -19,6 +19,27 @@ export function deleteFormFromCreated(createdForms, formID) {
   return createdFormsChanged;
 }
 
+export function deleteFormFromPublished(publishedForms, formID) {
+  let publishedFormsCopy = {...publishedForms};
+
+  const forms = Object.keys(publishedForms).map(id => {
+    return publishedFormsCopy[id];
+  });
+
+  const index = forms.findIndex(f => f.id === formID);
+  if (index >= 0) {
+    forms.splice(index, 1);
+  }
+
+  let publishedFormsChanged = {};
+
+  forms.forEach(f => {
+    publishedFormsChanged[f.id] = {...f}
+  });
+
+  return publishedFormsChanged;
+}
+
 export function deleteFormFromCampaigns(formCampaigns, formID) {
   let formCampaignCopy = {...formCampaigns};
 
