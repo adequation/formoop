@@ -12,10 +12,9 @@ import FormCampaign from '@/components/general/FormCampaign'
 import CreatorCampaign from '@/components/creator/CreatorCampaign'
 import ClosedForm from '@/components/general/ClosedForm'
 import SupervisorCampaignDashboard from '@/components/supervisor/SupervisorCampaignDashboard'
-import GridWIP from '@/components/containers/CustomGrid/GripWIP'
-
 import Firebase from 'firebase';
 import CreatorClosedForms from "../components/creator/CreatorClosedForms";
+import CsvHelpPage from "../components/general/CsvHelpPage";
 
 Vue.use(Router);
 
@@ -156,12 +155,12 @@ const router = new Router({
       }
     },
     {
-      path: '/wip/',
-      name: 'WIP',
-      component: GridWIP,
+      path: '/csv-help',
+      name: 'CsvHelp',
+      component: CsvHelpPage,
       meta: {
-        requiresAuth: true,
-        any: false
+        requiresAuth: false,
+        any: true
       }
     },
 

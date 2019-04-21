@@ -104,7 +104,7 @@
   import {inviteEntryPoint, inviteUser} from "@/thunks/userAccountThunks";
   import CopyToClipboardInput from "@/components/general/CopyToClipboardInput";
   import MailSender from "@/components/general/MailSender";
-  import CSVImportModal from "@/components/creator/CSVImportModal";
+  import CSVImportModal from "@/components/creator/CsvImportModal";
   import {getFormURL} from "@/helpers/rooterHelpers";
   import {getInvitationEntryPointText} from "@/helpers/mailHelpers";
   import {clipText} from "@/helpers/generalHelpers";
@@ -367,6 +367,7 @@
   }
 
   .delete-entry-point-button:hover {
+    cursor: pointer;
     color: tomato;
   }
 

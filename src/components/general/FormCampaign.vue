@@ -4,9 +4,11 @@
 
     <div v-if="campaignAsArray.length > 0">
 
-      <p v-for="campaign in campaignAsArray">
+      <div v-for="campaign in campaignAsArray">
         <router-link :to=getCampaignPath(campaign)>{{campaign.name}} ({{(campaign.forms || []).length}} Formoop)</router-link>
-      </p>
+        <i class="material-icons md-18" role="button" @click.stop=""
+           @click="deleteCampaign(campaign.id)">clear</i>
+      </div>
 
     </div>
 
@@ -30,7 +32,8 @@
 <script>
   import * as uuid from "uuid";
   import {saveFormCampaignFB} from "../../thunks/creatorForm";
-  import {doesCampaignExists} from "../../helpers/campaignsHelpers";
+  import {doesCampaignExists, deleteCampaignFromFormCampaigns} from "../../helpers/campaignsHelpers";
+  import {saveFormCampaignsFB} from "@/thunks/creatorForm"
 
   export default {
     name: "FormCampaign",
@@ -56,6 +59,13 @@
           } else this.newCampaignAlreadyExists = true;
         }
         this.newCampaignName = null;
+      },
+
+      deleteCampaign(campaignID){
+        if (confirm(`Etes vous sur de vouloir supprimer cette campagne? \nToute progression associée sera perdue`)){
+         const campaignsChanged = deleteCampaignFromFormCampaigns(this.formCampaigns, campaignID);
+         saveFormCampaignsFB(campaignsChanged);
+        }
       }
     },
 

@@ -1,21 +1,21 @@
 <template>
   <div>
-    <form>
-      <select title="" @change="onChange($event.target)">
-        <option value="-1"> </option>
-        <option v-for="(a, i) in answers" :key="a.id" :name="a.text" :value="a.id" :selected="selectedAnswers === a.id">
-          {{a.text}} </option>
-      </select>
-    </form>
+
+      <CustomSelect :options="optionsNames" :optionType="optionType" :selected="getOptionNameFromID(selectedAnswers)" class="option-select"/>
+
   </div>
 </template>
 
 <script>
+  import CustomSelect from "../general/CustomSelect";
+
   export default {
     name: 'AnswerSelect',
-    data () {
+    components: {CustomSelect},
+    data() {
       return {
-        selectedAnswers: this.currentUserAnswers || null
+        selectedAnswers: this.currentUserAnswers || null,
+        optionType: "Réponse"
       }
     },
     props: {
@@ -37,29 +37,54 @@
       }
     },
     methods: {
-      onChange: function (target) {
-        if (target.value !== '-1') {
-          this.selectedAnswers = target.value;
-        } else {
-          this.selectedAnswers = null;
-        }
 
-        this.setSelectedAnswers()
+      setSelectedAnswers: function (answer) {
+        this.$root.$emit('set-selected-answers', this.entryID, answer)
       },
 
-      setSelectedAnswers: function () {
-        this.$root.$emit('set-selected-answers', this.entryID, this.selectedAnswers)
+      getOptionNameFromID(optionID){
+        let optionName = null;
+        this.answers.forEach(a => {
+          if (a.id === optionID) optionName = a.text
+        });
+        return optionName;
       }
     },
 
-    watch:{
+    watch: {
       currentUserAnswers: function (val) {
         this.selectedAnswers = val || null;
         this.setSelectedAnswers();
       }
+    },
+    created() {
+      this.$on('set-option-selection', option => {
+        if(option === null){
+
+          this.setSelectedAnswers(null);
+        }
+        else{
+          let answer = '';
+          this.answers.forEach(a => {
+            if (a.text === option) answer = a.id
+          });
+          this.setSelectedAnswers(answer);
+        }
+      });
+    },
+    computed: {
+      optionsNames() {
+        return this.answers.map(a => {
+          return a.text;
+        })
+      },
     }
   }
 </script>
 
 <style scoped>
+  .option-select{
+    width: 180px;
+    margin: 7px auto;
+  }
 </style>
