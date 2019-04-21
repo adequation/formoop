@@ -973,4 +973,17 @@
 
     cursor: pointer;
   }
+
+  .creator-form-title{
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    width: 300px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid rgb(217, 217, 217);
+    font-size: 1.5em;
+    text-align: center;
+    color: #2c3e50;
+  }
+
 </style>

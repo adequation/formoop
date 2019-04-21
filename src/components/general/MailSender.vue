@@ -216,7 +216,6 @@
 
   .send-mail-button:hover {
     color: white;
-    transform: scale(1.1);
   }
 
   .mail-form {

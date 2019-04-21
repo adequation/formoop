@@ -367,6 +367,7 @@
   }
 
   .delete-entry-point-button:hover {
+    cursor: pointer;
     color: tomato;
   }
 

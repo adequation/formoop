@@ -191,7 +191,8 @@
   }
 
   .add-new-campaign {
-    width: 12%;
+    width: 150px;
+    font-size: 0.9em;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

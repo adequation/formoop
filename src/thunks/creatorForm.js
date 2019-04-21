@@ -1,5 +1,5 @@
 import * as Firebase from 'firebase'
-import {campaignPath, getCreatedFormFromID, getPublishedFormFromID, publishingPath} from "@/helpers/firebaseHelpers";
+import {campaignPath, getCreatedFormFromID, getPublishedFormFromID, publishingPath, getCreatedForms} from "@/helpers/firebaseHelpers";
 import * as uuid from "uuid";
 import {addFormToWantedCampaigns, removeFormFromUnwantedCampaigns} from "@/helpers/campaignsHelpers";
 import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helpers/accountHelpers";
@@ -15,6 +15,14 @@ export const saveCreatorFormFB = (creatorID, formID, form) => {
   return Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
     .set(form);
 
+};
+
+export const saveCreatedFormsFB = (creatorID, forms) => {
+  return Firebase.database().ref(getCreatedForms(creatorID)).set(forms);
+};
+
+export const savePublishedFormsFB = (forms) => {
+  return Firebase.database().ref(publishingPath).set(forms);
 };
 
 export const saveFormCampaignFB = (campaignID, campaign) => {
