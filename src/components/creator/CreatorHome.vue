@@ -245,12 +245,6 @@
     margin-right: 10px;
   }
 
-  .form-grid-delete-button {
-    top: 0;
-    right: 0;
-    position: absolute;
-  }
-
   .form-grid-description {
   }
 

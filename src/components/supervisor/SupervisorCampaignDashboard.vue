@@ -3,6 +3,11 @@
 
     <h1>{{campaignName}}</h1>
 
+    <div class="form-delete-button" title="Supprimer le formulaire">
+      <i class="material-icons md-48" role="button" @click.stop=""
+         @click="deleteCampaign">clear</i>
+    </div>
+
     <Modal v-if="showSingleForm" @close="showSingleForm = false">
 
       <div slot="body">
@@ -124,6 +129,8 @@
   import DownloadCampaign from "../general/DownloadCampaign";
   import DownloadForm from "../general/DownloadForm";
   import DownloadCampaignModal from "./DownloadCampaignModal";
+  import {deleteCampaignFromFormCampaigns} from "../../helpers/campaignsHelpers";
+  import {saveFormCampaignsFB} from "@/thunks/creatorForm"
 
   export default {
     name: "SupervisorCampaignDashboard",
@@ -176,6 +183,10 @@
         return this.campaign ? this.campaign.id : this.$route.params.campaignID;
       },
 
+      formCampaigns() {
+        return this.$store.getters.formCampaigns;
+      },
+
     },
 
     methods: {
@@ -205,6 +216,14 @@
           activePercentage = activeParticipantNumber(usersAnswers) / totalNumberOfInvitedPeople;
 
         return `${activeParticipantNumber(usersAnswers)} (${activePercentage * 100}%)`;
+      },
+
+      deleteCampaign(){
+        if (confirm(`Etes vous sur de vouloir supprimer cette campagne? \nToute progression associée sera perdue`)){
+          const campaignsChanged = deleteCampaignFromFormCampaigns(this.formCampaigns, this.campaignID);
+          saveFormCampaignsFB(campaignsChanged);
+          this.$router.push("/campaigns/");
+        }
       }
 
     },
@@ -369,4 +388,17 @@
   .supervisor-footer {
     margin: 8em;
   }
+
+  .form-delete-button{
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 999;
+    color: tomato;
+  }
+
+  .form-delete-button:hover{
+    cursor: pointer;
+  }
+
 </style>

@@ -2,12 +2,11 @@
   <div>
     <h1>Campagnes</h1>
 
+    <!--
     <div v-if="campaignAsArray.length > 0">
 
       <div v-for="campaign in campaignAsArray">
-        <router-link :to=getCampaignPath(campaign)>{{campaign.name}} ({{(campaign.forms || []).length}} Formoop)</router-link>
-        <i class="material-icons md-18" role="button" @click.stop=""
-           @click="deleteCampaign(campaign.id)">clear</i>
+        <router-link :to=getCampaignPath(campaign)>{{campaign.name}} ({{(campaign.forms || []).length}} Formoop(s))</router-link>
       </div>
 
     </div>
@@ -24,7 +23,73 @@
     />
     <button class="create-campaign-button" @click="createNewCampaign">Créer une campagne</button>
     <p v-if="newCampaignAlreadyExists">Cette campagne existe déjà</p>
+    -->
 
+    <!--- -->
+
+    <div class="space-header"></div>
+
+    <div class="campaigns-header">
+
+      <div class="search-campaign">
+        <input class="search-box"
+               type="text"
+               placeholder="Rechercher une campagne"
+               v-model="searchQuery"
+               @click.stop=""/>
+        <div class="clean-search-button">
+          <i v-if="searchQuery" class="material-icons md-18" role="button" @click.stop=""
+             @click="searchQuery = ''">clear</i>
+        </div>
+      </div>
+
+    </div>
+
+    <div v-if="campaignAsArray.length > 0">
+
+      <div class="campaigns-grid">
+
+        <div v-for="campaign in searchedCampaign"
+             :key="campaign.id"
+             class="user-grid-entry"
+             @click="navigate(campaign)"
+             :title="campaign.name"
+        >
+          <div class="campaign-content">
+            <div class="campaign-grid-header">
+              <div class="campaign-grid-title">
+                {{campaign.name}}
+              </div>
+            </div>
+
+            <hr/>
+
+            <div class="campaign-grid-description">
+              <div class="campaign-form-number">
+                {{(campaign.forms || []).length}} Formoop(s)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-else>
+      <h1>Aucune campagne</h1>
+    </div>
+
+    <div class="campaign-footer">
+      <div class="create-campaign">
+        <input class="create-campaign-box"
+               type="text"
+               placeholder="Ajouter une campagne"
+               v-model="newCampaignName"
+               @keydown.enter="createNewCampaign"
+        />
+        <div @click="createNewCampaign"><i class="material-icons md-24"
+                                                                  title="Créer une campagne">add_circle</i></div>
+      </div>
+    </div>
 
   </div>
 </template>
@@ -32,21 +97,25 @@
 <script>
   import * as uuid from "uuid";
   import {saveFormCampaignFB} from "../../thunks/creatorForm";
-  import {doesCampaignExists, deleteCampaignFromFormCampaigns} from "../../helpers/campaignsHelpers";
-  import {saveFormCampaignsFB} from "@/thunks/creatorForm"
+  import {doesCampaignExists} from "../../helpers/campaignsHelpers";
 
   export default {
     name: "FormCampaign",
     data() {
       return {
         newCampaignName: null,
-        newCampaignAlreadyExists: false
+        newCampaignAlreadyExists: false,
+        searchQuery: ""
       }
     },
 
     methods: {
       getCampaignPath(campaign) {
         return "monitor/campaign/".concat(campaign.id);
+      },
+
+      navigate(campaign) {
+        this.$router.push(this.getCampaignPath(campaign));
       },
 
       createNewCampaign() {
@@ -61,12 +130,7 @@
         this.newCampaignName = null;
       },
 
-      deleteCampaign(campaignID){
-        if (confirm(`Etes vous sur de vouloir supprimer cette campagne? \nToute progression associée sera perdue`)){
-         const campaignsChanged = deleteCampaignFromFormCampaigns(this.formCampaigns, campaignID);
-         saveFormCampaignsFB(campaignsChanged);
-        }
-      }
+
     },
 
     computed: {
@@ -74,20 +138,171 @@
         return this.$store.getters.formCampaigns;
       },
 
-      campaignAsArray(){
+      campaignAsArray() {
         return Object.keys(this.formCampaigns).map(key => this.formCampaigns[key]);
+      },
+
+      searchedCampaign() {
+        return this.campaignAsArray.filter(f =>
+          this.searchTokens.every(t =>
+            f.name.toLowerCase().includes(t.toLowerCase())
+          ));
+      },
+
+      searchTokens() {
+        return this.searchQuery.split(' ');
       },
     },
 
     created() {
       this.$store.dispatch('setPublishedForms');
       this.$store.dispatch('setFormCampaigns');
-    }
+    },
   }
 </script>
 
 <style scoped>
-  .create-campaign-button{
+
+  .campaigns-header {
+    margin-left: 20%;
+    margin-right: 20%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1em;
+  }
+
+  .search-campaign {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    justify-content: normal;
+    align-items: center;
+  }
+
+  .search-box {
+    width: 175px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid rgb(217, 217, 217);
+    font-size: 1em;
+    color: #2c3e50;
+    margin: 0px 2px 0px 2px;
+  }
+
+  .search-box:focus {
+    outline: none;
+  }
+
+  .search-box::placeholder {
+    font-size: 0.9em;
+  }
+
+  .campaigns-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    grid-auto-rows: 1fr;
+    width: auto;
+    margin-left: 20%;
+    margin-right: 20%;
+  }
+
+  .campaigns-grid > *:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+
+    -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .campaign-content {
+    height: 100%;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .user-grid-entry {
+    margin: 2px;
+    background: #f6f6f6;
+
+    transition: transform .2s;
+  }
+
+  hr {
+    width: 80%;
+    margin-left: 10%;
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    padding: 0;
+  }
+
+  .campaign-grid-header {
+
+  }
+
+  .campaign-grid-title {
+    margin-left: 5px;
+    margin-right: 10px;
+  }
+
+  .campaign-grid-description {
+  }
+
+  .campaign-form-number {
+
+  }
+
+  .create-campaign > div {
+    cursor: pointer;
+    color: #00000070;
+  }
+
+  .create-campaign > div :hover {
+    cursor: pointer;
+    color: #000000aa;
+  }
+
+  .space-header {
+    margin-bottom: 5em;
+  }
+
+  .clean-search-button :hover {
+    cursor: pointer;
+  }
+
+  .campaign-footer{
+    margin-left: 20%;
+    margin-right: 20%;
+    align-items: center;
+    display: inline-block;
+  }
+  .create-campaign {
+    margin-top: 1em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .create-campaign input {
+    width: 175px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid rgb(217, 217, 217);
+    font-size: 1em;
+    color: #2c3e50;
+  }
+
+  .create-campaign i:hover {
     cursor: pointer;
   }
 </style>
