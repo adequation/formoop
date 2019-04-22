@@ -124,7 +124,7 @@
       },
 
       navigate(form) {
-        this.$router.push(this.getFormPath(form));
+        this.$router.replace(this.getFormPath(form));
       },
 
       isFormPublished(form) {

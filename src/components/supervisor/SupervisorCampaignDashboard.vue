@@ -219,10 +219,10 @@
       },
 
       deleteCampaign(){
-        if (confirm(`Etes vous sur de vouloir supprimer cette campagne? \nToute progression associée sera perdue`)){
+        if (confirm(`Êtes vous sur de vouloir supprimer cette campagne? \nToute progression associée sera perdue`)){
           const campaignsChanged = deleteCampaignFromFormCampaigns(this.formCampaigns, this.campaignID);
           saveFormCampaignsFB(campaignsChanged);
-          this.$router.push("/campaigns");
+          this.$router.replace("/campaigns");
         }
       }
 

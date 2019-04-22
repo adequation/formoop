@@ -557,7 +557,7 @@
 
 
       deleteForm() {
-        if (confirm(`Etes vous sur de vouloir supprimer ce formoop?
+        if (confirm(`Êtes vous sur de vouloir supprimer ce formoop?
                       \nAttention!
                       \nCelui-ci perdra ses questions, et sera supprimé des campagnes et des formoops publiés.
                       \nVous n'aurez plus accès aux réponse du formoop `)) {
@@ -574,7 +574,7 @@
           const publishedFormsChanged = deleteFormFromPublished(this.publishedForms, this.formID);
           savePublishedFormsFB(publishedFormsChanged);
 
-          this.$router.push("/create/");
+          this.$router.replace("/create");
         }
       }
     },
