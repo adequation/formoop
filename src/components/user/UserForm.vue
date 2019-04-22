@@ -534,9 +534,6 @@
     padding: 0.5em;
 
     width: 75%;
-
-
-    overflow-x: auto;
   }
 
   .user-form-section-list-wrapper svg{

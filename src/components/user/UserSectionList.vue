@@ -68,10 +68,8 @@
       draw() {
         const svg =
           d3.select('#user-section-svg')
-            .attr('width', "100%")
-            .attr('height', this.h + 'px')
-            .attr('viewBox',
-              `0 0 ${this.circlePadding * 2 + (this.radius + this.circlePadding) * this.sections.length} ${this.h}`);
+            .attr('width', `${(this.margin.left + this.margin.right)*2 + (this.circlePadding * 2 + (this.radius + this.circlePadding)) * this.sections.length}`)
+            .attr('height', this.h + 'px');
 
         const arc = d3.arc()
           .innerRadius(0)
@@ -219,7 +217,7 @@
 
 <style scoped>
 
-  #user-section-svg {
-
+  .user-section-list {
+    overflow-x: auto;
   }
 </style>
