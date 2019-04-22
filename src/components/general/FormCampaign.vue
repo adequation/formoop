@@ -162,7 +162,7 @@
     border-bottom: 2px solid rgb(217, 217, 217);
     font-size: 1em;
     color: #2c3e50;
-    margin: 0 2 0 2;
+    margin: 0 2px 0 2px;
   }
 
   .search-box:focus {
