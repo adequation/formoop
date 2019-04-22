@@ -59,12 +59,11 @@
   .drawer-wrapper {
     height: 100%;
 
-
   }
 
   .drawer-container {
     z-index: 9999;
-    width: 20%;
+    width: 18%;
     height: 100%;
     margin: 0;
     padding: 1em;
@@ -72,7 +71,6 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
     transition: all .3s ease;
     font-family: Helvetica, Arial, sans-serif;
-
   }
 
   .drawer-body {
