@@ -86,24 +86,44 @@
 
         <div class="user-form-menu-items">
           <div class="user-form-filter-buttons-wrapper">
-            <button v-for="f in filters" @click="changeFilter(f.name)"
-                    type="button"
-                    :class="filter===f.name ? 'user-form-filter-button-selected' : 'user-form-filter-button'"
-                    :title=f.description>
-              <i class="material-icons">{{f.icon}}</i>
+
+            <drawer v-if="showFilterDrawer" @close="showFilterDrawer=false">
+              <div slot="header">
+                <h1> Filtres </h1>
+              </div>
+              <div slot="body">
+                <div v-for="elem in filters"
+                     v-if="elem.name !== filter"
+                     :title="elem.description"
+                     @click="changeFilter(elem.name); showFilterDrawer=false">
+                  <span class="drawer-content"><i v-if="elem.icon" class="material-icons md-16">{{elem.icon}}</i> {{elem.description}}</span>
+                </div>
+              </div>
+            </drawer>
+
+            <button class="user-form-filter-button" type="button" @click="showFilterDrawer=true">
+              <i v-if="filters.find(f => f.name === filter).icon" class="material-icons md-24">{{filters.find(f => f.name === filter).icon}}</i>
+            </button>
+
+            <drawer v-if="showSorterDrawer" @close="showSorterDrawer=false">
+              <div slot="header">
+                <h1> Tris </h1>
+              </div>
+              <div slot="body">
+                <div v-for="elem in sorters"
+                     v-if="elem.name !== selectedSorter.name"
+                     :title="elem.description"
+                     @click="changeSorter(elem.name); showSorterDrawer=false">
+                  <span class="drawer-content"><i v-if="elem.icon" class="material-icons md-16">{{elem.icon}}</i> {{elem.description}}</span>
+                </div>
+              </div>
+            </drawer>
+
+            <button class="user-form-sort-button" type="button" @click="showSorterDrawer=true">
+              <i v-if="selectedSorter.icon" class="material-icons md-24">{{selectedSorter.icon}}</i>
             </button>
 
             <div class="vertical-separator"></div>
-
-            <button v-for="s in sorters" @click="selectedSorter = s"
-                    type="button"
-                    class="user-form-sort-button"
-                    :title="s.description">
-              <i class="material-icons">{{s.icon}}</i>
-            </button>
-
-            <div class="vertical-separator"></div>
-
 
             <button @click="cleanAllFilters"
                     type="button"
@@ -160,16 +180,22 @@
   import {decodeEmailToken} from "@/helpers/accountHelpers";
   import UserCloseForm from "./UserCloseForm";
   import UserGetFormLinkModal from "./UserGetFormLinkModal";
+  import DropUpMenu from "../containers/DropUpMenu";
+  import Drawer from "../containers/Drawer";
 
   export default {
     name: 'UserForm',
     components: {
+      Drawer,
+      DropUpMenu,
       UserGetFormLinkModal,
       UserCloseForm,
       UserSectionList, UserEntryGrid, DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
     data() {
       return {
         showModal: false,
+        showFilterDrawer: false,
+        showSorterDrawer: false,
         showGetFormLinkModal: false,
         selectedAnswers: {},
 
@@ -181,7 +207,13 @@
           {name: 'grid', description: 'Afficher en grille', icon: 'apps'},
         ],
 
-        selectedSorter: '',
+        selectedSorter: {
+          name: 'alphabetical',
+          description: 'Filtrer par ordre alphabetique',
+          icon: 'sort_by_alpha',
+          sortingLayer: 0,
+          sort: (a, b) => a.question.title.localeCompare(b.question.title)
+        },
         sorters: [
           {
             name: 'alphabetical',
@@ -198,44 +230,6 @@
             sort: (a, b) => b.question.title.localeCompare(a.question.title)
           },
         ],
-
-        /*
-
-        {
-            name: 'answered',
-            description: 'Avec réponse en premier',
-            icon: 'expand_less',
-            sortingLayer: 1,
-            sort: (a, b) => {
-              const aAnswered = this.hasAnsweredToEntry(a);
-              const bAnswered = this.hasAnsweredToEntry(b);
-
-              if (!aAnswered) {
-                if (!bAnswered) return 0;
-                return 1;
-              }
-              if (!bAnswered) return 0;
-              return 0;
-            }
-          },
-          {
-            name: 'notAnswered',
-            description: 'Sans réponse en premier',
-            icon: 'expand_more',
-            sortingLayer: 1,
-            sort: (a, b) => {
-              const aAnswered = this.hasAnsweredToEntry(a);
-              const bAnswered = this.hasAnsweredToEntry(b);
-              if (aAnswered) {
-                if (bAnswered) return 0;
-                return 1;
-              }
-              if (bAnswered) return 0;
-              return 0;
-            }
-          },
-
-         */
 
         searchQuery: '',
 
@@ -406,6 +400,10 @@
             this.filter = 'all';
             break;
         }
+      },
+
+      changeSorter (sorter){
+        this.selectedSorter = this.sorters.find(s => s.name === sorter);
       },
 
       cleanAllFilters() {
@@ -658,6 +656,17 @@
     border-right: 1px solid #00000055;
     height: 60px;
     top: 10px;
+  }
+
+  .drawer-content{
+    float: left;
+    font-size: large;
+    cursor: pointer;
+    padding: 8px 8px 8px 10px;
+  }
+
+  .drawer-content:hover{
+    color: rgba(0, 0, 0, .5);
   }
 
 
