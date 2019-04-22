@@ -25,12 +25,6 @@
 
 
       <div v-for="(entry, i) in formEntries">
-        <!--<div v-if="i <= 0">
-          <div v-for="label in labels" v-if="label.under < 0">
-            <button type="button" @click="addLabel(i)">+label</button>
-            <CreatorFormLabel :label="label"/>
-          </div>
-        </div>!-->
 
         <div
              :key="entry.id"
@@ -47,18 +41,6 @@
             :currentSection="entry.section"
           />
         </div>
-
-        <!--<div class="label-buttons-wrapper">
-          <div class="smooth add-label-button-left" title="ajouter un label" @click="addLabel(i)"></div>
-          <div class="smooth add-label-button-right" title="ajouter un label" @click="addLabel(i)"></div>
-        </div>
-
-
-        <div v-if="!!labels.find(l => l.under === i)">
-          <div v-for="label in labels" v-if="label.under === i">
-            <CreatorFormLabel :label="label"/>
-          </div>
-        </div>!-->
       </div>
 
       <div class="fake-entry">

@@ -15,7 +15,9 @@
       return {
         circlePadding: 20,
         h: 100,
-        radius: 75,
+        radius: 45,
+
+        margin: {left: 10, right: 10, top: 10, bottom: 10},
 
         oldPieData: {}
       }
@@ -48,13 +50,9 @@
         }
       },
 
-      colors(sectionID, name, value) {
-        /*if (sectionID === this.focusedSection) {
-          if (name === 'full') return '#4286f4';
-          return '#ffffff';
-        }*/
+      colors(value, i) {
 
-        if (name === 'empty') return '#DDDDDD';
+        if (i === 1) return '#DDDDDD';
 
         if (value >= 0.75) return '#42b983';
 
@@ -70,159 +68,134 @@
       draw() {
         const svg =
           d3.select('#user-section-svg')
-            .attr('width', "100%")
-            .attr('height', this.h + 'px')
-            .attr('viewBox',
-              `0 0 ${this.circlePadding * 2 + (this.radius + this.circlePadding) * this.sections.length} ${this.h}`);
+            .attr('width', `${(this.margin.left + this.margin.right)*2 + (this.circlePadding * 2 + (this.radius + this.circlePadding)) * this.sections.length}`)
+            .attr('height', this.h + 'px');
 
-        const arc = d3
-          .arc()
+        const arc = d3.arc()
           .innerRadius(0)
-          .outerRadius(this.radius / 2);
+          .outerRadius(this.radius);
 
-        const focusedArc = d3
-          .arc()
-          .innerRadius(0)
-          .outerRadius(this.radius / 1.7);
-
-        const pie = d3.pie()
-          .padAngle(0)
-          .sort(null)
-          .value(d => d.value);
-
-        const pies = svg
-          .selectAll("g")
-          .data(this.sections)
-          .enter()
-          .append("g")
-          .attr(
-            "transform",
-            (d, i) => {
-              return `translate(${(i + 1) * this.radius + i * this.circlePadding} , ${this.h / 2})`;
-            }
-          );
-
-        const links = pies
-          .filter((d, i) => i !== this.sections.length - 1)
-          .append("line")
-          .attr("x1", 0)
-          .attr("y1", 0)
-          .attr("x2", this.radius + this.circlePadding)
-          .attr("y2", 0);
-
-        pies
-          .selectAll("path")
-          .data(d => pie(d.values.map(v => ({...v, sectionID: d.id}))))
-          .enter()
-          .append("path");
+        const dataArcs = this.sections.map(d => ({
+          ...d,
+          pie: d3.pie().sort(null)([d.values[0].value, d.values[1].value])
+        }));
 
 
-        const label = pies
-          .append("text")
-          .attr("dy", ".35em")
-          .style("font-size", function (d) {
-            return (this.radius * 1.3) / 10 + "px";
-          })
-          .attr("text-anchor", "middle")
-          .style("font-family", '"Avenir", Helvetica, Arial, sans-serif');
+        svg.selectAll(".line").data([{}]).join(e => e.append("line").attr("class", "line").attr("x1", this.radius + this.margin.left)
+          .attr("y1", this.h / 2)
+          .attr("x2", (this.sections.length - 1) * this.radius * 2 + this.radius + (this.circlePadding * this.sections.length - 1) + this.margin.left)
+          .attr("y2", this.h / 2).attr("stroke", "black"))
+          .transition().duration(500)
+          .attr("x1", this.radius + this.margin.left)
+          .attr("y1", this.h / 2)
+          .attr("x2", (this.sections.length - 1) * this.radius * 2 + this.radius + (this.circlePadding * this.sections.length - 1) + this.margin.left)
+          .attr("y2", this.h / 2).attr("stroke", "black");
 
-        const border = pies
-          .append("circle")
-          .attr("cx", 0)
-          .attr("cy", 0)
-          .attr("fill", "transparent")
-          .on("mouseover", function () {
-            d3.select(this).attr("fill", "rgba(255,255,255,0.5)");
-            d3.select(this).style("cursor", "pointer");
-          })
-          .on("mouseout", function () {
-            d3.select(this).attr("fill", "transparent");
-            d3.select(this).style("cursor", "default");
-          })
-          .on("click", (d) => {
-            this.$parent.$emit('section-list-choice', d)
-          });
+        const g = svg.selectAll(".pies").data(dataArcs, d => d.id).join(
+          enter => {
+            enter = enter.append("g").style("cursor", "pointer")
+              .attr("class", "pies")
+              .attr("text-anchor", "middle")
+              .style("font", "15px sans-serif")
+              .attr("transform", (d, i) => `translate(${i * this.radius * 2 + this.radius + (this.circlePadding * i) + this.margin.left},${this.h / 2})`)
 
-        border.append("title").text((d) => d.name);
+            enter.selectAll("path").data(d => d.pie).enter().append("path");
 
-        svg.selectAll('path')
-          .transition()
-          .duration(500)
+            enter.append("text");
+
+            enter.append("circle").attr("fill-opacity", 0).attr("fill", "black")
+              .on("mouseover", function () {
+                d3.select(this).attr("fill-opacity", 0.15);
+              })
+              .on("mouseout", function () {
+                d3.select(this).attr("fill-opacity", 0);
+              })
+              .on("click", (d) => {
+                this.$parent.$emit('section-list-choice', d);
+              });
+            return enter
+          }
+          ,
+          update => update.transition()
+            .duration(500)
+            .attr("transform", (d, i) => `translate(${i * this.radius * 2 + this.radius + (this.circlePadding * i)
+            + this.margin.left},${this.h / 2})`),
+
+          exit => exit.remove());
+
+        g.select("circle").attr("r", this.radius)
+          .attr("stroke", "black")
+          .attr("stroke-width", d => d.id === this.focusedSection ? '3' : '1');
+
+        g.select("text")
+          .selectAll("tspan")
+          .data(d => this.fit(d.name, this.radius).lines)
+          .join("tspan")
+          .attr("x", 0)
+          .attr("y", (d, i, data) => (i - data.length / 2 + 0.8) * 15)
+          .text(d => d.text);
+
+
+        g.selectAll("path")
+          .data(d => d.pie)
+          .join(
+            enter => enter.append("path"),
+            update => update,
+            exit => exit.remove()
+          ).transition().duration(500).attrTween("d", function (d) {
+
+          let i = d3.interpolate(this._current, d);
+
+          this._current = i(0);
+
+          return function (t) {
+            return arc(i(t));
+          };
+        })
           .attr("fill", (d, i) => {
-            return this.colors(d.data.sectionID, d.data.name, this.updatedValue(d))
+            return this.colors(d.value, i)
           })
-          .attrTween("d", d => {
-            let newPieData = this.updatedValue(d, pie);
-
-            let arcTweenValue;
-
-            //update the old value
-            if (!this.oldPieData[d.data.sectionID]) this.oldPieData[d.data.sectionID] = {};
-            if (!this.oldPieData[d.data.sectionID][d.data.name])
-              this.oldPieData[d.data.sectionID][d.data.name] = newPieData;
-
-            arcTweenValue = this.arcTween(newPieData, this.oldPieData[d.data.sectionID][d.data.name], arc);
-            if (d.data.sectionID === this.focusedSection)
-              arcTweenValue = this.arcTween(newPieData, this.oldPieData[d.data.sectionID][d.data.name], focusedArc);
-
-            this.oldPieData[d.data.sectionID][d.data.name] = newPieData;
-
-            return arcTweenValue;
-          });
-
-
-        svg.selectAll('circle')
-          .transition()
-          .duration(500)
-          .attr("r", (d) => {
-            if (d.id === this.focusedSection) return this.radius / 1.7;
-            return this.radius / 2
-          })
-          .attr("stroke", (d) => {
-            return 'black'
-          })
-          .attr('stroke-width', (d, i) => {
-            if (d.id === this.focusedSection) return '3';
-            return '1.5';
-          });
-
-        svg.selectAll('line')
-          .transition()
-          .duration(500)
-          .attr("stroke", d => {
-            return 'black'
-          })
-          .attr("stroke-width", d => {
-            if (d.id === this.focusedSection ||
-              this.sections[this.sections.findIndex(s => s.id === d.id) + 1].id === this.focusedSection) return this.radius / 5 + "px";
-            return this.radius / 10 + "px"
-          });
-
-        svg.selectAll('text')
-          .text((d, i) => {
-            if (d.id === this.focusedSection) return d.name.length > 9 ? d.name.substring(0, 8) + "..." : d.name;
-            return d.name.length > 5 ? d.name.substring(0, 4) + "..." : d.name
-          })
-
       },
 
-      //get around faulty value updating
+      //measure the width of a text
+      measureWidth(text) {
+        const context = document.createElement("canvas").getContext("2d");
+        return text => context.measureText(text).width;
+      },
 
-      updatedValue(d, pie) {
-        const newData = this.sections.find(s => s.id === d.data.sectionID);
-        let newPieData;
-        if (newData) {
-          if (pie) {
-            newPieData = pie(newData.values);
-            return newPieData.find(v => v.data.name === d.data.name);
+      //used to fit text inside a circle
+      fit(text, value) {
+        let line;
+        let lineWidth0 = Infinity;
+        const lineHeight = 12;
+        const targetWidth = Math.sqrt(this.measureWidth(text.trim()) * lineHeight);
+        const words = text.split(/\s+/g); // To hyphenate: /\s+|(?<=-)/
+        if (!words[words.length - 1]) words.pop();
+        if (!words[0]) words.shift();
+        const lines = [];
+        for (let i = 0, n = words.length; i < n; ++i) {
+          let lineText1 = (line ? line.text + " " : "") + words[i];
+          let lineWidth1 = this.measureWidth(lineText1);
+          if ((lineWidth0 + lineWidth1) * 0.4 < targetWidth) {
+            line.width = lineWidth0 = lineWidth1;
+            line.text = lineText1;
+          } else {
+            lineWidth0 = this.measureWidth(words[i]);
+            line = {width: lineWidth0, text: words[i]};
+            lines.push(line);
           }
-
-          return newData.values.find(v => v.name === d.data.name).value;
         }
-
-        return d;
+        //  if (value !== undefined) lines.push({width: this.measureWidth(value), text: value});
+        let radius = 0;
+        for (let i = 0, n = lines.length; i < n; ++i) {
+          const dy = (Math.abs(i - n / 2 + 0.5) + 0.5) * lineHeight;
+          const dx = lines[i].width / 2;
+          radius = Math.max(radius, Math.sqrt(dx ** 2 + dy ** 2));
+        }
+        return {lines, radius};
       }
     },
+
     mounted() {
       this.draw();
     },
@@ -243,4 +216,8 @@
 </script>
 
 <style scoped>
+
+  .user-section-list {
+    overflow-x: auto;
+  }
 </style>

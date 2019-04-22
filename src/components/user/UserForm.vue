@@ -15,7 +15,7 @@
 
 
     <div class="user-form-section-list-wrapper">
-      <UserSectionList v-if="sections.length > 0"
+      <UserSectionList v-if="sections.length > 0 && user"
                        :sections="sections" :focusedSection="focusedSection"
                        :formEntries="formEntries" :userAnswers="userAnswers"></UserSectionList>
     </div>
@@ -539,6 +539,10 @@
     padding: 0.5em;
 
     width: 75%;
+  }
+
+  .user-form-section-list-wrapper svg{
+    overflow-x: auto;
   }
 
   .user-form-filter-button {
