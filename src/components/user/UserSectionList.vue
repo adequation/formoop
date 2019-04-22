@@ -68,7 +68,7 @@
       draw() {
         const svg =
           d3.select('#user-section-svg')
-            .attr('width', `${(this.margin.left + this.margin.right)*2 + (this.circlePadding * 2 + (this.radius + this.circlePadding)) * this.sections.length}`)
+            .attr('width', this.margin.left + this.margin.right + this.circlePadding * (this.sections.length-1) + this.radius*2 * this.sections.length)
             .attr('height', this.h + 'px');
 
         const arc = d3.arc()
