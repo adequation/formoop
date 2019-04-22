@@ -82,7 +82,6 @@
           pie: d3.pie().sort(null)([d.values[0].value, d.values[1].value])
         }));
 
-        console.log(dataArcs);
 
         svg.selectAll(".line").data([{}]).join(e => e.append("line").attr("class", "line").attr("x1", this.radius + this.margin.left)
           .attr("y1", this.h / 2)
@@ -94,7 +93,7 @@
           .attr("x2", (this.sections.length - 1) * this.radius * 2 + this.radius + (this.circlePadding * this.sections.length - 1) + this.margin.left)
           .attr("y2", this.h / 2).attr("stroke", "black");
 
-        const g = svg.selectAll(".pies").data(dataArcs).join(
+        const g = svg.selectAll(".pies").data(dataArcs, d => d.id).join(
           enter => {
             enter = enter.append("g").style("cursor", "pointer")
               .attr("class", "pies")
@@ -150,7 +149,6 @@
           };
         })
           .attr("fill", (d, i) => {
-            console.log(d);
             return this.colors(d.value, i)
           })
       },
