@@ -41,7 +41,7 @@
 
             <div class="campaign-grid-description">
               <div class="campaign-form-number">
-                {{(campaign.forms || []).length}} Formoop(s)
+                {{(campaign.forms || []).length}} Formoop{{(campaign.forms || []).length >1 ? 's' : ''}}
               </div>
             </div>
           </div>
@@ -62,7 +62,7 @@
                @keydown.enter="createNewCampaign"
         />
         <div @click="createNewCampaign"><i class="material-icons md-24"
-                                                                  title="Créer une campagne">add_circle</i></div>
+                                           title="Créer une campagne">add_circle</i></div>
       </div>
     </div>
 
@@ -164,7 +164,7 @@
     border-bottom: 2px solid rgb(217, 217, 217);
     font-size: 1em;
     color: #2c3e50;
-    margin: 0px 2px 0px 2px;
+    margin: 0 2 0 2;
   }
 
   .search-box:focus {
@@ -177,7 +177,7 @@
 
   .campaigns-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 10rem));
     grid-auto-rows: 1fr;
     width: auto;
     margin-left: 20%;
@@ -186,28 +186,27 @@
 
   .campaigns-grid > *:hover {
     cursor: pointer;
-    transform: scale(1.05);
-
-    -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    transform: scale(1.075);
   }
 
   .campaign-content {
-    height: 100%;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-
-  .user-grid-entry {
-    margin: 2px;
+    margin: 5px;
     background: #f6f6f6;
 
     transition: transform .2s;
+
+    border-radius: 6px;
+    padding: 2px;
+  }
+
+  .user-grid-entry {
+    margin: 5px;
+    background: #f6f6f6;
+
+    transition: transform .2s;
+
+    border-radius: 6px;
+    padding: 2px;
   }
 
   hr {
@@ -221,7 +220,7 @@
   }
 
   .campaign-grid-header {
-
+    font-weight: bold;
   }
 
   .campaign-grid-title {
@@ -254,12 +253,13 @@
     cursor: pointer;
   }
 
-  .campaign-footer{
+  .campaign-footer {
     margin-left: 20%;
     margin-right: 20%;
     align-items: center;
     display: inline-block;
   }
+
   .create-campaign {
     margin-top: 1em;
     display: flex;
