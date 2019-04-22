@@ -46,21 +46,25 @@
 
             <div class="form-grid-description">
               <div class="form-question-number">
-                {{form.questionNumber}} question(s)
+                {{form.questionNumber}} question{{form.questionNumber > 1 ? 's' : ''}}
               </div>
 
-              <div v-if="containsGenericQuestion(form)" class="form-is-generic">
-                Générique
+              <hr/>
+
+              <div class="form-grid-description-tags">
+                <div v-if="containsGenericQuestion(form)" class="form-is-generic">
+                  Générique
+                </div>
+
+
+                <div v-if="isFormPublished(form)" class="form-publication-state-published">
+                  Publié
+                </div>
+                <div v-else class="form-publication-state-not-published">
+                  Non publié
+                </div>
               </div>
 
-              <div class="space-form-publication-state"></div>
-
-              <div v-if="isFormPublished(form)" class="form-publication-state-published">
-                Publié
-              </div>
-              <div v-else class="form-publication-state-not-published">
-                Non publié
-              </div>
 
             </div>
 
@@ -180,7 +184,7 @@
     border-bottom: 2px solid rgb(217, 217, 217);
     font-size: 1em;
     color: #2c3e50;
-    margin: 0px 2px 0px 2px;
+    margin: 0 2px 0 2px;
   }
 
   .search-box:focus {
@@ -193,7 +197,7 @@
 
   .forms-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 10rem));
     grid-auto-rows: 1fr;
     width: auto;
     margin-left: 20%;
@@ -202,11 +206,8 @@
 
   .forms-grid > *:hover {
     cursor: pointer;
-    transform: scale(1.05);
+    transform: scale(1.075);
 
-    -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   }
 
   .form-content {
@@ -220,10 +221,13 @@
   }
 
   .user-grid-entry {
-    margin: 2px;
+    margin: 5px;
     background: #f6f6f6;
 
     transition: transform .2s;
+
+    border-radius: 6px;
+    padding: 2px;
   }
 
   hr {
@@ -243,39 +247,45 @@
   .form-grid-title {
     margin-left: 5px;
     margin-right: 10px;
+
+    font-weight: bold;
   }
 
   .form-grid-description {
+
+  }
+
+  .form-grid-description-tags{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: baseline;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: lighter;
+
   }
 
   .form-question-number {
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 1em;
+    font-weight: normal;
 
   }
 
   .form-is-generic {
-    color: rgba(0, 0, 0, 0.6);
     font-size: 0.8em;
-    position: absolute;
-    margin-right: 10px;
-    bottom: 15px;
-    right: 0;
   }
 
   .form-publication-state-published {
     font-size: 0.8em;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    margin-right: 10px;
     color: #4286f4;
   }
 
   .form-publication-state-not-published {
     font-size: 0.8em;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    margin-right: 10px;
   }
 
   .space-form-publication-state {
@@ -300,5 +310,8 @@
     cursor: pointer;
   }
 
+  .search-box {
+    width: auto;
+  }
 
 </style>
