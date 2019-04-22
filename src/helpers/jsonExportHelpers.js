@@ -1,13 +1,16 @@
 import {filterEntries, getEntryAnswers, answerAmount, answeredEntries} from '@/helpers/userAnswersHelpers'
 
+//Get the result for 1 entry
 function entryResult(entry, usersAnswers) {
   let answersAmount = answerAmount(entry, usersAnswers);
   let result = [];
+  //All the answers for text answers
   if( entry.type === 'textarea' || entry.type === 'text'){
     // For string Answers, answerAmount set the string answer as key and NAN as value
     Object.keys(answersAmount).filter(key => isNaN(answersAmount[key]))
       .forEach(key => result.push(key))
   }
+  //The number of answer for other type of answers
   else{
     entry.answer.answers.forEach(a => {
       a["nbanswers"] = answersAmount[a.id];
@@ -24,6 +27,7 @@ function entryResult(entry, usersAnswers) {
 }
 
 function parseAnswered(brutForm){
+  //Get Only the answered entries
   let answered = filterEntries("answered", Object.values(brutForm.entries), brutForm.usersAnswers);
   let answeredEntries = [];
   answered.forEach( AE => {
@@ -33,6 +37,7 @@ function parseAnswered(brutForm){
 }
 
 function parseNotAnswered(brutForm) {
+  //Get only the unanswered entries
   let notanswered = filterEntries("notAnswered", Object.values(brutForm.entries), brutForm.usersAnswers);
   let notAnsweredEntries = [];
   notanswered.forEach( NAE => {
@@ -48,6 +53,7 @@ function parseNotAnswered(brutForm) {
   return notAnsweredEntries;
 }
 
+//Get the text for the Answers given for readability
 function convertAnswerIdToText(answer, entry){
   if(entry.type === 'checkbox'){
     let textAnswer = [];
