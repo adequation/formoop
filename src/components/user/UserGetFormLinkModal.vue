@@ -6,7 +6,7 @@
       Obtenir mon lien
     </button>
 
-    <Modal v-if="showIdentificationModal" @close="closeModal">
+    <Modal v-if="showIdentificationModal || showGetLinkModal" @close="closeModal">
       <div slot="body" >
 
         <h1>Tu n'es pas connecté &#x1F625</h1>
@@ -65,6 +65,13 @@
         mailSend: false
       }
     },
+    props: {
+      showGetLinkModal: {
+        type: Boolean,
+        required: false,
+        default: false
+      },
+    },
     methods: {
       verifyEmail() {
         this.invalidAddress = false;
@@ -98,6 +105,7 @@
       },
 
       closeModal() {
+        this.$parent.$emit('close-get-link-modal');
         this.showIdentificationModal = false;
         this.mailSend = false;
       }

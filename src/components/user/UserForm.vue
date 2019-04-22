@@ -10,7 +10,7 @@
 
     <div v-if="!user && sortedEntries.length > 0">
       <h2>Aie ! Tu n'es pas connecté !</h2>
-      <UserGetFormLinkModal />
+      <UserGetFormLinkModal :showGetLinkModal="showGetFormLinkModal"/>
     </div>
 
 
@@ -170,6 +170,7 @@
     data() {
       return {
         showModal: false,
+        showGetFormLinkModal: false,
         selectedAnswers: {},
 
         filter: 'all',
@@ -333,7 +334,7 @@
       },
 
       formSectionSortOrder(){
-          return this.$store.getters.formSections || []
+        return this.$store.getters.formSections || []
       },
 
       sections() {
@@ -360,6 +361,10 @@
         this.setSelectedAnswers(id, answers);
       });
 
+      this.$on('close-get-link-modal', () => {
+        this.showGetFormLinkModal = false;
+      });
+
       this.$on('section-list-choice', (section) => {
         if (this.focusedSection === section.id) {
           this.focusedSection = null;
@@ -383,7 +388,7 @@
         if (this.user)
           setSelectedAnswersFB(this.formID, this.selectedAnswers, this.user.id);
 
-        else alert("Vous n'êtes pas connecté !");
+        else this.showGetFormLinkModal = true
       },
 
       changeFilter(filter) {
