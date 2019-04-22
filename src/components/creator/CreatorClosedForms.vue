@@ -5,7 +5,7 @@
 
       <div class="space-header"></div>
 
-      <div class="published-forms-header">
+      <div class="finished-forms-header">
 
         <div class="search-form">
           <input class="search-box"
@@ -109,7 +109,7 @@
 </script>
 
 <style scoped>
-  .published-forms-header {
+  .finished-forms-header {
     margin-left: 20%;
     margin-right: 20%;
     display: flex;

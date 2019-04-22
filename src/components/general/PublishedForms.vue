@@ -6,7 +6,7 @@
 
     <div class="space-header"></div>
 
-    <div class="creator-home-header">
+    <div class="published-forms-header">
 
       <div class="search-form">
         <input class="search-box"
@@ -109,7 +109,7 @@
 </script>
 
 <style scoped>
-  .creator-home-header {
+  .published-forms-header {
     margin-left: 20%;
     margin-right: 20%;
     display: flex;
