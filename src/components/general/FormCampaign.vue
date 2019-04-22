@@ -18,45 +18,54 @@
         </div>
       </div>
 
-        <div class="create-campaign">
+      <div class="create-campaign">
+        <div class="create-campaign-wrapper">
           <input class="create-campaign-box"
                  type="text"
                  placeholder="Ajouter une campagne"
                  v-model="newCampaignName"
                  @keydown.enter="createNewCampaign"
           />
-          <div @click="createNewCampaign"><i class="material-icons md-24"
+          <div @click="createNewCampaign" class="create-campaign-button"><i class="material-icons md-24"
                                              title="Créer une campagne">add_circle</i></div>
         </div>
+        <p v-if="newCampaignAlreadyExists" class="new-campaign-already-exits-text">Cette campagne existe déjà</p>
+      </div>
 
     </div>
 
     <div v-if="campaignAsArray.length > 0">
 
-      <div class="campaigns-grid">
+      <div v-if="searchedCampaign.length > 0 ">
 
-        <div v-for="campaign in searchedCampaign"
-             :key="campaign.id"
-             class="user-grid-entry"
-             @click="navigate(campaign)"
-             :title="campaign.name"
-        >
-          <div class="campaign-content">
-            <div class="campaign-grid-header">
-              <div class="campaign-grid-title">
-                {{campaign.name}}
+        <div class="campaigns-grid">
+
+          <div v-for="campaign in searchedCampaign"
+               :key="campaign.id"
+               class="user-grid-entry"
+               @click="navigate(campaign)"
+               :title="campaign.name"
+          >
+            <div class="campaign-content">
+              <div class="campaign-grid-header">
+                <div class="campaign-grid-title">
+                  {{campaign.name}}
+                </div>
               </div>
-            </div>
 
-            <hr/>
+              <hr/>
 
-            <div class="campaign-grid-description">
-              <div class="campaign-form-number">
-                {{(campaign.forms || []).length}} Formoop{{(campaign.forms || []).length >1 ? 's' : ''}}
+              <div class="campaign-grid-description">
+                <div class="campaign-form-number">
+                  {{(campaign.forms || []).length}} Formoop{{(campaign.forms || []).length >1 ? 's' : ''}}
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <div v-else>
+        <h3>Aucune campagne correspondant à la recherche trouvée</h3>
       </div>
     </div>
 
@@ -173,6 +182,36 @@
     font-size: 0.9em;
   }
 
+  .create-campaign-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .create-campaign-box {
+    width: 175px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid rgb(217, 217, 217);
+    font-size: 1em;
+    color: #2c3e50;
+    outline: none;
+  }
+
+  .create-campaign-button{
+    color: #00000070;
+  }
+
+  .create-campaign-button:hover{
+    color: #000000aa;
+    cursor: pointer;
+  }
+
+  .clean-search-button:hover {
+    cursor: pointer;
+  }
+
   .campaigns-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(10rem, 10rem));
@@ -233,15 +272,6 @@
 
   }
 
-  .create-campaign > div {
-    cursor: pointer;
-    color: #00000070;
-  }
-
-  .create-campaign > div :hover {
-    cursor: pointer;
-    color: #000000aa;
-  }
 
   .space-header {
     margin-bottom: 5em;
@@ -251,32 +281,15 @@
     cursor: pointer;
   }
 
-  .campaign-footer {
-    margin-left: 20%;
-    margin-right: 20%;
-    align-items: center;
-    display: inline-block;
+  .new-campaign-already-exits-text{
+    margin: 0;
   }
 
-  .create-campaign {
-    margin-top: 1em;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+  @media screen and (max-width: 720px) {
+    .campaigns-header {
+      display: inline-block;
+    }
   }
 
-  .create-campaign-box{
-    width: 175px;
-    background: none;
-    border: none;
-    border-bottom: 2px solid rgb(217, 217, 217);
-    font-size: 1em;
-    color: #2c3e50;
-    outline: none;
-  }
 
-  .create-campaign i:hover {
-    cursor: pointer;
-  }
 </style>

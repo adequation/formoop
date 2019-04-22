@@ -27,53 +27,54 @@
 
     <div v-if="createdForms.length > 0">
 
-      <div class="forms-grid">
+      <div v-if="searchedForm.length > 0 ">
 
-        <div v-for="form in searchedForm"
-             :key="form.id"
-             class="user-grid-entry"
-             @click="navigate(form)"
-             :title="form.title"
-        >
-          <div class="form-content">
-            <div class="form-grid-header">
-              <div class="form-grid-title">
-                {{form.title}}
-              </div>
-            </div>
+        <div class="forms-grid">
 
-            <hr/>
-
-            <div class="form-grid-description">
-              <div class="form-question-number">
-                {{form.questionNumber}} question{{form.questionNumber > 1 ? 's' : ''}}
+          <div v-for="form in searchedForm"
+               :key="form.id"
+               class="user-grid-entry"
+               @click="navigate(form)"
+               :title="form.title"
+          >
+            <div class="form-content">
+              <div class="form-grid-header">
+                <div class="form-grid-title">
+                  {{form.title}}
+                </div>
               </div>
 
               <hr/>
 
-              <div class="form-grid-description-tags">
-                <div v-if="containsGenericQuestion(form)" class="form-is-generic">
-                  Générique
+              <div class="form-grid-description">
+                <div class="form-question-number">
+                  {{form.questionNumber}} question{{form.questionNumber > 1 ? 's' : ''}}
                 </div>
 
+                <hr/>
 
-                <div v-if="isFormPublished(form)" class="form-publication-state-published">
-                  Publié
-                </div>
-                <div v-else class="form-publication-state-not-published">
-                  Non publié
+                <div class="form-grid-description-tags">
+                  <div v-if="containsGenericQuestion(form)" class="form-is-generic">
+                    Générique
+                  </div>
+
+
+                  <div v-if="isFormPublished(form)" class="form-publication-state-published">
+                    Publié
+                  </div>
+                  <div v-else class="form-publication-state-not-published">
+                    Non publié
+                  </div>
                 </div>
               </div>
-
-
             </div>
-
           </div>
-
         </div>
-
       </div>
 
+      <div v-else>
+        <h3>Aucun formulaire correspondant à la recherche trouvé</h3>
+      </div>
     </div>
 
     <div v-else>
@@ -103,7 +104,7 @@
         return this.$store.getters.createdForms || [];
       },
 
-      publishedForms(){
+      publishedForms() {
         return this.$store.getters.publishedForms || [];
       },
 
@@ -255,7 +256,7 @@
 
   }
 
-  .form-grid-description-tags{
+  .form-grid-description-tags {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -306,7 +307,7 @@
     margin-bottom: 5em;
   }
 
-  .clean-search-button :hover{
+  .clean-search-button :hover {
     cursor: pointer;
   }
 
