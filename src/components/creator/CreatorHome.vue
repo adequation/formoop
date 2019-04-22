@@ -40,10 +40,6 @@
               <div class="form-grid-title">
                 {{form.title}}
               </div>
-              <div class="form-grid-delete-button">
-                <i class="material-icons md-18" role="button" @click.stop=""
-                   @click="deleteForm(form)">clear</i>
-              </div>
             </div>
 
             <hr/>
@@ -86,8 +82,6 @@
 <script>
   import * as uuid from "uuid";
   import {getCreatedForms} from "@/helpers/firebaseHelpers";
-  import {saveCreatedFormsFB, saveFormCampaignsFB, savePublishedFormsFB} from "@/thunks/creatorForm"
-  import {deleteFormFromCreated, deleteFormFromPublished, deleteFormFromCampaigns} from "@/helpers/creatorHelpers";
 
   export default {
     name: "CreatorHome",
@@ -120,10 +114,6 @@
         return this.searchQuery.split(' ');
       },
 
-      formCampaigns() {
-        return this.$store.getters.formCampaigns;
-      }
-
     },
     methods: {
       getFormPath({id}) {
@@ -143,28 +133,6 @@
 
       isPublishedGenericForms(form) {
         return !!this.$store.getters.publishedForms.find(pe => pe.id.includes(form.id));
-      },
-
-      deleteForm(form) {
-
-        if (confirm(`Etes vous sur de vouloir supprimer ce formoop?
-                      \nAttention!
-                      \nCelui-ci perdra ses questions, et sera supprimé des campagnes et des formoops publiés.
-                      \n Vous n'aurez plus accès aux réponse du formoop `)) {
-
-          //delete from created forms
-          const createdFormsChanged = deleteFormFromCreated(this.createdForms, form.id);
-          saveCreatedFormsFB(this.user, createdFormsChanged);
-
-          //delete from campaigns
-          const campaignsChanged = deleteFormFromCampaigns(this.formCampaigns, form.id);
-          saveFormCampaignsFB(campaignsChanged);
-
-          //delete published form
-          console.log(JSON.stringify(this.publishedForms))
-          const publishedFormsChanged = deleteFormFromPublished(this.publishedForms, form.id);
-          savePublishedFormsFB(publishedFormsChanged)
-        }
       },
 
       containsGenericQuestion(form) {

@@ -6,10 +6,16 @@
                  top>
       <div slot="body">
         <Tabs :current-tab="currentTab" :tabs="tabs" @change-tab="changeTab($event)"/>
+
       </div>
     </DockingMenu>
 
     <div class="creator-form-header"></div>
+
+    <div class="form-delete-button" title="Supprimer le formulaire">
+      <i class="material-icons md-48" role="button" @click.stop=""
+         @click="deleteForm">clear</i>
+    </div>
 
     <!-- ////////////////////////////////////////// CREATE AREA ////////////////////////////////////////// !-->
 
@@ -231,6 +237,8 @@
   import autoScrollMixin from "@/mixins/autoScrollMixin";
   import CreatorFormShareTab from "@/components/creator/formTabs/CreatorFormShareTab";
   import CreatorFormLabel from "@/components/creator/CreatorFormLabel";
+  import {saveCreatedFormsFB, saveFormCampaignsFB, savePublishedFormsFB} from "@/thunks/creatorForm"
+  import {deleteFormFromCreated, deleteFormFromPublished, deleteFormFromCampaigns} from "@/helpers/creatorHelpers";
 
   export default {
     name: 'CreatorForm',
@@ -545,6 +553,29 @@
             e.preventDefault();
             break;
         }
+      },
+
+
+      deleteForm() {
+        if (confirm(`Etes vous sur de vouloir supprimer ce formoop?
+                      \nAttention!
+                      \nCelui-ci perdra ses questions, et sera supprimé des campagnes et des formoops publiés.
+                      \nVous n'aurez plus accès aux réponse du formoop `)) {
+
+          //delete from created forms
+          const createdFormsChanged = deleteFormFromCreated(this.createdForms, this.formID);
+          saveCreatedFormsFB(this.creatorID, createdFormsChanged);
+
+          //delete from campaigns
+          const campaignsChanged = deleteFormFromCampaigns(this.formCampaigns, this.formID);
+          saveFormCampaignsFB(campaignsChanged);
+
+          //delete published form
+          const publishedFormsChanged = deleteFormFromPublished(this.publishedForms, this.formID);
+          savePublishedFormsFB(publishedFormsChanged);
+
+          this.$router.push("/create/");
+        }
       }
     },
     created: function () {
@@ -697,6 +728,14 @@
 
       sections() {
         return this.currentSections;
+      },
+
+      publishedForms(){
+        return this.$store.getters.publishedForms || [];
+      },
+
+      createdForms() {
+        return this.$store.getters.createdForms || [];
       },
     },
     watch: {
@@ -984,6 +1023,18 @@
     font-size: 1.5em;
     text-align: center;
     color: #2c3e50;
+  }
+
+  .form-delete-button{
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 999;
+    color: tomato;
+  }
+
+  .form-delete-button:hover{
+    cursor: pointer;
   }
 
 </style>
