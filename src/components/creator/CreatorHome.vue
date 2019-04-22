@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <h3>Formoops créés :</h3>
+    <h1>Formoops créés</h1>
 
     <div class="space-header"></div>
 

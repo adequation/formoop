@@ -1,16 +1,67 @@
 <template>
   <div>
-    <div v-if="finishedForms.length > 0">
-      <h3>Formulaires terminés :</h3>
 
-      <p v-for="form in finishedForms">
-        <a :href="JsonConvert(form)" :download="form.title + '.json'"> {{ form.title }}</a>
-      </p>
-    </div>
+      <h3>Formulaires terminés</h3>
 
-    <div v-else>
-      <h1>Aucun formulaire terminé</h1>
-    </div>
+      <div class="space-header"></div>
+
+      <div class="finished-forms-header">
+
+        <div class="search-form">
+          <input class="search-box"
+                 type="text"
+                 placeholder="Rechercher un formoop"
+                 v-model="searchQuery"
+                 @click.stop=""/>
+          <div class="clean-search-button">
+            <i v-if="searchQuery" class="material-icons md-18" role="button" @click.stop=""
+               @click="searchQuery = ''">clear</i>
+          </div>
+        </div>
+
+      </div>
+
+      <div v-if="finishedForms.length > 0">
+
+        <div v-if="searchedForm.length > 0 ">
+
+          <div class="forms-grid">
+
+            <a v-for="form in searchedForm"
+                 :key="form.id"
+                 class="user-grid-entry"
+                 @click="download(form)"
+                 :title="form.title"
+                 :href="JsonConvert(form)" :download="form.title + '.json'"
+            >
+              <div class="form-content">
+                <div class="form-grid-header">
+                  <div class="form-grid-title">
+                    {{ form.title }}
+                  </div>
+                </div>
+
+                <hr/>
+
+                <div class="form-grid-description">
+                  <div class="form-question-number">
+                    {{Object.keys(form.entries).length}} question{{Object.keys(form.entries).length > 1 ? 's' : ''}}
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div v-else>
+          <h3>Aucun formulaire correspondant à la recherche trouvé</h3>
+        </div>
+      </div>
+
+      <div v-else>
+        <h1>Aucun formoop terminé</h1>
+      </div>
+
   </div>
 </template>
 
@@ -19,9 +70,25 @@
 
     export default {
       name: "CreatorClosedForms",
+      data() {
+        return {
+          searchQuery: ''
+        }
+      },
       computed:{
         finishedForms(){
           return this.$store.getters.finishedForms;
+        },
+
+        searchedForm() {
+          return this.finishedForms.filter(f =>
+            this.searchTokens.every(t =>
+              f.title.toLowerCase().includes(t.toLowerCase())
+            ));
+        },
+
+        searchTokens() {
+          return this.searchQuery.split(' ');
         },
       },
       methods: {
@@ -42,5 +109,135 @@
 </script>
 
 <style scoped>
+  .finished-forms-header {
+    margin-left: 20%;
+    margin-right: 20%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1em;
+  }
 
+  .space-header {
+    margin-bottom: 5em;
+  }
+
+  .search-form {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    justify-content: normal;
+    align-items: center;
+  }
+
+  .search-box {
+    width: 150px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid rgb(217, 217, 217);
+    font-size: 1em;
+    color: #2c3e50;
+    margin: 0 2px 0 2px;
+  }
+
+  .search-box:focus {
+    outline: none;
+  }
+
+  .search-box::placeholder {
+    font-size: 0.9em;
+  }
+
+  .forms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 10rem));
+    grid-auto-rows: 1fr;
+    width: auto;
+    margin-left: 20%;
+    margin-right: 20%;
+  }
+
+  .forms-grid > *:hover {
+    cursor: pointer;
+    transform: scale(1.075);
+
+  }
+
+  .form-content {
+    height: 100%;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .user-grid-entry {
+    color: #2c3e50;
+    text-decoration: none;
+    margin: 5px;
+    background: #f6f6f6;
+
+    transition: transform .2s;
+
+    border-radius: 6px;
+    padding: 2px;
+    outline: none;
+  }
+
+  hr {
+    width: 80%;
+    margin-left: 10%;
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    padding: 0;
+  }
+
+  .form-grid-header {
+
+  }
+
+  .form-grid-title {
+    margin-left: 5px;
+    margin-right: 10px;
+
+    font-weight: bold;
+  }
+
+  .form-grid-description {
+
+  }
+
+  .form-question-number {
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 1em;
+    font-weight: normal;
+
+  }
+
+  .create-form > div {
+    cursor: pointer;
+    color: #00000070;
+  }
+
+  .create-form > div :hover {
+    cursor: pointer;
+    color: #000000aa;
+  }
+
+
+  .clean-search-button :hover {
+    cursor: pointer;
+  }
+
+  .search-box {
+    width: auto;
+  }
 </style>
