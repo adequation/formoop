@@ -6,6 +6,7 @@
                  top>
       <div slot="body">
         <Tabs :current-tab="currentTab" :tabs="tabs" @change-tab="changeTab($event)"/>
+
       </div>
     </DockingMenu>
 
@@ -19,12 +20,6 @@
 
 
       <div v-for="(entry, i) in formEntries">
-        <!--<div v-if="i <= 0">
-          <div v-for="label in labels" v-if="label.under < 0">
-            <button type="button" @click="addLabel(i)">+label</button>
-            <CreatorFormLabel :label="label"/>
-          </div>
-        </div>!-->
 
         <div
              :key="entry.id"
@@ -41,18 +36,6 @@
             :currentSection="entry.section"
           />
         </div>
-
-        <!--<div class="label-buttons-wrapper">
-          <div class="smooth add-label-button-left" title="ajouter un label" @click="addLabel(i)"></div>
-          <div class="smooth add-label-button-right" title="ajouter un label" @click="addLabel(i)"></div>
-        </div>
-
-
-        <div v-if="!!labels.find(l => l.under === i)">
-          <div v-for="label in labels" v-if="label.under === i">
-            <CreatorFormLabel :label="label"/>
-          </div>
-        </div>!-->
       </div>
 
       <div class="fake-entry">
@@ -160,6 +143,28 @@
 
     </div>
 
+    <!-- ////////////////////////////////////////// DELETE AREA ////////////////////////////////////////// !-->
+
+    <div v-if="currentTab === 'delete'" class="delete-area">
+      <p class="delete-infos-message">
+        Attention ! <br/>
+        Supprimer un formoop implique la suppresion de celui-ci : <br/>
+        - Des formoops créés <br/>
+        - Des campagnes auxquelles il appartient <br/>
+        - Des formoop publiés <br/>
+        <br/>
+        Toute progression liée à ce formoop sera donc perdue.
+      </p>
+
+      <div class="delete-area">
+      <div class="delete-form-button" title="Supprimer le formulaire" @click="deleteForm">
+        <i class="material-icons md-36" role="button" @click.stop=""
+           >delete</i>
+        <p>Supprimer le formoop</p>
+      </div>
+      </div>
+    </div>
+
     <div v-else>
 
     </div>
@@ -231,6 +236,8 @@
   import autoScrollMixin from "@/mixins/autoScrollMixin";
   import CreatorFormShareTab from "@/components/creator/formTabs/CreatorFormShareTab";
   import CreatorFormLabel from "@/components/creator/CreatorFormLabel";
+  import {saveCreatedFormsFB, saveFormCampaignsFB, savePublishedFormsFB} from "@/thunks/creatorForm"
+  import {deleteFormFromCreated, deleteFormFromPublished, deleteFormFromCampaigns} from "@/helpers/creatorHelpers";
 
   export default {
     name: 'CreatorForm',
@@ -268,6 +275,7 @@
           {title: 'Paramétrer', value: 'sort', icon: 'settings'},
           {title: 'Campagnes', value: 'campaigns', icon: 'insert_chart'},
           {title: 'Partager', value: 'share', icon: 'share'},
+          {title: 'Supprimer', value: 'delete', icon: 'delete'},
         ],
         currentTab: 'create',
 
@@ -545,6 +553,29 @@
             e.preventDefault();
             break;
         }
+      },
+
+
+      deleteForm() {
+        if (confirm(`Êtes vous sur de vouloir supprimer ce formoop?
+                      \nAttention!
+                      \nCelui-ci perdra ses questions, et sera supprimé des campagnes et des formoops publiés.
+                      \nVous n'aurez plus accès aux réponse du formoop `)) {
+
+          //delete from created forms
+          const createdFormsChanged = deleteFormFromCreated(this.createdForms, this.formID);
+          saveCreatedFormsFB(this.creatorID, createdFormsChanged);
+
+          //delete from campaigns
+          const campaignsChanged = deleteFormFromCampaigns(this.formCampaigns, this.formID);
+          saveFormCampaignsFB(campaignsChanged);
+
+          //delete published form
+          const publishedFormsChanged = deleteFormFromPublished(this.publishedForms, this.formID);
+          savePublishedFormsFB(publishedFormsChanged);
+
+          this.$router.replace("/create");
+        }
       }
     },
     created: function () {
@@ -697,6 +728,14 @@
 
       sections() {
         return this.currentSections;
+      },
+
+      publishedForms(){
+        return this.$store.getters.publishedForms || [];
+      },
+
+      createdForms() {
+        return this.$store.getters.createdForms || [];
       },
     },
     watch: {
@@ -984,6 +1023,35 @@
     font-size: 1.5em;
     text-align: center;
     color: #2c3e50;
+  }
+
+  .delete-form-button{
+    color: white;
+    background: tomato;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    border-radius: 16px;
+    padding-right: 5px;
+  }
+
+  .delete-form-button:hover{
+    cursor: pointer;
+    background: #dc472f;
+  }
+
+  .delete-infos-message{
+    width: 100%;
+    text-align: left;
+  }
+
+  .delete-area{
+    display: inline-block;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
   }
 
 </style>

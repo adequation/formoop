@@ -10,12 +10,12 @@
 
     <div v-if="!user && sortedEntries.length > 0">
       <h2>Aie ! Tu n'es pas connecté !</h2>
-      <UserGetFormLinkModal />
+      <UserGetFormLinkModal :showGetLinkModal="showGetFormLinkModal"/>
     </div>
 
 
     <div class="user-form-section-list-wrapper">
-      <UserSectionList v-if="sections.length > 0"
+      <UserSectionList v-if="sections.length > 0 && user"
                        :sections="sections" :focusedSection="focusedSection"
                        :formEntries="formEntries" :userAnswers="userAnswers"></UserSectionList>
     </div>
@@ -196,6 +196,7 @@
         showModal: false,
         showFilterDrawer: false,
         showSorterDrawer: false,
+        showGetFormLinkModal: false,
         selectedAnswers: {},
 
         filter: 'all',
@@ -327,7 +328,7 @@
       },
 
       formSectionSortOrder(){
-          return this.$store.getters.formSections || []
+        return this.$store.getters.formSections || []
       },
 
       sections() {
@@ -354,6 +355,10 @@
         this.setSelectedAnswers(id, answers);
       });
 
+      this.$on('close-get-link-modal', () => {
+        this.showGetFormLinkModal = false;
+      });
+
       this.$on('section-list-choice', (section) => {
         if (this.focusedSection === section.id) {
           this.focusedSection = null;
@@ -377,7 +382,7 @@
         if (this.user)
           setSelectedAnswersFB(this.formID, this.selectedAnswers, this.user.id);
 
-        else alert("Vous n'êtes pas connecté !");
+        else this.showGetFormLinkModal = true
       },
 
       changeFilter(filter) {
@@ -534,6 +539,10 @@
     width: 75%;
   }
 
+  .user-form-section-list-wrapper svg{
+    overflow-x: auto;
+  }
+
   .user-form-filter-button {
     margin-right: 0.5em;
     padding: 0.5em;
@@ -552,6 +561,24 @@
     align-items: center;
   }
 
+  .user-form-filter-button-selected {
+    margin-right: 0.5em;
+    padding: 0.5em;
+    color: white;
+    background: #4286f4;
+
+    cursor: pointer;
+    font-size: large;
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    border: 2px solid #ffffff;
+  }
+
   .user-form-filter-button:hover {
     background: #3462ad;
   }
@@ -568,6 +595,7 @@
     border: none;
 
     border-radius: 5px;
+
     display: flex;
     flex-direction: row;
     justify-content: space-between;

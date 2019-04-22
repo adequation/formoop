@@ -88,7 +88,6 @@ export default {
         Firebase.database().ref(closedPath)
           .on('value', function (snapshot) {
             const value = snapshot.val();
-            console.log(value)
             if (value) {
               const fullForms = [];
 

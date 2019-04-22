@@ -148,7 +148,6 @@
 
   .creator-campaign-form:hover {
     background: #00000022;
-
   }
 
   .creator-campaign-form-selected {

@@ -27,53 +27,54 @@
 
     <div v-if="createdForms.length > 0">
 
-      <div class="forms-grid">
+      <div v-if="searchedForm.length > 0 ">
 
-        <div v-for="form in searchedForm"
-             :key="form.id"
-             class="user-grid-entry"
-             @click="navigate(form)"
-             :title="form.title"
-        >
-          <div class="form-content">
-            <div class="form-grid-header">
-              <div class="form-grid-title">
-                {{form.title}}
+        <div class="forms-grid">
+
+          <div v-for="form in searchedForm"
+               :key="form.id"
+               class="user-grid-entry"
+               @click="navigate(form)"
+               :title="form.title"
+          >
+            <div class="form-content">
+              <div class="form-grid-header">
+                <div class="form-grid-title">
+                  {{form.title}}
+                </div>
               </div>
-              <div class="form-grid-delete-button">
-                <i class="material-icons md-18" role="button" @click.stop=""
-                   @click="deleteForm(form)">clear</i>
+
+              <hr/>
+
+              <div class="form-grid-description">
+                <div class="form-question-number">
+                  {{form.questionNumber}} question{{form.questionNumber > 1 ? 's' : ''}}
+                </div>
+
+                <hr/>
+
+                <div class="form-grid-description-tags">
+                  <div v-if="containsGenericQuestion(form)" class="form-is-generic">
+                    Générique
+                  </div>
+
+
+                  <div v-if="isFormPublished(form)" class="form-publication-state-published">
+                    Publié
+                  </div>
+                  <div v-else class="form-publication-state-not-published">
+                    Non publié
+                  </div>
+                </div>
               </div>
             </div>
-
-            <hr/>
-
-            <div class="form-grid-description">
-              <div class="form-question-number">
-                {{form.questionNumber}} question(s)
-              </div>
-
-              <div v-if="containsGenericQuestion(form)" class="form-is-generic">
-                Générique
-              </div>
-
-              <div class="space-form-publication-state"></div>
-
-              <div v-if="isFormPublished(form)" class="form-publication-state-published">
-                Publié
-              </div>
-              <div v-else class="form-publication-state-not-published">
-                Non publié
-              </div>
-
-            </div>
-
           </div>
-
         </div>
-
       </div>
 
+      <div v-else>
+        <h3>Aucun formulaire correspondant à la recherche trouvé</h3>
+      </div>
     </div>
 
     <div v-else>
@@ -86,8 +87,6 @@
 <script>
   import * as uuid from "uuid";
   import {getCreatedForms} from "@/helpers/firebaseHelpers";
-  import {saveCreatedFormsFB, saveFormCampaignsFB, savePublishedFormsFB} from "@/thunks/creatorForm"
-  import {deleteFormFromCreated, deleteFormFromPublished, deleteFormFromCampaigns} from "@/helpers/creatorHelpers";
 
   export default {
     name: "CreatorHome",
@@ -105,7 +104,7 @@
         return this.$store.getters.createdForms || [];
       },
 
-      publishedForms(){
+      publishedForms() {
         return this.$store.getters.publishedForms || [];
       },
 
@@ -120,10 +119,6 @@
         return this.searchQuery.split(' ');
       },
 
-      formCampaigns() {
-        return this.$store.getters.formCampaigns;
-      }
-
     },
     methods: {
       getFormPath({id}) {
@@ -134,7 +129,7 @@
       },
 
       navigate(form) {
-        this.$router.push(this.getFormPath(form));
+        this.$router.replace(this.getFormPath(form));
       },
 
       isFormPublished(form) {
@@ -143,28 +138,6 @@
 
       isPublishedGenericForms(form) {
         return !!this.$store.getters.publishedForms.find(pe => pe.id.includes(form.id));
-      },
-
-      deleteForm(form) {
-
-        if (confirm(`Etes vous sur de vouloir supprimer ce formoop?
-                      \nAttention!
-                      \nCelui-ci perdra ses questions, et sera supprimé des campagnes et des formoops publiés.
-                      \n Vous n'aurez plus accès aux réponse du formoop `)) {
-
-          //delete from created forms
-          const createdFormsChanged = deleteFormFromCreated(this.createdForms, form.id);
-          saveCreatedFormsFB(this.user, createdFormsChanged);
-
-          //delete from campaigns
-          const campaignsChanged = deleteFormFromCampaigns(this.formCampaigns, form.id);
-          saveFormCampaignsFB(campaignsChanged);
-
-          //delete published form
-          console.log(JSON.stringify(this.publishedForms))
-          const publishedFormsChanged = deleteFormFromPublished(this.publishedForms, form.id);
-          savePublishedFormsFB(publishedFormsChanged)
-        }
       },
 
       containsGenericQuestion(form) {
@@ -212,7 +185,7 @@
     border-bottom: 2px solid rgb(217, 217, 217);
     font-size: 1em;
     color: #2c3e50;
-    margin: 0px 2px 0px 2px;
+    margin: 0 2px 0 2px;
   }
 
   .search-box:focus {
@@ -225,7 +198,7 @@
 
   .forms-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 10rem));
     grid-auto-rows: 1fr;
     width: auto;
     margin-left: 20%;
@@ -234,11 +207,8 @@
 
   .forms-grid > *:hover {
     cursor: pointer;
-    transform: scale(1.05);
+    transform: scale(1.075);
 
-    -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   }
 
   .form-content {
@@ -252,10 +222,13 @@
   }
 
   .user-grid-entry {
-    margin: 2px;
+    margin: 5px;
     background: #f6f6f6;
 
     transition: transform .2s;
+
+    border-radius: 6px;
+    padding: 2px;
   }
 
   hr {
@@ -275,45 +248,45 @@
   .form-grid-title {
     margin-left: 5px;
     margin-right: 10px;
-  }
 
-  .form-grid-delete-button {
-    top: 0;
-    right: 0;
-    position: absolute;
+    font-weight: bold;
   }
 
   .form-grid-description {
+
+  }
+
+  .form-grid-description-tags {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: baseline;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: lighter;
+
   }
 
   .form-question-number {
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 1em;
+    font-weight: normal;
 
   }
 
   .form-is-generic {
-    color: rgba(0, 0, 0, 0.6);
     font-size: 0.8em;
-    position: absolute;
-    margin-right: 10px;
-    bottom: 15px;
-    right: 0;
   }
 
   .form-publication-state-published {
     font-size: 0.8em;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    margin-right: 10px;
     color: #4286f4;
   }
 
   .form-publication-state-not-published {
     font-size: 0.8em;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    margin-right: 10px;
   }
 
   .space-form-publication-state {
@@ -334,9 +307,12 @@
     margin-bottom: 5em;
   }
 
-  .clean-search-button :hover{
+  .clean-search-button :hover {
     cursor: pointer;
   }
 
+  .search-box {
+    width: auto;
+  }
 
 </style>
