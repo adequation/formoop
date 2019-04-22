@@ -15,9 +15,9 @@
       return {
         circlePadding: 20,
         h: 100,
-        radius: 50,
+        radius: 45,
 
-        margin: {left: 20, right: 20, top: 10, bottom: 10},
+        margin: {left: 10, right: 10, top: 10, bottom: 10},
 
         oldPieData: {}
       }
@@ -103,14 +103,18 @@
 
             enter.selectAll("path").data(d => d.pie).enter().append("path");
 
+            enter.append("text");
+
             enter.append("circle").attr("fill-opacity", 0).attr("fill", "black")
               .on("mouseover", function () {
-                d3.select(this).attr("fill-opacity", 0.1);
-              }).on("mouseout", function () {
-              d3.select(this).attr("fill-opacity", 0);
-            });
-
-            enter.append("text");
+                d3.select(this).attr("fill-opacity", 0.15);
+              })
+              .on("mouseout", function () {
+                d3.select(this).attr("fill-opacity", 0);
+              })
+              .on("click", (d) => {
+                this.$parent.$emit('section-list-choice', d);
+              });
             return enter
           }
           ,
@@ -121,7 +125,9 @@
 
           exit => exit.remove());
 
-        g.select("circle").attr("r", this.radius).attr("stroke", "black");
+        g.select("circle").attr("r", this.radius)
+          .attr("stroke", "black")
+          .attr("stroke-width", d => d.id === this.focusedSection ? '3' : '1');
 
         g.select("text")
           .selectAll("tspan")
@@ -212,4 +218,8 @@
 </script>
 
 <style scoped>
+
+  #user-section-svg {
+
+  }
 </style>
