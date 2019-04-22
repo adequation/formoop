@@ -18,6 +18,17 @@
         </div>
       </div>
 
+        <div class="create-campaign">
+          <input class="create-campaign-box"
+                 type="text"
+                 placeholder="Ajouter une campagne"
+                 v-model="newCampaignName"
+                 @keydown.enter="createNewCampaign"
+          />
+          <div @click="createNewCampaign"><i class="material-icons md-24"
+                                             title="Créer une campagne">add_circle</i></div>
+        </div>
+
     </div>
 
     <div v-if="campaignAsArray.length > 0">
@@ -53,19 +64,6 @@
       <h1>Aucune campagne</h1>
     </div>
 
-    <div class="campaign-footer">
-      <div class="create-campaign">
-        <input class="create-campaign-box"
-               type="text"
-               placeholder="Ajouter une campagne"
-               v-model="newCampaignName"
-               @keydown.enter="createNewCampaign"
-        />
-        <div @click="createNewCampaign"><i class="material-icons md-24"
-                                           title="Créer une campagne">add_circle</i></div>
-      </div>
-    </div>
-
   </div>
 </template>
 
@@ -80,7 +78,7 @@
       return {
         newCampaignName: null,
         newCampaignAlreadyExists: false,
-        searchQuery: ""
+        searchQuery: "",
       }
     },
 
@@ -268,13 +266,14 @@
     align-items: center;
   }
 
-  .create-campaign input {
+  .create-campaign-box{
     width: 175px;
     background: none;
     border: none;
     border-bottom: 2px solid rgb(217, 217, 217);
     font-size: 1em;
     color: #2c3e50;
+    outline: none;
   }
 
   .create-campaign i:hover {

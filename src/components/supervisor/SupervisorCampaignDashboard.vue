@@ -1,119 +1,153 @@
 <template>
   <div>
 
-    <h1>{{campaignName}}</h1>
-
-    <div class="form-delete-button" title="Supprimer le formulaire">
-      <i class="material-icons md-48" role="button" @click.stop=""
-         @click="deleteCampaign">clear</i>
-    </div>
-
-    <Modal v-if="showSingleForm" @close="showSingleForm = false">
-
+    <DockingMenu class="campaigns-top-menu"
+                 ref="top-menu"
+                 top>
       <div slot="body">
-
-        <div class="single-form-wrapper">
-          <div class="single-form">
-
-            <SupervisorForceDirectedGraph v-if="selectedForm.usersAnswers"
-                                          :userAnswers="selectedForm.usersAnswers"
-                                          :formEntries="selectedForm ?
-                                          Object.keys(selectedForm.entries).map(k =>  selectedForm.entries[k]) : []"
-                                          :users="selectedForm.users"/>
-
-          </div>
-        </div>
-
-
-      </div>
-    </Modal>
-
-    <div v-if="campaignFullForms.length > 0">
-
-      <div>
-        <table class="campaign-progression-table">
-          <th>Nom du formulaire</th>
-          <th>Progression</th>
-          <th>Points d'entrée</th>
-          <th>Nombre de participants</th>
-          <th>Nombre de participants actifs</th>
-          <th>État</th>
-          <tr v-for="form in campaignFullForms" :key="'O-' + form.id" @click="openSingleForm(form)">
-            <td>{{form.title}}</td>
-            <td>
-              <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
-            </td>
-            <td><span class="tag" v-for="e in getEntryPoints(form).map(ep => ep.name)">{{e}}</span></td>
-            <td>{{(form.users ? Object.keys(form.users) : []).length}}</td>
-            <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
-            <td><i class="material-icons">lock_open</i></td>
-          </tr>
-          <tr v-for="form in campaignClosedForms" :key="'C-' + form.id" @click="openSingleForm(form)">
-            <td>{{form.title}}</td>
-            <td>
-              <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
-            </td>
-            <td><span class="tag" v-for="e in getEntryPoints(form).map(ep => ep.name)">{{e}}</span></td>
-            <td>{{(form.users ? Object.keys(form.users) : []).length}}</td>
-            <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
-            <td><i class="material-icons">lock</i></td>
-          </tr>
-        </table>
-      </div>
-
-      <SupervisorProgressChart
-        :percentage="campaignFormsProgress.reduce( ( sum, { value } ) => sum + value , 0)/ campaignFormsProgress.length"></SupervisorProgressChart>
-
-      <div class="supervisor-footer">
-
-      </div>
-    </div>
-
-    <div v-else>
-      <h3>Aucun formoop dans cette campagne</h3>
-    </div>
-
-    <DockingMenu class="supervisor-campaign-bottom-menu">
-      <div slot="body">
-
-        <div class="supervisor-campaign-bottom-menu-wrapper">
-
-
-          <div class="creator-form-buttons-wrapper">
-
-            <div class="creator-form-buttons-type">
-              <button class="bottom-button filter-button" title="Progression"><i class="material-icons">timeline</i>
-              </button>
-              <button class="bottom-button filter-button" title="Conflits"><i class="material-icons">event_busy</i>
-              </button>
-            </div>
-
-            <div class="creator-form-buttons-sort">
-              <button class="bottom-button sort-button" title="Filtrer">
-                <i class="material-icons">sort</i>
-              </button>
-              <button class="bottom-button sort-button" title="Filtrer par ordre alphabetique">
-                <i class="material-icons">sort_by_alpha</i>
-              </button>
-            </div>
-
-          </div>
-
-
-          <div class="creator-form-tools-wrapper">
-            <!--<download-campaign class="bottom-button tool-button" title="Récupérer les résultats" :campaign="campaign"
-                               :campaign-forms="campaignFullForms" :campaign-closed-forms="campaignClosedForms"/>-->
-            <button class="bottom-button tool-button" title="Récupérer les résultats" @click="showDownloadForm = true"> <i class="material-icons md-36">save_alt</i></button>
-            <DownloadCampaignModal :campaign="this.campaign" :open-forms-to-select="this.campaignFullForms" :closed-forms-to-select="this.campaignClosedForms" :show-modal="showDownloadForm" @close="showDownloadForm = false"/>
-            <button class="bottom-button tool-button" title="Progression"><i
-              class="material-icons md-36">description</i></button>
-          </div>
-        </div>
-
+        <Tabs :current-tab="currentTab" :tabs="tabs" @change-tab="changeTab($event)"/>
 
       </div>
     </DockingMenu>
 
+    <div class="campaign-form-header"></div>
+
+    <!-- ////////////////////////////////////////// CONSULT AREA ////////////////////////////////////////// !-->
+
+    <div v-if="currentTab === 'consult'">
+
+
+      <h1>{{campaignName}}</h1>
+
+
+      <Modal v-if="showSingleForm" @close="showSingleForm = false">
+
+        <div slot="body">
+
+          <div class="single-form-wrapper">
+            <div class="single-form">
+
+              <SupervisorForceDirectedGraph v-if="selectedForm.usersAnswers"
+                                            :userAnswers="selectedForm.usersAnswers"
+                                            :formEntries="selectedForm ?
+                                          Object.keys(selectedForm.entries).map(k =>  selectedForm.entries[k]) : []"
+                                            :users="selectedForm.users"/>
+
+            </div>
+          </div>
+
+
+        </div>
+      </Modal>
+
+      <div v-if="campaignFullForms.length > 0">
+
+        <div>
+          <table class="campaign-progression-table">
+            <th>Nom du formulaire</th>
+            <th>Progression</th>
+            <th>Points d'entrée</th>
+            <th>Nombre de participants</th>
+            <th>Nombre de participants actifs</th>
+            <th>État</th>
+            <tr v-for="form in campaignFullForms" :key="'O-' + form.id" @click="openSingleForm(form)">
+              <td>{{form.title}}</td>
+              <td>
+                <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
+              </td>
+              <td><span class="tag" v-for="e in getEntryPoints(form).map(ep => ep.name)">{{e}}</span></td>
+              <td>{{(form.users ? Object.keys(form.users) : []).length}}</td>
+              <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
+              <td><i class="material-icons">lock_open</i></td>
+            </tr>
+            <tr v-for="form in campaignClosedForms" :key="'C-' + form.id" @click="openSingleForm(form)">
+              <td>{{form.title}}</td>
+              <td>
+                <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
+              </td>
+              <td><span class="tag" v-for="e in getEntryPoints(form).map(ep => ep.name)">{{e}}</span></td>
+              <td>{{(form.users ? Object.keys(form.users) : []).length}}</td>
+              <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
+              <td><i class="material-icons">lock</i></td>
+            </tr>
+          </table>
+        </div>
+
+        <SupervisorProgressChart
+          :percentage="campaignFormsProgress.reduce( ( sum, { value } ) => sum + value , 0)/ campaignFormsProgress.length"></SupervisorProgressChart>
+
+        <div class="supervisor-footer">
+
+        </div>
+      </div>
+
+      <div v-else>
+        <h3>Aucun formoop dans cette campagne</h3>
+      </div>
+
+      <DockingMenu class="supervisor-campaign-bottom-menu">
+        <div slot="body">
+
+          <div class="supervisor-campaign-bottom-menu-wrapper">
+
+
+            <div class="creator-form-buttons-wrapper">
+
+              <div class="creator-form-buttons-type">
+                <button class="bottom-button filter-button" title="Progression"><i class="material-icons">timeline</i>
+                </button>
+                <button class="bottom-button filter-button" title="Conflits"><i class="material-icons">event_busy</i>
+                </button>
+              </div>
+
+              <div class="creator-form-buttons-sort">
+                <button class="bottom-button sort-button" title="Filtrer">
+                  <i class="material-icons">sort</i>
+                </button>
+                <button class="bottom-button sort-button" title="Filtrer par ordre alphabetique">
+                  <i class="material-icons">sort_by_alpha</i>
+                </button>
+              </div>
+
+            </div>
+
+
+            <div class="creator-form-tools-wrapper">
+              <!--<download-campaign class="bottom-button tool-button" title="Récupérer les résultats" :campaign="campaign"
+                                 :campaign-forms="campaignFullForms" :campaign-closed-forms="campaignClosedForms"/>-->
+              <button class="bottom-button tool-button" title="Récupérer les résultats"
+                      @click="showDownloadForm = true"><i class="material-icons md-36">save_alt</i></button>
+              <DownloadCampaignModal :campaign="this.campaign" :open-forms-to-select="this.campaignFullForms"
+                                     :closed-forms-to-select="this.campaignClosedForms" :show-modal="showDownloadForm"
+                                     @close="showDownloadForm = false"/>
+              <button class="bottom-button tool-button" title="Progression"><i
+                class="material-icons md-36">description</i></button>
+            </div>
+          </div>
+
+
+        </div>
+      </DockingMenu>
+
+    </div>
+
+    <!-- ////////////////////////////////////////// DELETE AREA ////////////////////////////////////////// !-->
+
+    <div v-if="currentTab === 'delete'" class="delete-area">
+
+      <p class="delete-infos-message">
+        Attention ! <br/>
+        En supprimant cette campagne, toute progression liée à celle-ci sera perdue.
+      </p>
+
+      <div class="delete-area">
+        <div class="delete-campaign-button" title="Supprimer la campagne" @click="deleteCampaign">
+          <i class="material-icons md-36" role="button" @click.stop=""
+          >delete</i>
+          <p>Supprimer la campagne</p>
+        </div>
+      </div>
+    </div>
 
   </div>
 </template>
@@ -130,7 +164,8 @@
   import DownloadForm from "../general/DownloadForm";
   import DownloadCampaignModal from "./DownloadCampaignModal";
   import {deleteCampaignFromFormCampaigns} from "../../helpers/campaignsHelpers";
-  import {saveFormCampaignsFB} from "@/thunks/creatorForm"
+  import {saveFormCampaignsFB} from "@/thunks/creatorForm";
+  import Tabs from "@/components/containers/Tabs";
 
   export default {
     name: "SupervisorCampaignDashboard",
@@ -138,15 +173,21 @@
       DownloadCampaignModal,
       DownloadForm,
       DownloadCampaign,
+      Tabs,
       SupervisorForceDirectedGraph,
       SupervisorBasicFormInfo, Modal, SupervisorProgressChart, SupervisorCampaignProgressChart, DockingMenu
     },
 
     data() {
       return {
-        showSingleForm : false,
+        showSingleForm: false,
         showDownloadForm: false,
-        selectedForm : null,
+        selectedForm: null,
+        tabs: [
+          {title: 'Consulter', value: 'consult', icon: 'search'},
+          {title: 'Supprimer', value: 'delete', icon: 'delete'},
+        ],
+        currentTab: 'consult',
       }
     },
 
@@ -191,6 +232,11 @@
 
     methods: {
 
+      changeTab(newTab) {
+        if (this.currentTab === newTab) return;
+        this.currentTab = newTab;
+      },
+
       getFormProgress(form) {
         return {
           name: form.title,
@@ -218,8 +264,8 @@
         return `${activeParticipantNumber(usersAnswers)} (${activePercentage * 100}%)`;
       },
 
-      deleteCampaign(){
-        if (confirm(`Êtes vous sur de vouloir supprimer cette campagne? \nToute progression associée sera perdue`)){
+      deleteCampaign() {
+        if (confirm(`Êtes vous sur de vouloir supprimer cette campagne? \nToute progression associée sera perdue`)) {
           const campaignsChanged = deleteCampaignFromFormCampaigns(this.formCampaigns, this.campaignID);
           saveFormCampaignsFB(campaignsChanged);
           this.$router.replace("/campaigns");
@@ -389,7 +435,7 @@
     margin: 8em;
   }
 
-  .form-delete-button{
+  .form-delete-button {
     position: absolute;
     top: 0;
     right: 0;
@@ -397,8 +443,44 @@
     color: tomato;
   }
 
-  .form-delete-button:hover{
+  .form-delete-button:hover {
     cursor: pointer;
+  }
+
+  .campaign-form-header {
+    margin: 4em;
+  }
+
+  .campaigns-top-menu {
+    background-color: #4286f4 !important;
+    padding-bottom: 2px;
+  }
+
+  .delete-campaign-button {
+    color: white;
+    background: tomato;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    border-radius: 16px;
+    padding-right: 5px;
+  }
+
+  .delete-campaign-button:hover {
+    cursor: pointer;
+    background: #dc472f;
+  }
+
+  .delete-infos-message {
+  }
+
+  .delete-area {
+    display: inline-block;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
   }
 
 </style>

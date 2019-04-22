@@ -12,11 +12,6 @@
 
     <div class="creator-form-header"></div>
 
-    <div class="form-delete-button" title="Supprimer le formulaire">
-      <i class="material-icons md-48" role="button" @click.stop=""
-         @click="deleteForm">clear</i>
-    </div>
-
     <!-- ////////////////////////////////////////// CREATE AREA ////////////////////////////////////////// !-->
 
     <div v-if="currentTab === 'create'">
@@ -148,6 +143,28 @@
 
     </div>
 
+    <!-- ////////////////////////////////////////// DELETE AREA ////////////////////////////////////////// !-->
+
+    <div v-if="currentTab === 'delete'" class="delete-area">
+      <p class="delete-infos-message">
+        Attention ! <br/>
+        Supprimer un formoop implique la suppresion de celui-ci : <br/>
+        - Des formoops créés <br/>
+        - Des campagnes auxquelles il appartient <br/>
+        - Des formoop publiés <br/>
+        <br/>
+        Toute progression liée à ce formoop sera donc perdue.
+      </p>
+
+      <div class="delete-area">
+      <div class="delete-form-button" title="Supprimer le formulaire" @click="deleteForm">
+        <i class="material-icons md-36" role="button" @click.stop=""
+           >delete</i>
+        <p>Supprimer le formoop</p>
+      </div>
+      </div>
+    </div>
+
     <div v-else>
 
     </div>
@@ -258,6 +275,7 @@
           {title: 'Paramétrer', value: 'sort', icon: 'settings'},
           {title: 'Campagnes', value: 'campaigns', icon: 'insert_chart'},
           {title: 'Partager', value: 'share', icon: 'share'},
+          {title: 'Supprimer', value: 'delete', icon: 'delete'},
         ],
         currentTab: 'create',
 
@@ -1007,16 +1025,33 @@
     color: #2c3e50;
   }
 
-  .form-delete-button{
-    position: fixed;
-    top: 0;
-    right: 0;
-    z-index: 999;
-    color: tomato;
+  .delete-form-button{
+    color: white;
+    background: tomato;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    border-radius: 16px;
+    padding-right: 5px;
   }
 
-  .form-delete-button:hover{
+  .delete-form-button:hover{
     cursor: pointer;
+    background: #dc472f;
+  }
+
+  .delete-infos-message{
+    width: 100%;
+    text-align: left;
+  }
+
+  .delete-area{
+    display: inline-block;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
   }
 
 </style>
