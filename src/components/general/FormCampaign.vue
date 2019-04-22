@@ -2,31 +2,6 @@
   <div>
     <h1>Campagnes</h1>
 
-    <!--
-    <div v-if="campaignAsArray.length > 0">
-
-      <div v-for="campaign in campaignAsArray">
-        <router-link :to=getCampaignPath(campaign)>{{campaign.name}} ({{(campaign.forms || []).length}} Formoop(s))</router-link>
-      </div>
-
-    </div>
-
-    <div v-else>
-      <h1>Il n'y a aucune campagne en cours pour l'instant</h1>
-    </div>
-
-    <input class="create-campaign-box"
-           type="text"
-           placeholder="Nom de la campagne"
-           v-model="newCampaignName"
-           @keydown.enter="createNewCampaign"
-    />
-    <button class="create-campaign-button" @click="createNewCampaign">Créer une campagne</button>
-    <p v-if="newCampaignAlreadyExists">Cette campagne existe déjà</p>
-    -->
-
-    <!--- -->
-
     <div class="space-header"></div>
 
     <div class="campaigns-header">
@@ -115,7 +90,7 @@
       },
 
       navigate(campaign) {
-        this.$router.push(this.getCampaignPath(campaign));
+        this.$router.push(this.getCampaignPath(campaign))
       },
 
       createNewCampaign() {
