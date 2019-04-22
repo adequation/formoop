@@ -89,7 +89,7 @@
 
             <drawer v-if="showFilterDrawer" @close="showFilterDrawer=false">
               <div slot="header">
-                <h1> Filters</h1>
+                <h1> Filtres </h1>
               </div>
               <div slot="body">
                 <div v-for="elem in filters"
@@ -107,7 +107,7 @@
 
             <drawer v-if="showSorterDrawer" @close="showSorterDrawer=false">
               <div slot="header">
-                <h1> Sorters </h1>
+                <h1> Tris </h1>
               </div>
               <div slot="body">
                 <div v-for="elem in sorters"
@@ -122,10 +122,6 @@
             <button class="user-form-sort-button" type="button" @click="showSorterDrawer=true">
               <i v-if="selectedSorter.icon" class="material-icons md-24">{{selectedSorter.icon}}</i>
             </button>
-
-            <!-- <drop-up-menu class="filters-menu" :list-of-elements="filters" :selected-element="filter" @dropupMenu-selected="changeFilter($event)"/>
-
-            <drop-up-menu class="sorters-menu" :list-of-elements="sorters" :selected-element="selectedSorter.name" @dropupMenu-selected="changeSorter($event)"/> -->
 
             <div class="vertical-separator"></div>
 
@@ -233,44 +229,6 @@
             sort: (a, b) => b.question.title.localeCompare(a.question.title)
           },
         ],
-
-        /*
-
-        {
-            name: 'answered',
-            description: 'Avec réponse en premier',
-            icon: 'expand_less',
-            sortingLayer: 1,
-            sort: (a, b) => {
-              const aAnswered = this.hasAnsweredToEntry(a);
-              const bAnswered = this.hasAnsweredToEntry(b);
-
-              if (!aAnswered) {
-                if (!bAnswered) return 0;
-                return 1;
-              }
-              if (!bAnswered) return 0;
-              return 0;
-            }
-          },
-          {
-            name: 'notAnswered',
-            description: 'Sans réponse en premier',
-            icon: 'expand_more',
-            sortingLayer: 1,
-            sort: (a, b) => {
-              const aAnswered = this.hasAnsweredToEntry(a);
-              const bAnswered = this.hasAnsweredToEntry(b);
-              if (aAnswered) {
-                if (bAnswered) return 0;
-                return 1;
-              }
-              if (bAnswered) return 0;
-              return 0;
-            }
-          },
-
-         */
 
         searchQuery: '',
 
