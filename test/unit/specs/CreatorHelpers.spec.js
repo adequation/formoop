@@ -1,4 +1,5 @@
-import {deleteFormFromCreated, deleteFormFromPublished, deleteFormFromCampaigns} from "@/helpers/creatorHelpers";
+import {deleteFormFromCreated, deleteFormFromPublished, deleteFormFromCampaigns, isUserInvitedToForm} from "@/helpers/creatorHelpers";
+import {getUserIdFromEmail} from "@/helpers/accountHelpers";
 
 const mockCreatedForms =
   {
@@ -133,11 +134,11 @@ describe('creatorHelpers.js', () => {
         "title": "Formulaire 1",
         "users":
           {
-            "user1":
+            "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=":
               {
                 "company": "formoop",
                 "email": "bob.michelo@formoop.com",
-                "id": "user1",
+                "id": "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=",
                 "name": "Bob Michelo"
               }
           }
@@ -205,7 +206,7 @@ describe('creatorHelpers.js', () => {
               {
                 "company": "formoop",
                 "email": "bob.michelo@formoop.com",
-                "id": "user1",
+                "id": "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=",
                 "name": "Bob Michelo"
               }
           },
@@ -218,11 +219,11 @@ describe('creatorHelpers.js', () => {
         "title": "Formulaire 2",
         "users":
           {
-            "user1":
+            "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=":
               {
                 "company": "formoop",
                 "email": "bob.michelo@formoop.com",
-                "id": "user1",
+                "id": "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=",
                 "name": "Bob Michelo"
               },
             "user2":
@@ -306,7 +307,7 @@ describe('creatorHelpers.js', () => {
                   {
                     "company": "formoop",
                     "email": "bob.michelo@formoop.com",
-                    "id": "user1",
+                    "id": "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=",
                     "name": "Bob Michelo"
                   }
               },
@@ -319,11 +320,11 @@ describe('creatorHelpers.js', () => {
             "title": "Formulaire 2",
             "users":
               {
-                "user1":
+                "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=":
                   {
                     "company": "formoop",
                     "email": "bob.michelo@formoop.com",
-                    "id": "user1",
+                    "id": "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=",
                     "name": "Bob Michelo"
                   },
                 "user2":
@@ -375,11 +376,11 @@ describe('creatorHelpers.js', () => {
             "title": "Formulaire 1",
             "users":
               {
-                "user1":
+                "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=":
                   {
                     "company": "formoop",
                     "email": "bob.michelo@formoop.com",
-                    "id": "user1",
+                    "id": "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=",
                     "name": "Bob Michelo"
                   }
               }
@@ -448,7 +449,7 @@ describe('creatorHelpers.js', () => {
                 {
                   "company": "formoop",
                   "email": "bob.michelo@formoop.com",
-                  "id": "user1",
+                  "id": "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=",
                   "name": "Bob Michelo"
                 }
             },
@@ -461,11 +462,11 @@ describe('creatorHelpers.js', () => {
           "title": "Formulaire 2",
           "users":
             {
-              "user1":
+              "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=":
                 {
                   "company": "formoop",
                   "email": "bob.michelo@formoop.com",
-                  "id": "user1",
+                  "id": "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=",
                   "name": "Bob Michelo"
                 },
               "user2":
@@ -481,4 +482,21 @@ describe('creatorHelpers.js', () => {
 
     expect(deleteFormFromPublished(mockPublishedForms, mockFormID)).toEqual(mockPublishedFormsAfterDelete);
   });
+
+  it('Should be true when the user is invited to the form', () => {
+
+    const mockFormID = "form2";
+    const mockUserEmail = "bob.michelo@formoop.com";
+
+    expect(isUserInvitedToForm(mockFormID, mockUserEmail, mockPublishedForms)).toBe(true);
+  });
+
+  it('Should be false when the user is not invited to the form', () => {
+
+    const mockFormID = "form2";
+    const mockUserEmail = "rené.castaign@formoop.com";
+
+    expect(isUserInvitedToForm(mockFormID, mockUserEmail, mockPublishedForms)).toBe(false);
+  });
+
 });

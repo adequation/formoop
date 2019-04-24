@@ -1,3 +1,7 @@
+import {getUserIdFromEmail} from "@/helpers/accountHelpers";
+
+/////////////// DELETE FORM  ////
+
 export function deleteFormFromCreated(createdForms, formID) {
   let createdFormsCopy = {...createdForms};
 
@@ -61,4 +65,19 @@ export function deleteFormFromCampaigns(formCampaigns, formID) {
   });
 
   return formCampaignCopy;
+}
+
+/////////////// IS USER INVITED TO FORM ////
+
+export function isUserInvitedToForm(formID, userEmail, publishedForms ) {
+  let isInvited = false;
+
+  publishedForms.forEach(f => {
+    if (f.id === formID) {
+      Object.keys(f.users).forEach(formUser => {
+        if (formUser === getUserIdFromEmail(userEmail)) isInvited = true;
+      });
+    }
+  });
+  return isInvited
 }

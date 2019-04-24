@@ -464,7 +464,7 @@ export const generateGenericFormsFB = (creatorID, formID, entities, publishingCa
 };
 
 
-// DELETE A FORM
+/////////////// DELETE FORM  ////
 
 export function deleteFormFromPublishedFB(formID){
   return Firebase.database().ref(publishingPath)
@@ -498,6 +498,8 @@ export function deleteFormFromCampaignsFB(formID){
       }
     });
 }
+
+/////////////// DELETE CAMPAIGN  ////
 
 export function deleteCampaignFromFormCampaignsFB(campaignID){
   return Firebase.database().ref(campaignPath)

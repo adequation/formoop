@@ -97,7 +97,7 @@
       },
 
       navigate(campaign) {
-        this.$router.replace(this.getCampaignPath(campaign))
+        this.$router.push(this.getCampaignPath(campaign))
       },
 
       createNewCampaign() {

@@ -192,7 +192,7 @@
 
     computed: {
       campaign() {
-        return this.$store.getters.currentCampaign;
+        return this.$store.getters.currentCampaign || {};
       },
 
       publishedForms() {

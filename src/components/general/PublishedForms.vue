@@ -47,6 +47,15 @@
                 <div class="form-question-number">
                   {{form.questionNumber}} question{{form.questionNumber > 1 ? 's' : ''}}
                 </div>
+
+                <hr/>
+
+                <div class="form-grid-description-tags">
+
+                  <div v-if="isUserInvited(form)" class="form-publication-state-published">
+                    Invité
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -68,6 +77,10 @@
 </template>
 
 <script>
+  import {getUserIdFromEmail} from "@/helpers/accountHelpers";
+  import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
+  import {isUserInvitedToForm} from "@/helpers/creatorHelpers";
+
   export default {
     name: "PublishedForms",
     data() {
@@ -81,8 +94,12 @@
       },
 
       navigate(form) {
-        this.$router.replace(this.getPublishedFormPath(form));
+        this.$router.push(this.getPublishedFormPath(form).concat("/" + getUserIdFromEmail(this.user.email)));
       },
+
+      isUserInvited(form) {
+        return isUserInvitedToForm(form.id, getUserIdFromEmail(this.user.email), this.publishedForms);
+      }
 
     },
     computed: {
@@ -99,6 +116,10 @@
 
       searchTokens() {
         return this.searchQuery.split(' ');
+      },
+
+      user() {
+        return nativeFbFunctions.getCurrentUser();
       },
     },
     created() {
@@ -230,17 +251,9 @@
 
   }
 
-  .form-is-generic {
-    font-size: 0.8em;
-  }
-
   .form-publication-state-published {
     font-size: 0.8em;
     color: #4286f4;
-  }
-
-  .form-publication-state-not-published {
-    font-size: 0.8em;
   }
 
   .create-form > div {
