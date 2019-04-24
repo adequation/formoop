@@ -22,10 +22,10 @@
       <div v-for="(entry, i) in formEntries">
 
         <div
-             :key="entry.id"
-             @click="focusEntry(entry)"
-             :ref="`top_${entry.id}`"
-             :class="['smooth', {focusedEntry: focusedEntry ? focusedEntry.id === entry.id : false}]">
+          :key="entry.id"
+          @click="focusEntry(entry)"
+          :ref="`top_${entry.id}`"
+          :class="['smooth', {focusedEntry: focusedEntry ? focusedEntry.id === entry.id : false}]">
 
           <CreatorFormEntry
             :key="entry.id"
@@ -157,11 +157,11 @@
       </p>
 
       <div class="delete-area">
-      <div class="delete-form-button" title="Supprimer le formulaire" @click="deleteForm">
-        <i class="material-icons md-36" role="button" @click.stop=""
-           >delete</i>
-        <p>Supprimer le formoop</p>
-      </div>
+        <div class="delete-form-button" title="Supprimer le formulaire" @click="deleteForm">
+          <i class="material-icons md-36" role="button" @click.stop=""
+          >delete</i>
+          <p>Supprimer le formoop</p>
+        </div>
       </div>
     </div>
 
@@ -236,8 +236,7 @@
   import autoScrollMixin from "@/mixins/autoScrollMixin";
   import CreatorFormShareTab from "@/components/creator/formTabs/CreatorFormShareTab";
   import CreatorFormLabel from "@/components/creator/CreatorFormLabel";
-  import {saveCreatedFormsFB, saveFormCampaignsFB, savePublishedFormsFB} from "@/thunks/creatorForm"
-  import {deleteFormFromCreated, deleteFormFromPublished, deleteFormFromCampaigns} from "@/helpers/creatorHelpers";
+  import {deleteFormFromCreatedFB, deleteFormFromPublishedFB, deleteFormFromCampaignsFB} from "@/thunks/creatorForm"
 
   export default {
     name: 'CreatorForm',
@@ -533,10 +532,10 @@
         //remove the form where we don't want it to be
         //and add it where it is not
         //if (!isFormGeneric(this.formEntries))
-          saveAndFilterCampaignsFB({
-            id: this.formID,
-            title: this.formTitle
-          }, this.formCampaigns, this.publishingCampaigns);
+        saveAndFilterCampaignsFB({
+          id: this.formID,
+          title: this.formTitle
+        }, this.formCampaigns, this.publishingCampaigns);
 
       },
 
@@ -557,22 +556,16 @@
 
 
       deleteForm() {
-        if (confirm(`Êtes vous sur de vouloir supprimer ce formoop?
+        if (confirm(`Es-tu sûr de vouloir supprimer ce formoop?
                       \nAttention!
                       \nCelui-ci perdra ses questions, et sera supprimé des campagnes et des formoops publiés.
-                      \nVous n'aurez plus accès aux réponse du formoop `)) {
+                      \nTu n'auras plus accès aux réponses du formoop `)) {
 
-          //delete from created forms
-          const createdFormsChanged = deleteFormFromCreated(this.createdForms, this.formID);
-          saveCreatedFormsFB(this.creatorID, createdFormsChanged);
+          deleteFormFromCreatedFB(this.creatorID, this.formID);
 
-          //delete from campaigns
-          const campaignsChanged = deleteFormFromCampaigns(this.formCampaigns, this.formID);
-          saveFormCampaignsFB(campaignsChanged);
+          deleteFormFromCampaignsFB(this.formID);
 
-          //delete published form
-          const publishedFormsChanged = deleteFormFromPublished(this.publishedForms, this.formID);
-          savePublishedFormsFB(publishedFormsChanged);
+          deleteFormFromPublishedFB(this.formID);
 
           this.$router.replace("/create");
         }

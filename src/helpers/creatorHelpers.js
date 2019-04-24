@@ -48,7 +48,7 @@ export function deleteFormFromCampaigns(formCampaigns, formID) {
   });
 
   campaigns.forEach(c => {
-    let campaignForms = []
+    let campaignForms = [];
     if (c.forms) {
       c.forms.forEach(cf => {
         if (cf.id !== formID) campaignForms.push(cf);

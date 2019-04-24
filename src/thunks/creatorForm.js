@@ -1,13 +1,14 @@
 import * as Firebase from 'firebase'
 import {campaignPath, getCreatedFormFromID, getPublishedFormFromID, publishingPath, getCreatedForms} from "@/helpers/firebaseHelpers";
 import * as uuid from "uuid";
-import {addFormToWantedCampaigns, removeFormFromUnwantedCampaigns} from "@/helpers/campaignsHelpers";
+import {addFormToWantedCampaigns, removeFormFromUnwantedCampaigns, deleteCampaignFromFormCampaigns} from "@/helpers/campaignsHelpers";
 import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helpers/accountHelpers";
 import {getFormUrlWithInvite, getInvitationEntryPointText, isValidAddress, sendMailToBack} from "@/helpers/mailHelpers";
 import {getFormURL} from "@/helpers/rooterHelpers";
 import {areUserEntriesDifferent, updateAnswers, updateEntry, updatePublishedForm} from "@/helpers/generalHelpers";
 import {getEntityToken} from "@/helpers/csvParserHelpers";
 import {getPropArrayFromBlock} from "@/helpers/genericQuestionHelpers";
+import {deleteFormFromCreated, deleteFormFromPublished, deleteFormFromCampaigns} from "@/helpers/creatorHelpers";
 
 export const saveCreatorFormFB = (creatorID, formID, form) => {
 
@@ -461,3 +462,50 @@ export const generateGenericFormsFB = (creatorID, formID, entities, publishingCa
     });
 
 };
+
+
+// DELETE A FORM
+
+export function deleteFormFromPublishedFB(formID){
+  return Firebase.database().ref(publishingPath)
+    .once('value', function (snapshot) {
+      const value = snapshot.val();
+      if (value) {
+        const publishedFormsAfterDelete = deleteFormFromPublished(value,formID);
+        savePublishedFormsFB(publishedFormsAfterDelete);
+      }
+    });
+}
+
+export function deleteFormFromCreatedFB(creatorID, formID){
+  return Firebase.database().ref(getCreatedForms(creatorID))
+    .once('value', function (snapshot) {
+      const value = snapshot.val();
+      if (value) {
+        const createdFormsAfterDelete = deleteFormFromCreated(value,formID);
+        saveCreatedFormsFB(creatorID, createdFormsAfterDelete);
+      }
+    });
+}
+
+export function deleteFormFromCampaignsFB(formID){
+  return Firebase.database().ref(campaignPath)
+    .once('value', function (snapshot) {
+      const value = snapshot.val();
+      if (value) {
+        const campaignsFormsAfterDelete = deleteFormFromCampaigns(value,formID);
+        saveFormCampaignsFB(campaignsFormsAfterDelete);
+      }
+    });
+}
+
+export function deleteCampaignFromFormCampaignsFB(campaignID){
+  return Firebase.database().ref(campaignPath)
+    .once('value', function (snapshot) {
+      const value = snapshot.val();
+      if (value) {
+        const campaignsAfterDelete = deleteCampaignFromFormCampaigns(value, campaignID);
+        saveFormCampaignsFB(campaignsAfterDelete);
+      }
+    });
+}

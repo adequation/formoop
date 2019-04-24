@@ -163,8 +163,7 @@
   import DownloadCampaign from "../general/DownloadCampaign";
   import DownloadForm from "../general/DownloadForm";
   import DownloadCampaignModal from "./DownloadCampaignModal";
-  import {deleteCampaignFromFormCampaigns} from "../../helpers/campaignsHelpers";
-  import {saveFormCampaignsFB} from "@/thunks/creatorForm";
+  import {deleteCampaignFromFormCampaignsFB} from "@/thunks/creatorForm";
   import Tabs from "@/components/containers/Tabs";
 
   export default {
@@ -265,9 +264,8 @@
       },
 
       deleteCampaign() {
-        if (confirm(`Êtes vous sur de vouloir supprimer cette campagne? \nToute progression associée sera perdue`)) {
-          const campaignsChanged = deleteCampaignFromFormCampaigns(this.formCampaigns, this.campaignID);
-          saveFormCampaignsFB(campaignsChanged);
+        if (confirm(`Es-tu sûr de vouloir supprimer cette campagne? \nToute progression associée sera perdue`)) {
+          deleteCampaignFromFormCampaignsFB(this.campaignID);
           this.$router.replace("/campaigns");
         }
       }
