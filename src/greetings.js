@@ -1,5 +1,5 @@
 export const greetings = [
-  `Salut @NOM ! Dépèches toi, @NBINVITES t'attendent pour la fête !`,
+  `Salut @NOM ! Dépèches toi, @NBINVITES personnes t'attendent pour la fête !`,
   `C'est à cette heure si que tu arrives @NOM ? @HEURE, c'est clairement l'heure du Formoop !`,
   `HERE, IS, @NOM ! 🔪`,
   `Faites chauffer le ☕, @NOM arrive pour participer !`,

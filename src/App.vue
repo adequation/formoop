@@ -15,6 +15,7 @@
 <style>
   @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
   @import url('https://fonts.googleapis.com/css?family=Lato');
+  @import url('https://fonts.googleapis.com/css?family=Indie+Flower');
 
   .material-icons.md-16 {
     font-size: 16px;
@@ -58,6 +59,14 @@
 
   #app {
     font-family: 'Lato', sans-serif, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+  }
+
+  .hand-written{
+    font-family: 'Indie Flower', sans-serif, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;

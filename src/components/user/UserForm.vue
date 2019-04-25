@@ -14,9 +14,8 @@
     </div>
 
     <div v-else-if="user">
-      <UserGreeting :percentage="currentFormPercentage" :showGreetingsModal="showGreetingsModal"/>
+      <UserGreeting v-if="!user.alreadyConfirmed" :percentage="currentFormPercentage" :showGreetingsModal="showGreetingsModal"/>
     </div>
-
 
     <div class="user-form-section-list-wrapper">
       <UserSectionList v-if="sections.length > 0 && user"
