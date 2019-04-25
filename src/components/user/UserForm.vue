@@ -14,7 +14,7 @@
     </div>
 
     <div v-else-if="user">
-      <UserGreeting v-if="!user.alreadyConfirmed" :percentage="currentFormPercentage" :showGreetingsModal="showGreetingsModal"/>
+      <UserGreeting v-if="!user.visited" :percentage="currentFormPercentage" :showGreetingsModal="showGreetingsModal"/>
     </div>
 
     <div class="user-form-section-list-wrapper">
@@ -704,5 +704,6 @@
 
   .help-button:hover{
     background: #dddddd;
+    border: 1px solid #000000aa;
   }
 </style>

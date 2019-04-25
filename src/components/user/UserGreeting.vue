@@ -27,6 +27,7 @@
   import {getRandomGreeting, parseSentence} from "@/helpers/greetingsHelpers";
   import {getFormattedHourMinutes, getFormattedToday} from "@/helpers/timeHelpers";
   import Modal from "@/components/containers/Modal";
+  import {visitForm} from "@/thunks/userAccountThunks";
 
 
   export default {
@@ -85,6 +86,7 @@
     methods: {
       closeModal() {
         this.$parent.$emit('close-greetings-modal');
+        visitForm(this.user.id, this.formID);
       },
 
       getGreeting() {
