@@ -79,6 +79,10 @@
 
     </div>
 
+    <div class="help-button">
+      ?
+    </div>
+
     <DockingMenu class="user-form-menu">
       <div slot="body">
 
@@ -682,4 +686,23 @@
   }
 
 
+  .help-button {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    height: 36px;
+    text-align: center;
+    width: 36px;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 1px solid #00000088;
+    border-radius: 18px 18px 18px 18px;
+  }
+
+  .help-button:hover{
+    background: #dddddd;
+  }
 </style>
