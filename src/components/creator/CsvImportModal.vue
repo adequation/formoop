@@ -198,7 +198,6 @@
 
 <style scoped>
   .csv-import-modal {
-    height: 80%;
   }
 
   .override-warning-message {
@@ -214,8 +213,9 @@
   }
 
   .csv-messages-container {
+    height: 40vh;
     min-height: 100px;
-    max-height: 300px;
+    max-height: 400px;
   }
 
   .generate-forms-button {
