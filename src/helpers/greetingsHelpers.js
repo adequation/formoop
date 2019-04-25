@@ -1,12 +1,12 @@
-//Returns à random int between 0 and the array length minus one
 import {greetings, thanks} from "@/greetings";
 
+//Returns à random int between 0 and the array length minus one
 export function getRandomArrayIndex(array) {
   return Math.floor(Math.random() * array.length)
 }
 
 //Returns a random greeting sentence from the users list
-export function getRandomGreetings() {
+export function getRandomGreeting() {
   return greetings[getRandomArrayIndex(greetings)];
 }
 
@@ -25,7 +25,7 @@ export function parseSentence(sentence, currentValues) {
 
   //we go trough our variables, replacing what can be
   Object.keys(currentValues).forEach(v => {
-    newSentence = sentence.replace(`@${v}`, currentValues[v]);
+    newSentence = newSentence.replace(`@${v}`, currentValues[v]);
   });
 
   return newSentence;
