@@ -177,12 +177,12 @@
           <div class="creator-form-entry-buttons-wrapper">
             <button type="button" class="creator-form-entry-button"
                     @click="addEntry(false)" title="Ajouter une question">
-              <i class="material-icons md-36">add_box</i>
+              <i class="material-icons md-36 menu-button">add_box</i>
             </button>
 
             <button type="button" class="creator-form-entry-button"
                     @click="addEntry(true)" title="Ajouter une question générique">
-              <i class="material-icons md-36">ballot</i>
+              <i class="material-icons md-36 menu-button">ballot</i>
             </button>
 
             <div class="vertical-separator"></div>
@@ -195,7 +195,7 @@
 
               <button type="button" class="creator-form-section-button"
                       @click="addSection" title="Créer une nouvelle Section">
-                <i class="material-icons md-36">create_new_folder</i>
+                <i class="material-icons md-36 menu-button">create_new_folder</i>
               </button>
             </div>
 
@@ -204,7 +204,7 @@
           <div class="creator-form-utils-buttons-wrapper">
             <button type="button" @click="saveForm" class="creator-form-save-button md-36"
                     title="Enregistrer le formulaire">
-              <i class="material-icons md-36">save</i>
+              <i class="material-icons md-36 menu-button">save</i>
             </button>
 
           </div>
@@ -880,7 +880,7 @@
   }
 
   .creator-form-sections-buttons-wrapper input {
-    width: 90%;
+    width: auto;
     color: #ffffff;
     border-bottom: 1px solid #00000055;
   }
@@ -1052,5 +1052,21 @@
       margin: 8em;
     }
   }
+
+  @media screen and (max-width: 480px) {
+    .creator-form-sections-buttons-wrapper input{
+      width: 100px;
+    }
+
+    .creator-form-buttons-wrapper{
+      padding: 0.5em;
+    }
+
+    .menu-button {
+      font-size: 24px;
+    }
+  }
+
+
 
 </style>
