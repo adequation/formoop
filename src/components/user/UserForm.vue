@@ -88,7 +88,7 @@
           <div class="user-form-filter-buttons-wrapper">
 
             <drawer v-if="showFilterDrawer" @close="showFilterDrawer=false">
-              <div slot="header">
+              <div slot="header" >
                 <h1> Filtres </h1>
               </div>
               <div slot="body">
