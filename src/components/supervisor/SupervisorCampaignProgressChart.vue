@@ -82,9 +82,8 @@
 
       renderChart() {
         const svg = d3.select(`#${this.uniqueID}`)
-          .attr('width', '100%')
-          .attr('height', this.height)
-          .attr('viewbox', `0 0 ${this.height} ${this.width/3}`);
+          .attr('width', '95%')
+          .attr('height', this.height);
 
         const bars = svg.selectAll('.bars').data([{}]);
 
@@ -98,23 +97,15 @@
         const rectEnter = rect.enter().append("rect").attr("x", this.x(0))
           .attr("y", d => this.y(d.name))
           .attr('rx', '5px')
-          .attr('ry', '5px')
-          .on("mouseover", function () {
-            d3.select(this).attr("opacity", "0.7");
-            d3.select(this).style("cursor", "pointer");
-          })
-          .on("mouseout", function () {
-            d3.select(this).attr("opacity", "1");
-            d3.select(this).style("cursor", "default");
-          });
+          .attr('ry', '5px');
 
-        rect.merge(rectEnter).transition().duration(500).attr("x", this.x(0))
+        rect.merge(rectEnter).attr("height", this.y.bandwidth()).transition().duration(500).attr("x", this.x(0))
           .attr("y", d => this.y(d.name))
           .attr("width", d => this.x(d.value) - this.x(0))
-          .attr("height", this.y.bandwidth())
+
           .attr("fill", d => this.color(d.value));
 
-        const barText = svg.selectAll('.bar-text').data([{}])
+        const barText = svg.selectAll('.bar-text').data([{}]);
 
         const barTextEnter = barText.enter().append("g").attr("fill", "white")
           .attr("text-anchor", "end")
@@ -133,7 +124,7 @@
           .attr("x", d => this.x(d.value) - 4)
           .attr("y", d => this.y(d.name) + this.y.bandwidth() / 2)
           .attr("dy", "0.35em")
-          .text(d => this.format(d.value));
+          .text(d => `${this.format(d.value)}%`);
 
         /*const xAx = svg.selectAll('.x-axis').data([{}]);
 

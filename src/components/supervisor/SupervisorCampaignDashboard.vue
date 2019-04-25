@@ -44,16 +44,28 @@
 
         <div>
           <table class="campaign-progression-table">
-            <th>Nom du formulaire</th>
-            <th>Progression</th>
-            <th>Points d'entrée</th>
-            <th>Nombre de participants</th>
-            <th>Nombre de participants actifs</th>
-            <th>État</th>
-            <th  @click.stop><p>Sélectionner</p>
-              <i @click="selectAllForms" class="material-icons md-18 checkbox">{{((formsSelectedToDownload.length === campaignFullForms.length) && (closedFormsSelectedToDownload.length === campaignClosedForms.length) )? 'check_box' : 'check_box_outline_blank'}}</i>
-            </th>
-            <tr v-for="form in campaignFullForms" :key="'O-' + form.id" @click="openSingleForm(form)">
+            <thead>
+            <tr>
+              <th scope="col">Nom du formulaire</th>
+              <th scope="col">Progression</th>
+              <th scope="col">Points d'entrée</th>
+              <th scope="col">Nombre de participants</th>
+              <th scope="col">Nombre de participants actifs</th>
+              <th scope="col">État</th>
+              <th scope="col" @click.stop>
+                <i @click="selectAllForms" class="material-icons md-26 checkbox">
+                  {{
+                  ((formsSelectedToDownload.length === campaignFullForms.length)
+                  && (closedFormsSelectedToDownload.length === campaignClosedForms.length) )
+                  ? 'check_box' : 'check_box_outline_blank'
+                  }}
+                </i>
+              </th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr v-for="form in campaignFullForms" :key="`on-${form.id}`" @click="openSingleForm(form)">
               <td>{{form.title}}</td>
               <td>
                 <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
@@ -62,9 +74,13 @@
               <td>{{(form.users ? Object.keys(form.users) : []).length}}</td>
               <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
               <td><i class="material-icons">lock_open</i></td>
-              <td @click="onChangeFormsSelected(form)" @click.stop><i class="material-icons md-18">{{formIsSelected(formsSelectedToDownload, form) ? 'check_box' : 'check_box_outline_blank'}}</i></td>
+              <td @click="onChangeFormsSelected(form)" @click.stop>
+                <i class="material-icons md-26 checkbox">
+                  {{formIsSelected(formsSelectedToDownload, form) ? 'check_box' : 'check_box_outline_blank'}}
+                </i>
+              </td>
             </tr>
-            <tr v-for="form in campaignClosedForms" :key="'C-' + form.id" @click="openSingleForm(form)">
+            <tr v-for="form in campaignClosedForms" :key="`off-${form.id}`" @click="openSingleForm(form)">
               <td>{{form.title}}</td>
               <td>
                 <SupervisorCampaignProgressChart :data="[getFormProgress(form)]"/>
@@ -73,8 +89,14 @@
               <td>{{(form.users ? Object.keys(form.users) : []).length}}</td>
               <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
               <td><i class="material-icons">lock</i></td>
-              <td @click="onChangeClosedFormsSelected(form)" @click.stop><i class="material-icons md-18">{{formIsSelected(closedFormsSelectedToDownload, form) ? 'check_box' : 'check_box_outline_blank'}}</i></td>
+              <td @click="onChangeClosedFormsSelected(form)" @click.stop>
+                <i class="material-icons md-26 checkbox">
+                  {{formIsSelected(closedFormsSelectedToDownload, form) ? 'check_box' : 'check_box_outline_blank'}}
+                </i>
+              </td>
             </tr>
+            </tbody>
+
           </table>
         </div>
 
@@ -166,7 +188,7 @@
   import DownloadForm from "../general/DownloadForm";
   import {deleteCampaignFromFormCampaignsFB} from "@/thunks/creatorForm";
   import Tabs from "@/components/containers/Tabs";
-  import  {parseCampaign } from '@/helpers/jsonExportHelpers'
+  import {parseCampaign} from '@/helpers/jsonExportHelpers'
   import {getCampaignWithForms} from "../../helpers/campaignsHelpers";
 
   export default {
@@ -230,7 +252,7 @@
         return this.$store.getters.formCampaigns;
       },
 
-      campaignToConvert(){
+      campaignToConvert() {
         return getCampaignWithForms(this.campaign, this.formsSelectedToDownload, this.closedFormsSelectedToDownload);
       }
 
@@ -277,7 +299,7 @@
         }
       },
 
-      formIsSelected(selectionArray, form){
+      formIsSelected(selectionArray, form) {
         let selected = false;
 
         selectionArray.forEach(f => {
@@ -288,32 +310,32 @@
       },
 
 
-      onChangeFormsSelected(form){
-        if(this.formIsSelected(this.formsSelectedToDownload, form)){
+      onChangeFormsSelected(form) {
+        if (this.formIsSelected(this.formsSelectedToDownload, form)) {
           const index = this.formsSelectedToDownload.map(fs => {
             return fs.id;
           }).indexOf(form.id);
-          this.formsSelectedToDownload.splice(index,1);
+          this.formsSelectedToDownload.splice(index, 1);
         }
-        else{
+        else {
           this.formsSelectedToDownload.push(form);
         }
       },
 
-      onChangeClosedFormsSelected(form){
-        if(this.formIsSelected(this.closedFormsSelectedToDownload, form)){
+      onChangeClosedFormsSelected(form) {
+        if (this.formIsSelected(this.closedFormsSelectedToDownload, form)) {
           const index = this.closedFormsSelectedToDownload.map(fs => {
             return fs.id;
           }).indexOf(form.id);
-          this.closedFormsSelectedToDownload.splice(index,1);
+          this.closedFormsSelectedToDownload.splice(index, 1);
         }
-        else{
+        else {
           this.closedFormsSelectedToDownload.push(form);
         }
       },
 
-      selectAllForms(){
-        if(!(this.formsSelectedToDownload.length === this.campaignFullForms.length && this.closedFormsSelectedToDownload.length === this.campaignClosedForms.length)){
+      selectAllForms() {
+        if (!(this.formsSelectedToDownload.length === this.campaignFullForms.length && this.closedFormsSelectedToDownload.length === this.campaignClosedForms.length)) {
           this.formsSelectedToDownload = [];
           this.closedFormsSelectedToDownload = [];
           this.campaignFullForms.forEach(form => {
@@ -323,7 +345,7 @@
             this.closedFormsSelectedToDownload.push(form);
           });
         }
-        else{
+        else {
           this.formsSelectedToDownload = [];
           this.closedFormsSelectedToDownload = [];
         }
@@ -332,7 +354,7 @@
       /**
        * @return {string}
        */
-      JsonParsing(campaign){
+      JsonParsing(campaign) {
         return "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(parseCampaign(this.campaignToConvert), null, 2));
       },
 
@@ -375,16 +397,40 @@
   }
 
   .campaign-progression-table {
-    width: 100%;
+    width: 95%;
+    margin: auto;
     border-collapse: collapse;
   }
 
-  .campaign-progression-table td {
-    border-bottom: 1px solid #e8e8e8;
+  .campaign-progression-table td, .campaign-progression-table th {
+    padding: 10px;
   }
 
+  .campaign-progression-table td {
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .campaign-progression-table thead tr:first-child th:first-child {
+    border-radius: 10px 0 0 0;
+  }
+  .campaign-progression-table thead tr:first-child th:last-child {
+    border-radius: 0 10px 0 0;
+  }
+
+  .campaign-progression-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
+    background-color: #4286f4;
+    color: white;
+
+    height: 20px;
+  }
+
+  .campaign-progression-table tr:nth-child(even){background: #efefef;}
+
   .campaign-progression-table tr:hover {
-    background: #00000011;
+    background: #ddd;
     cursor: pointer;
   }
 
@@ -457,7 +503,7 @@
   }
 
   .filter-button:hover {
-    background: #3462ad;
+    background: #4286f4;
   }
 
   .sort-button:hover {
@@ -547,8 +593,13 @@
     align-items: center;
   }
 
+  .checkbox {
+    color: #00000090
+  }
+
   .checkbox:hover {
     cursor: pointer;
+    color: #000000
   }
 
   a {
