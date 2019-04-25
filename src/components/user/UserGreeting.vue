@@ -8,7 +8,7 @@
 
       <div slot="body">
 
-        <span class="greeting hand-written">{{getGreeting()}}</span>
+        <div class="greeting hand-written">{{getGreeting()}}</div>
 
         <div class="begin-button pulse" @click="closeModal">
           Commencer !
@@ -101,9 +101,9 @@
   @import url('../../style/animations.css');
 
   .greeting{
-    color : black;
+    color : #16161d;
     font-weight: bold;
-    width: auto;
+    width: 85%;
     margin: auto;
     font-size: xx-large;
 
