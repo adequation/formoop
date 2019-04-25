@@ -163,11 +163,12 @@
         this.add(data);
       });
 
-      this.selectedCampaigns = this.formCampaign;
-
       this.$root.$on('remove-from-selected-by-user', (data) => {
         this.remove(data);
       });
+
+      this.selectedCampaigns = this.formCampaign.slice();
+      this.setPublishingCampaigns(this.selectedCampaigns);
 
     }
   }
