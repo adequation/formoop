@@ -50,6 +50,9 @@
             <th>Nombre de participants</th>
             <th>Nombre de participants actifs</th>
             <th>État</th>
+            <th  @click.stop><p>Sélectionner</p>
+              <i @click="selectAllForms" class="material-icons md-18 checkbox">{{((formsSelectedToDownload.length === campaignFullForms.length) && (closedFormsSelectedToDownload.length === campaignClosedForms.length) )? 'check_box' : 'check_box_outline_blank'}}</i>
+            </th>
             <tr v-for="form in campaignFullForms" :key="'O-' + form.id" @click="openSingleForm(form)">
               <td>{{form.title}}</td>
               <td>
@@ -59,6 +62,7 @@
               <td>{{(form.users ? Object.keys(form.users) : []).length}}</td>
               <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
               <td><i class="material-icons">lock_open</i></td>
+              <td @click="onChangeFormsSelected(form)" @click.stop><i class="material-icons md-18">{{formIsSelected(formsSelectedToDownload, form) ? 'check_box' : 'check_box_outline_blank'}}</i></td>
             </tr>
             <tr v-for="form in campaignClosedForms" :key="'C-' + form.id" @click="openSingleForm(form)">
               <td>{{form.title}}</td>
@@ -69,6 +73,7 @@
               <td>{{(form.users ? Object.keys(form.users) : []).length}}</td>
               <td>{{getActivePeople(form.usersAnswers, (form.users ? Object.keys(form.users) : []).length)}}</td>
               <td><i class="material-icons">lock</i></td>
+              <td @click="onChangeClosedFormsSelected(form)" @click.stop><i class="material-icons md-18">{{formIsSelected(closedFormsSelectedToDownload, form) ? 'check_box' : 'check_box_outline_blank'}}</i></td>
             </tr>
           </table>
         </div>
@@ -116,10 +121,8 @@
               <!--<download-campaign class="bottom-button tool-button" title="Récupérer les résultats" :campaign="campaign"
                                  :campaign-forms="campaignFullForms" :campaign-closed-forms="campaignClosedForms"/>-->
               <button class="bottom-button tool-button" title="Récupérer les résultats"
-                      @click="showDownloadForm = true"><i class="material-icons md-36">save_alt</i></button>
-              <DownloadCampaignModal :campaign="this.campaign" :open-forms-to-select="this.campaignFullForms"
-                                     :closed-forms-to-select="this.campaignClosedForms" :show-modal="showDownloadForm"
-                                     @close="showDownloadForm = false"/>
+              ><a :href="JsonParsing(campaign)" :download="campaign.name + '.json'"><i class="material-icons md-36">save_alt</i></a>
+              </button>
               <button class="bottom-button tool-button" title="Progression"><i
                 class="material-icons md-36">description</i></button>
             </div>
@@ -160,18 +163,16 @@
   import Modal from "@/components/containers/Modal";
   import SupervisorBasicFormInfo from "@/components/supervisor/SupervisorBasicFormInfo";
   import SupervisorForceDirectedGraph from "@/components/supervisor/SupervisorForceDirectedGraph";
-  import DownloadCampaign from "../general/DownloadCampaign";
   import DownloadForm from "../general/DownloadForm";
-  import DownloadCampaignModal from "./DownloadCampaignModal";
   import {deleteCampaignFromFormCampaignsFB} from "@/thunks/creatorForm";
   import Tabs from "@/components/containers/Tabs";
+  import  {parseCampaign } from '@/helpers/jsonExportHelpers'
+  import {getCampaignWithForms} from "../../helpers/campaignsHelpers";
 
   export default {
     name: "SupervisorCampaignDashboard",
     components: {
-      DownloadCampaignModal,
       DownloadForm,
-      DownloadCampaign,
       Tabs,
       SupervisorForceDirectedGraph,
       SupervisorBasicFormInfo, Modal, SupervisorProgressChart, SupervisorCampaignProgressChart, DockingMenu
@@ -182,6 +183,8 @@
         showSingleForm: false,
         showDownloadForm: false,
         selectedForm: null,
+        formsSelectedToDownload: [],
+        closedFormsSelectedToDownload: [],
         tabs: [
           {title: 'Consulter', value: 'consult', icon: 'search'},
           {title: 'Supprimer', value: 'delete', icon: 'delete'},
@@ -227,6 +230,10 @@
         return this.$store.getters.formCampaigns;
       },
 
+      campaignToConvert(){
+        return getCampaignWithForms(this.campaign, this.formsSelectedToDownload, this.closedFormsSelectedToDownload);
+      }
+
     },
 
     methods: {
@@ -268,7 +275,66 @@
           deleteCampaignFromFormCampaignsFB(this.campaignID);
           this.$router.replace("/campaigns");
         }
-      }
+      },
+
+      formIsSelected(selectionArray, form){
+        let selected = false;
+
+        selectionArray.forEach(f => {
+          if (f.id === form.id) selected = true
+        });
+
+        return selected
+      },
+
+
+      onChangeFormsSelected(form){
+        if(this.formIsSelected(this.formsSelectedToDownload, form)){
+          const index = this.formsSelectedToDownload.map(fs => {
+            return fs.id;
+          }).indexOf(form.id);
+          this.formsSelectedToDownload.splice(index,1);
+        }
+        else{
+          this.formsSelectedToDownload.push(form);
+        }
+      },
+
+      onChangeClosedFormsSelected(form){
+        if(this.formIsSelected(this.closedFormsSelectedToDownload, form)){
+          const index = this.closedFormsSelectedToDownload.map(fs => {
+            return fs.id;
+          }).indexOf(form.id);
+          this.closedFormsSelectedToDownload.splice(index,1);
+        }
+        else{
+          this.closedFormsSelectedToDownload.push(form);
+        }
+      },
+
+      selectAllForms(){
+        if(!(this.formsSelectedToDownload.length === this.campaignFullForms.length && this.closedFormsSelectedToDownload.length === this.campaignClosedForms.length)){
+          this.formsSelectedToDownload = [];
+          this.closedFormsSelectedToDownload = [];
+          this.campaignFullForms.forEach(form => {
+            this.formsSelectedToDownload.push(form);
+          });
+          this.campaignClosedForms.forEach(form => {
+            this.closedFormsSelectedToDownload.push(form);
+          });
+        }
+        else{
+          this.formsSelectedToDownload = [];
+          this.closedFormsSelectedToDownload = [];
+        }
+      },
+
+      /**
+       * @return {string}
+       */
+      JsonParsing(campaign){
+        return "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(parseCampaign(this.campaignToConvert), null, 2));
+      },
 
     },
 
@@ -479,6 +545,14 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
+  }
+
+  .checkbox:hover {
+    cursor: pointer;
+  }
+
+  a {
+    color: #fff;
   }
 
 </style>
