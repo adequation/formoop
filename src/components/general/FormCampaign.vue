@@ -1,33 +1,36 @@
 <template>
-  <div>
+  <div class="form-campaigns">
+
     <h1>Campagnes</h1>
 
     <div class="space-header"></div>
 
     <div class="campaigns-header">
 
-      <div class="search-campaign">
-        <input class="search-box"
+      <div class="input-wrapper">
+        <input class="input"
                type="text"
                placeholder="Rechercher une campagne"
                v-model="searchQuery"
                @click.stop=""/>
-        <div class="clean-search-button">
+        <div class="campaigns-button">
           <i v-if="searchQuery" class="material-icons md-18" role="button" @click.stop=""
              @click="searchQuery = ''">clear</i>
         </div>
       </div>
 
       <div class="create-campaign">
-        <div class="create-campaign-wrapper">
-          <input class="create-campaign-box"
+        <div class="input-wrapper">
+          <input class="input"
                  type="text"
                  placeholder="Ajouter une campagne"
                  v-model="newCampaignName"
                  @keydown.enter="createNewCampaign"
           />
-          <div @click="createNewCampaign" class="create-campaign-button"><i class="material-icons md-24"
-                                             title="Créer une campagne">add_circle</i></div>
+          <div @click="createNewCampaign" class="campaigns-button">
+            <i class="material-icons md-24"
+               title="Créer une campagne">add_circle</i>
+          </div>
         </div>
         <p v-if="newCampaignAlreadyExists" class="new-campaign-already-exits-text">Cette campagne existe déjà</p>
       </div>
@@ -42,23 +45,19 @@
 
           <div v-for="campaign in searchedCampaign"
                :key="campaign.id"
-               class="user-grid-entry"
+               class="campaign-grid-entry"
                @click="navigate(campaign)"
                :title="campaign.name"
           >
             <div class="campaign-content">
-              <div class="campaign-grid-header">
-                <div class="campaign-grid-title">
-                  {{campaign.name}}
-                </div>
+              <div class="campaign-grid-title">
+                {{campaign.name}}
               </div>
 
               <hr/>
 
-              <div class="campaign-grid-description">
-                <div class="campaign-form-number">
-                  {{(campaign.forms || []).length}} Formoop{{(campaign.forms || []).length >1 ? 's' : ''}}
-                </div>
+              <div class="campaign-form-number">
+                {{(campaign.forms || []).length}} Formoop{{(campaign.forms || []).length >1 ? 's' : ''}}
               </div>
             </div>
           </div>
@@ -144,10 +143,16 @@
 </script>
 
 <style scoped>
-
-  .campaigns-header {
+  .form-campaigns{
     margin-left: 20%;
     margin-right: 20%;
+  }
+
+  .space-header {
+    margin-bottom: 5em;
+  }
+
+  .campaigns-header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -155,17 +160,16 @@
     margin-bottom: 1em;
   }
 
-  .search-campaign {
+  .input-wrapper {
     width: 100%;
-    height: 10%;
     display: flex;
     flex-direction: row;
     justify-content: normal;
     align-items: center;
   }
 
-  .search-box {
-    width: 175px;
+  .input {
+    width: auto;
     background: none;
     border: none;
     border-bottom: 2px solid rgb(217, 217, 217);
@@ -174,51 +178,29 @@
     margin: 0 2px 0 2px;
   }
 
-  .search-box:focus {
+  .input:focus {
     outline: none;
   }
 
-  .search-box::placeholder {
+  .input::placeholder {
     font-size: 0.9em;
   }
 
-  .create-campaign-wrapper {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .create-campaign-box {
-    width: 175px;
-    background: none;
-    border: none;
-    border-bottom: 2px solid rgb(217, 217, 217);
-    font-size: 1em;
-    color: #2c3e50;
-    outline: none;
-  }
-
-  .create-campaign-button{
+  .campaigns-button {
+    cursor: pointer;
     color: #00000070;
   }
 
-  .create-campaign-button:hover{
+  .campaigns-button :hover {
+    cursor: pointer;
     color: #000000aa;
-    cursor: pointer;
-  }
-
-  .clean-search-button:hover {
-    cursor: pointer;
   }
 
   .campaigns-grid {
+    width: auto;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(10rem, 10rem));
     grid-auto-rows: 1fr;
-    width: auto;
-    margin-left: 20%;
-    margin-right: 20%;
   }
 
   .campaigns-grid > *:hover {
@@ -226,24 +208,30 @@
     transform: scale(1.075);
   }
 
+  .campaign-grid-entry {
+    margin: 5px;
+    padding: 2px;
+    background: #f6f6f6;
+    transition: transform .2s;
+    border-radius: 6px;
+  }
+
   .campaign-content {
     margin: 5px;
     background: #f6f6f6;
-
     transition: transform .2s;
-
     border-radius: 6px;
     padding: 2px;
   }
 
-  .user-grid-entry {
-    margin: 5px;
-    background: #f6f6f6;
+  .campaign-grid-title {
+    margin-left: 5px;
+    margin-right: 10px;
+    font-weight: bold;
+  }
 
-    transition: transform .2s;
+  .campaign-form-number {
 
-    border-radius: 6px;
-    padding: 2px;
   }
 
   hr {
@@ -254,35 +242,6 @@
     border: 0;
     border-top: 1px solid #ccc;
     padding: 0;
-  }
-
-  .campaign-grid-header {
-    font-weight: bold;
-  }
-
-  .campaign-grid-title {
-    margin-left: 5px;
-    margin-right: 10px;
-  }
-
-  .campaign-grid-description {
-  }
-
-  .campaign-form-number {
-
-  }
-
-
-  .space-header {
-    margin-bottom: 5em;
-  }
-
-  .clean-search-button :hover {
-    cursor: pointer;
-  }
-
-  .new-campaign-already-exits-text{
-    margin: 0;
   }
 
   @media screen and (max-width: 720px) {

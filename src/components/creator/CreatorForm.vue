@@ -10,7 +10,7 @@
       </div>
     </DockingMenu>
 
-    <div class="creator-form-header"></div>
+    <div class="space-header"></div>
 
     <!-- ////////////////////////////////////////// CREATE AREA ////////////////////////////////////////// !-->
 
@@ -775,7 +775,7 @@
     margin: 9em;
   }
 
-  .creator-form-header {
+  .space-header {
     margin: 4em;
   }
 
@@ -1045,6 +1045,12 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
+  }
+
+  @media screen and (max-width: 370px) {
+    .space-header {
+      margin: 8em;
+    }
   }
 
 </style>

@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div class="closed-forms">
 
       <h3>Formulaires terminés</h3>
 
       <div class="space-header"></div>
 
-      <div class="finished-forms-header">
+      <div class="closed-forms-header">
 
         <div class="search-form">
           <input class="search-box"
@@ -29,25 +29,21 @@
 
             <a v-for="form in searchedForm"
                  :key="form.id"
-                 class="user-grid-entry"
+                 class="form-grid-entry"
                  @click="download(form)"
                  :title="form.title"
                  :href="JsonConvert(form)" :download="form.title + '.json'"
             >
               <div class="form-content">
-                <div class="form-grid-header">
                   <div class="form-grid-title">
                     {{ form.title }}
                   </div>
-                </div>
 
                 <hr/>
 
-                <div class="form-grid-description">
                   <div class="form-question-number">
                     {{Object.keys(form.entries).length}} question{{Object.keys(form.entries).length > 1 ? 's' : ''}}
                   </div>
-                </div>
               </div>
             </a>
           </div>
@@ -109,9 +105,16 @@
 </script>
 
 <style scoped>
-  .finished-forms-header {
+  .closed-forms{
     margin-left: 20%;
     margin-right: 20%;
+  }
+
+  .space-header {
+    margin-bottom: 5em;
+  }
+
+  .closed-forms-header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -119,21 +122,15 @@
     margin-bottom: 1em;
   }
 
-  .space-header {
-    margin-bottom: 5em;
-  }
-
   .search-form {
     width: 100%;
-    height: 10%;
     display: flex;
     flex-direction: row;
     justify-content: normal;
-    align-items: center;
   }
 
   .search-box {
-    width: 150px;
+    width: auto;
     background: none;
     border: none;
     border-bottom: 2px solid rgb(217, 217, 217);
@@ -150,13 +147,21 @@
     font-size: 0.9em;
   }
 
+  .clean-search-button {
+    cursor: pointer;
+    color: #00000070;
+  }
+
+  .clean-search-button :hover {
+    cursor: pointer;
+    color: #000000aa;
+  }
+
   .forms-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(10rem, 10rem));
     grid-auto-rows: 1fr;
     width: auto;
-    margin-left: 20%;
-    margin-right: 20%;
   }
 
   .forms-grid > *:hover {
@@ -175,17 +180,37 @@
     margin-bottom: 10px;
   }
 
-  .user-grid-entry {
+  .form-grid-entry {
+    margin: 5px;
+    padding: 2px;
     color: #2c3e50;
     text-decoration: none;
-    margin: 5px;
     background: #f6f6f6;
-
     transition: transform .2s;
-
     border-radius: 6px;
-    padding: 2px;
     outline: none;
+  }
+
+  .form-content {
+    margin-bottom: 10px;
+    height: 100%;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .form-grid-title {
+    margin-left: 5px;
+    margin-right: 10px;
+    font-weight: bold;
+  }
+
+  .form-question-number {
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 1em;
+    font-weight: normal;
   }
 
   hr {
@@ -198,46 +223,4 @@
     padding: 0;
   }
 
-  .form-grid-header {
-
-  }
-
-  .form-grid-title {
-    margin-left: 5px;
-    margin-right: 10px;
-
-    font-weight: bold;
-  }
-
-  .form-grid-description {
-
-  }
-
-  .form-question-number {
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    font-size: 1em;
-    font-weight: normal;
-
-  }
-
-  .create-form > div {
-    cursor: pointer;
-    color: #00000070;
-  }
-
-  .create-form > div :hover {
-    cursor: pointer;
-    color: #000000aa;
-  }
-
-
-  .clean-search-button :hover {
-    cursor: pointer;
-  }
-
-  .search-box {
-    width: auto;
-  }
 </style>
