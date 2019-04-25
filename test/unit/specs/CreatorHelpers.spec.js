@@ -234,6 +234,33 @@ describe('creatorHelpers.js', () => {
                 "name": "Marcel Mazout"
               }
           }
+      },
+      {
+        "entries":
+          {
+            "entry1":
+              {
+                "answer":
+                  {
+                    "answers":
+                      [
+                        {"id": "option1", "text": "Option 1"},
+                        {"id": "option2", "text": "Option 2"}
+                      ],
+                    "type": "radio"
+                  },
+                "id": "entry1",
+                "index": 0,
+                "question":
+                  {
+                    "title": "Question 1"
+                  },
+                "type": "radio"
+              }
+          },
+        "id": "form3",
+        "questionNumber": 1,
+        "title": "Formulaire 3"
       }
     ];
 
@@ -335,6 +362,34 @@ describe('creatorHelpers.js', () => {
                     "name": "Marcel Mazout"
                   }
               }
+          },
+        "form3":
+          {
+            "entries":
+              {
+                "entry1":
+                  {
+                    "answer":
+                      {
+                        "answers":
+                          [
+                            {"id": "option1", "text": "Option 1"},
+                            {"id": "option2", "text": "Option 2"}
+                          ],
+                        "type": "radio"
+                      },
+                    "id": "entry1",
+                    "index": 0,
+                    "question":
+                      {
+                        "title": "Question 1"
+                      },
+                    "type": "radio"
+                  }
+              },
+            "id": "form3",
+            "questionNumber": 1,
+            "title": "Formulaire 3",
           }
       };
 
@@ -477,7 +532,35 @@ describe('creatorHelpers.js', () => {
                   "name": "Marcel Mazout"
                 }
             }
-        }
+        },
+        "form3":
+          {
+            "entries":
+              {
+                "entry1":
+                  {
+                    "answer":
+                      {
+                        "answers":
+                          [
+                            {"id": "option1", "text": "Option 1"},
+                            {"id": "option2", "text": "Option 2"}
+                          ],
+                        "type": "radio"
+                      },
+                    "id": "entry1",
+                    "index": 0,
+                    "question":
+                      {
+                        "title": "Question 1"
+                      },
+                    "type": "radio"
+                  }
+              },
+            "id": "form3",
+            "questionNumber": 1,
+            "title": "Formulaire 3",
+          }
       };
 
     expect(deleteFormFromPublished(mockPublishedForms, mockFormID)).toEqual(mockPublishedFormsAfterDelete);
@@ -494,6 +577,14 @@ describe('creatorHelpers.js', () => {
   it('Should be false when the user is not invited to the form', () => {
 
     const mockFormID = "form2";
+    const mockUserEmail = "rené.castaign@formoop.com";
+
+    expect(isUserInvitedToForm(mockFormID, mockUserEmail, mockPublishedForms)).toBe(false);
+  });
+
+  it('Should be false when the form does not have invited users', () => {
+
+    const mockFormID = "form3";
     const mockUserEmail = "rené.castaign@formoop.com";
 
     expect(isUserInvitedToForm(mockFormID, mockUserEmail, mockPublishedForms)).toBe(false);

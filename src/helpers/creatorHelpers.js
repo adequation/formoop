@@ -74,9 +74,11 @@ export function isUserInvitedToForm(formID, userEmail, publishedForms ) {
 
   publishedForms.forEach(f => {
     if (f.id === formID) {
-      Object.keys(f.users).forEach(formUser => {
-        if (formUser === getUserIdFromEmail(userEmail)) isInvited = true;
-      });
+      if(Object.keys(f).includes("users")){
+        Object.keys(f.users).forEach(formUser => {
+          if (formUser === getUserIdFromEmail(userEmail)) isInvited = true;
+        });
+      }
     }
   });
   return isInvited
