@@ -81,6 +81,14 @@
         return this.$store.getters.user;
       },
 
+      greeting(){
+        return this.$store.getters.greeting;
+      },
+
+      isRandomGreetingMode(){
+        return this.$store.getters.isRandomGreetingMode;
+      },
+
     },
 
     methods: {
@@ -90,10 +98,14 @@
       },
 
       getGreeting() {
+        if(this.isRandomGreetingMode){
+          const rawGreeting = getRandomGreeting();
+          //we use
+          return parseSentence(rawGreeting, this.parsingVariables);
+        }else{
+          return parseSentence(this.greeting, this.parsingVariables);
+        }
 
-        const rawGreeting = getRandomGreeting();
-        //we use
-        return parseSentence(rawGreeting, this.parsingVariables);
       }
     },
   }
