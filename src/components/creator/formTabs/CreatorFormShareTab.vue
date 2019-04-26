@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="share-tab-header"> </div>
+    <div class="share-tab-header"></div>
 
     <h1 class="share-form-title">
       <span v-if="isPublished" class="published-form-title">
@@ -17,7 +17,25 @@
                     :save-form="this.saveForm"
                     :publishing-campaigns="publishingCampaigns"
                     @close="closeCSVImportModal"
-    :override="this.overrideCSVForm"/>
+                    :override="this.overrideCSVForm"/>
+
+    <div class="greeting-mode-wrapper">
+
+      <table class="greeting-mode-table">
+        <tr @click="selectGreetingMode(true)" :class="{notSelectedGreetingMode: !randomGreeting}">
+          <td><i class="material-icons md-26"> {{randomGreeting ? 'check_box' : 'check_box_outline_blank'}}</i></td>
+          <td>Phrase d'acceuil au hasard</td>
+          <td></td>
+        </tr>
+        <tr @click="selectGreetingMode(false)" :class="{notSelectedGreetingMode: randomGreeting}">
+          <td><i class="material-icons md-26"> {{!randomGreeting ? 'check_box' : 'check_box_outline_blank'}}</i></td>
+          <td>Phrase d'acceuil personalisée : </td>
+          <td><input type="text" placeholder="Phrase d'acceuil"
+                     :value="greeting"
+                     @change="changeCustomGreetingSentence($event)"/></td>
+        </tr>
+      </table>
+    </div>
 
     <div class="publish-wrapper">
       <div class="smooth publish-button good-publish-button"
@@ -144,6 +162,14 @@
       formTitle: {
         type: String,
         required: true
+      },
+      greeting: {
+        type: String,
+        required: true
+      },
+      randomGreeting: {
+        type: Boolean,
+        required: true
       }
     },
     computed: {
@@ -230,6 +256,14 @@
       closeCSVImportModal() {
         this.showCSVImportModal = false;
       },
+
+      selectGreetingMode(isRandom) {
+        this.$parent.$emit('greeting-mode', isRandom);
+      },
+
+      changeCustomGreetingSentence(e){
+        this.$parent.$emit('custom-greeting-sentence', e.target.value);
+      }
     },
 
   }
@@ -328,7 +362,7 @@
     width: auto;
   }
 
-  .sharing-wrapper{
+  .sharing-wrapper {
     height: fit-content;
   }
 
@@ -409,7 +443,7 @@
     background: #dc472f;
   }
 
-  .publish-wrapper{
+  .publish-wrapper {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -427,12 +461,35 @@
     margin: 3em;
   }
 
-  .share-tab-footer{
+  .share-tab-footer {
     margin-bottom: 9em;
   }
 
-  .share-tab-header{
+  .share-tab-header {
     margin-bottom: 6.5em;
+  }
+
+  .greeting-mode-wrapper {
+
+  }
+
+  .greeting-mode-table {
+    border-collapse: collapse;
+    text-align: left;
+    margin: auto;
+  }
+
+  .greeting-mode-table tr:hover {
+    background: #eeeeee;
+    cursor: pointer;
+  }
+
+  .notSelectedGreetingMode {
+    color : #00000090
+  }
+
+  .notSelectedGreetingMode input[type=text]{
+    color : #00000090
   }
 
 </style>

@@ -132,7 +132,9 @@
                            :publishing-campaigns="publishingCampaigns"
                            :save-form="saveForm"
                            :form-title="formTitle"
-                           :entryPoints="entryPoints"/>
+                           :entryPoints="entryPoints"
+                           :greeting="greeting"
+                           :randomGreeting="randomGreeting"/>
     </div>
 
     <!-- ////////////////////////////////////////// CAMPAIGNS AREA ////////////////////////////////////////// !-->
@@ -168,6 +170,8 @@
     <div v-else>
 
     </div>
+
+    <!-- ////////////////////////////////////////// MENU AREA ////////////////////////////////////////// !-->
 
     <DockingMenu class="creator-form-bottom-menu">
       <div slot="body">
@@ -278,6 +282,9 @@
         ],
         currentTab: 'create',
 
+        greeting: 'Bienvenue sur le formulaire !',
+        randomGreeting: true,
+
         //boolean to check if we scroll down on a new entry or not
         firstMount: true
       }
@@ -363,7 +370,7 @@
         e.preventDefault();
       },
 
-      addLabel(under){
+      addLabel(under) {
         const id = uuid.v4();
 
         const label = {
@@ -474,16 +481,28 @@
         this.publishingCampaigns = publishingCampaigns;
       },
 
+      setGreetingMode(isRandomMode) {
+        this.randomGreeting = isRandomMode;
+      },
+
+      setGreetingSentence(greetingSentence) {
+        this.greeting = greetingSentence;
+      },
+
       setForm(form) {
         if (!form) {
           this.formEntries = [];
           this.formTitle = this.defaultFormTitle;
           this.currentSections = [];
+          this.randomGreeting = true;
+          this.greeting = 'Bienvenue sur le formulaire !';
           return;
         }
         this.formEntries = form.formEntries || [];
         this.formTitle = form.formTitle || this.defaultFormTitle;
         this.currentSections = form.currentSections || [];
+        this.randomGreeting = form.isRandomGreetingMode || false;
+        this.greeting = form.greeting || '';
       },
 
       async getFormFromFB(creatorID, formID) {
@@ -491,7 +510,13 @@
           .once('value', (snapshot) => {
             const value = snapshot.val();
             if (value) {
-              this.setForm({formEntries: value.entries, formTitle: value.title, currentSections: value.sections || []});
+              this.setForm({
+                formEntries: value.entries,
+                formTitle: value.title,
+                currentSections: value.sections || [],
+                isRandomGreetingMode: value.isRandomGreetingMode || false,
+                greeting: value.greeting || ''
+              })
             } else {
               this.setForm(null);
             }
@@ -523,7 +548,9 @@
             id: this.formID,
             title: this.formTitle,
             entries: this.formEntries,
-            sections: this.formSections || []
+            sections: this.formSections || [],
+            isRandomGreetingMode: this.randomGreeting,
+            greeting: this.greeting
           });
 
         //if everything is done, we reset the form's data
@@ -615,6 +642,14 @@
         this.setFormPublishingCampaign(publishingCampaigns)
       });
 
+      this.$on('greeting-mode', isRandomMode => {
+        this.setGreetingMode(isRandomMode);
+      });
+
+      this.$on('custom-greeting-sentence', greetingSentence => {
+        this.setGreetingSentence(greetingSentence);
+      });
+
       //when an entry is mounted
       this.$root.$on('mounted-entry', (id) => {
         //we don't want to be at the bottom of the page when arriving
@@ -681,8 +716,8 @@
         return !!this.$store.getters.publishedForms.find(pe => pe.id === this.formID) || this.hasPublishedGenericForms;
       },
 
-      hasPublishedGenericForms(){
-        if(this.containsGenericQuestion){
+      hasPublishedGenericForms() {
+        if (this.containsGenericQuestion) {
           return !!this.$store.getters.publishedForms.find(pe => pe.id.includes(this.formID));
         }
 
@@ -723,7 +758,7 @@
         return this.currentSections;
       },
 
-      publishedForms(){
+      publishedForms() {
         return this.$store.getters.publishedForms || [];
       },
 
@@ -951,8 +986,8 @@
     background: #00000015;
   }
 
-  .label-buttons-wrapper{
-    width : 90%;
+  .label-buttons-wrapper {
+    width: 90%;
     margin: 5px auto;
 
     height: 0;
@@ -973,14 +1008,13 @@
     border-left: 15px solid #00000000;
   }
 
-
-  .add-label-button-left:hover{
+  .add-label-button-left:hover {
     width: 0;
     height: 0;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
 
-    border-left:20px solid #00000090;
+    border-left: 20px solid #00000090;
 
     cursor: pointer;
   }
@@ -994,19 +1028,18 @@
     border-right: 15px solid #00000000;
   }
 
-
-  .add-label-button-right:hover{
+  .add-label-button-right:hover {
     width: 0;
     height: 0;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
 
-    border-right:15px solid #00000090;
+    border-right: 15px solid #00000090;
 
     cursor: pointer;
   }
 
-  .creator-form-title{
+  .creator-form-title {
     margin-top: 1em;
     margin-bottom: 0.5em;
     width: 300px;
@@ -1018,7 +1051,7 @@
     color: #2c3e50;
   }
 
-  .delete-form-button{
+  .delete-form-button {
     color: white;
     background: tomato;
     display: flex;
@@ -1030,17 +1063,17 @@
     padding-right: 5px;
   }
 
-  .delete-form-button:hover{
+  .delete-form-button:hover {
     cursor: pointer;
     background: #dc472f;
   }
 
-  .delete-infos-message{
+  .delete-infos-message {
     width: 100%;
     text-align: left;
   }
 
-  .delete-area{
+  .delete-area {
     display: inline-block;
     flex-direction: row;
     justify-content: center;
