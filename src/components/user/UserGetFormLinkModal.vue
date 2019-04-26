@@ -164,4 +164,11 @@
     font-size: 14px;
   }
 
+
+  @media screen and (max-width: 480px) {
+    .mail-input{
+      width: 100px;
+    }
+  }
+
 </style>

@@ -255,4 +255,41 @@
   .button-wrapper{
     align-self: center;
   }
+
+  @media screen and (max-width: 650px) {
+    .campaign-select-box{
+      width: auto;
+    }
+
+    .multi-select-campaign {
+
+      display: block;
+      flex-direction: row;
+      justify-content: center;
+    }
+
+    .button-wrapper{
+      margin-top: 1em;
+      width: fit-content;
+      display: inline-block;
+    }
+
+    .add-selected-button{
+      display: inline-block;
+      transform: rotate(90deg);
+    }
+
+    .add-selected-button i{
+      font-size: 36px;
+    }
+
+    .remove-selected-button{
+      display: inline-block;
+      transform: rotate(90deg);
+    }
+
+    .remove-selected-button i{
+      font-size: 36px;
+    }
+  }
 </style>
