@@ -258,7 +258,8 @@
           question: {title: ''},
           type: 'radio',
           answers: [],
-          initialyOpened: true //Opened collapse by default
+          initialyOpened: true, //Opened collapse by default
+          required: false
         },
         defaultQuestion: {title: 'Titre de la question'},
         defaultAnswers: [{id: "", text: 'Option'}],

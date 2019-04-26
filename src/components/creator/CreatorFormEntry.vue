@@ -138,7 +138,7 @@
     mounted() {
       this.$root.$emit('mounted-entry', this.entry.id);
     },
-    created(){
+    created() {
       this.$on('set-option-selection', option => {
         this.setEntrySection(option)
       });
@@ -186,7 +186,7 @@
 
   .creator-form-entry-requirement {
     position: absolute;
-    top:0;
+    top: 0;
     right: 0;
     background: none;
     border: none;
@@ -199,7 +199,7 @@
     font-size: 30px;
   }
 
-  .question-title{
+  .question-title {
     width: 175px;
     background: none;
     border: none;
@@ -231,7 +231,7 @@
     cursor: pointer;
   }
 
-  .section-select{
+  .section-select {
     position: absolute;
     top: 0;
     left: 0;
