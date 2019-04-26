@@ -13,6 +13,9 @@
       <UserGetFormLinkModal :showGetLinkModal="showGetFormLinkModal"/>
     </div>
 
+    <div v-else-if="user">
+      <UserGreeting v-if="!user.visited" :percentage="currentFormPercentage" :showGreetingsModal="showGreetingsModal"/>
+    </div>
 
     <div class="user-form-section-list-wrapper">
       <UserSectionList v-if="sections.length > 0 && user"
@@ -76,12 +79,16 @@
 
     </div>
 
+    <div class="help-button">
+      ?
+    </div>
+
     <DockingMenu class="user-form-menu">
       <div slot="body">
 
 
         <div class="user-form-progress-bar smooth"
-             :style="{width: Math.floor(Object.keys(userAnswers).length/formEntries.length * 100) + '%'}">
+             :style="{width: currentFormPercentage + '%'}">
         </div>
 
         <div class="user-form-menu-items">
@@ -176,16 +183,18 @@
   import UserEntryGrid from "@/components/user/UserEntryGrid";
   import UserSectionList from "@/components/user/UserSectionList";
   import {getSections} from "@/helpers/sectionsHelpers";
-  import {areAnswersUpdated, isAnswered} from "@/helpers/userAnswersHelpers";
+  import {areAnswersUpdated, getPercentage, isAnswered} from "@/helpers/userAnswersHelpers";
   import {decodeEmailToken} from "@/helpers/accountHelpers";
   import UserCloseForm from "./UserCloseForm";
   import UserGetFormLinkModal from "./UserGetFormLinkModal";
   import DropUpMenu from "../containers/DropUpMenu";
   import Drawer from "../containers/Drawer";
+  import UserGreeting from "@/components/user/UserGreeting";
 
   export default {
     name: 'UserForm',
     components: {
+      UserGreeting,
       Drawer,
       DropUpMenu,
       UserGetFormLinkModal,
@@ -197,6 +206,7 @@
         showFilterDrawer: false,
         showSorterDrawer: false,
         showGetFormLinkModal: false,
+        showGreetingsModal: true,
         selectedAnswers: {},
 
         filter: 'all',
@@ -342,7 +352,9 @@
         return this.filter !== 'all' || this.searchQuery || this.focusedSection
       },
 
-
+      currentFormPercentage(){
+        return getPercentage('answered', this.formEntries, this.userAnswers);
+      }
 
     },
     created() {
@@ -357,6 +369,10 @@
 
       this.$on('close-get-link-modal', () => {
         this.showGetFormLinkModal = false;
+      });
+
+      this.$on('close-greetings-modal', () => {
+        this.showGreetingsModal = false;
       });
 
       this.$on('section-list-choice', (section) => {
@@ -687,4 +703,24 @@
   }
 
 
+  .help-button {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    height: 36px;
+    text-align: center;
+    width: 36px;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 1px solid #00000088;
+    border-radius: 18px 18px 18px 18px;
+  }
+
+  .help-button:hover{
+    background: #dddddd;
+    border: 1px solid #000000aa;
+  }
 </style>

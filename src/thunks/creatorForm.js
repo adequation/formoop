@@ -1,7 +1,17 @@
 import * as Firebase from 'firebase'
-import {campaignPath, getCreatedFormFromID, getPublishedFormFromID, publishingPath, getCreatedForms} from "@/helpers/firebaseHelpers";
+import {
+  campaignPath,
+  getCreatedFormFromID,
+  getPublishedFormFromID,
+  publishingPath,
+  getCreatedForms
+} from "@/helpers/firebaseHelpers";
 import * as uuid from "uuid";
-import {addFormToWantedCampaigns, removeFormFromUnwantedCampaigns, deleteCampaignFromFormCampaigns} from "@/helpers/campaignsHelpers";
+import {
+  addFormToWantedCampaigns,
+  removeFormFromUnwantedCampaigns,
+  deleteCampaignFromFormCampaigns
+} from "@/helpers/campaignsHelpers";
 import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helpers/accountHelpers";
 import {getFormUrlWithInvite, getInvitationEntryPointText, isValidAddress, sendMailToBack} from "@/helpers/mailHelpers";
 import {getFormURL} from "@/helpers/rooterHelpers";
@@ -124,7 +134,13 @@ const writePublishedCreatorFormFB = (form, override = false) => {
 
 
 const parseFormToUser = (form) => {
-  const parsedForm = {id: form.id, title: form.title, sections: form.sections || []};
+  const parsedForm = {
+    id: form.id,
+    title: form.title,
+    sections: form.sections || [],
+    greeting: form.greeting,
+    isRandomGreetingMode: form.isRandomGreetingMode || false
+  };
 
   //parse entries
   const entriesObject = {};
@@ -218,7 +234,13 @@ const parseGenericEntry = (entry, entity) => {
 //be careful, we put the "nom" property (non open source perspective here...)
 const parseGenericFormToUser = (form, entity) => {
   const uniqueID = `${form.id}-${getEntityToken(entity.id)}`;
-  const parsedForm = {id: uniqueID, title: `${form.title} - ${entity.id}`, sections: form.sections || []};
+  const parsedForm = {
+    id: uniqueID,
+    title: `${form.title} - ${entity.id}`,
+    sections: form.sections || [],
+    greeting: form.greeting,
+    isRandomGreetingMode: form.isRandomGreetingMode || false
+  };
 
   //if there is contacts, add them as entry points and send them an email
 
@@ -466,34 +488,34 @@ export const generateGenericFormsFB = (creatorID, formID, entities, publishingCa
 
 /////////////// DELETE FORM  ////
 
-export function deleteFormFromPublishedFB(formID){
+export function deleteFormFromPublishedFB(formID) {
   return Firebase.database().ref(publishingPath)
     .once('value', function (snapshot) {
       const value = snapshot.val();
       if (value) {
-        const publishedFormsAfterDelete = deleteFormFromPublished(value,formID);
+        const publishedFormsAfterDelete = deleteFormFromPublished(value, formID);
         savePublishedFormsFB(publishedFormsAfterDelete);
       }
     });
 }
 
-export function deleteFormFromCreatedFB(creatorID, formID){
+export function deleteFormFromCreatedFB(creatorID, formID) {
   return Firebase.database().ref(getCreatedForms(creatorID))
     .once('value', function (snapshot) {
       const value = snapshot.val();
       if (value) {
-        const createdFormsAfterDelete = deleteFormFromCreated(value,formID);
+        const createdFormsAfterDelete = deleteFormFromCreated(value, formID);
         saveCreatedFormsFB(creatorID, createdFormsAfterDelete);
       }
     });
 }
 
-export function deleteFormFromCampaignsFB(formID){
+export function deleteFormFromCampaignsFB(formID) {
   return Firebase.database().ref(campaignPath)
     .once('value', function (snapshot) {
       const value = snapshot.val();
       if (value) {
-        const campaignsFormsAfterDelete = deleteFormFromCampaigns(value,formID);
+        const campaignsFormsAfterDelete = deleteFormFromCampaigns(value, formID);
         saveFormCampaignsFB(campaignsFormsAfterDelete);
       }
     });
@@ -501,7 +523,7 @@ export function deleteFormFromCampaignsFB(formID){
 
 /////////////// DELETE CAMPAIGN  ////
 
-export function deleteCampaignFromFormCampaignsFB(campaignID){
+export function deleteCampaignFromFormCampaignsFB(campaignID) {
   return Firebase.database().ref(campaignPath)
     .once('value', function (snapshot) {
       const value = snapshot.val();

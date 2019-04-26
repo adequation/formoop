@@ -39,3 +39,7 @@ export function inviteEntryPoint(userID, formID, metadata){
     }
   })
 }
+
+export function visitForm(userID, formID){
+  return Firebase.database().ref(`${getPublishedFormUserPath(formID, userID)}/visited`).set(true);
+}

@@ -6,7 +6,7 @@
         <div class="modal-container" v-on:click.stop="">
 
           <div class="modal-closer">
-            <slot name="upper-right">
+            <slot name="upper-right" v-if="showCloseButton">
               <button class="modal-close-button" @click="$emit('close')">
                 <i class="material-icons">close</i>
               </button>
@@ -39,7 +39,15 @@
 
 <script>
   export default {
-    name: "Modal"
+    name: "Modal",
+
+    props: {
+      showCloseButton: {
+        type: Boolean,
+        required : false,
+        default: true
+      }
+    }
   }
 </script>
 

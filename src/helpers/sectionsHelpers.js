@@ -7,8 +7,8 @@ export function getSections(formEntries, userAnswers) {
 
   //we retreive all sections from the entries
   formEntries.forEach(fe => {
-    if(!fe.section) return;
-    if(!allSections[fe.section]) {
+    if (!fe.section) return;
+    if (!allSections[fe.section]) {
       allSections[fe.section] = {id: fe.section, name: fe.section};
       sectionGrouped[fe.section] = [];
     }
@@ -23,21 +23,31 @@ export function getSections(formEntries, userAnswers) {
 
     allSections[section].values = [
       {"name": "full", "value": percentage},
-      {"name": "empty", "value": 1-percentage}
+      {"name": "empty", "value": 1 - percentage}
     ];
   });
 
   return Object.keys(allSections).map(section => ({...allSections[section], id: section}))
-    .sort((a,b) => a.name.localeCompare(b.name));
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export function getSectionColor(currentSection, sections, interpolator = d3.interpolateRainbow){
+export function getSectionColor(currentSection, sections, interpolator = d3.interpolateRainbow) {
 
-  if(!currentSection || sections.length <= 0) return null;
+  /*
+  colorize = (text) => {
+  let acc = text.length;
+  for (let i = 0; i < text.length; i++) {
+    acc += text.charCodeAt(i) + i;
+  }
+  return (acc ** 8 % 777) / 777;
+};
+   */
+
+  if (!currentSection || sections.length <= 0) return null;
 
   const index = sections.findIndex(s => s === currentSection);
 
-  if(index < 0) return null;
+  if (index < 0) return null;
 
   return interpolator(index / sections.length);
 }
