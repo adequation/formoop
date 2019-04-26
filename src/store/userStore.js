@@ -125,8 +125,8 @@ export default {
         .on('value', function (snapshot) {
           const value = snapshot.val();
           if (value) {
-            state.isRandomGreetingMode = value.isRandomGreetingMode;
-            state.greeting = value.greeting;
+            state.isRandomGreetingMode = value.isRandomGreetingMode || false;
+            state.greeting = value.greeting || '';
           }
           else {
             state.isRandomGreetingMode = true;
