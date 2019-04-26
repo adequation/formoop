@@ -3,7 +3,7 @@
 
     <h1 class="thank-you-text hand-written"
         @mouseup="canvasMouseup">
-      Merci d'avoir participé au formulaire !
+      Merci d'avoir participé au formoop !
     </h1>
 
     <canvas id="fireworks-canvas"
