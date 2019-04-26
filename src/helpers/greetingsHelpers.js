@@ -17,7 +17,7 @@ export function getRandomThankYou() {
 
 //Parse a sentence with variables
 //Right now, the parsing is intended with those values :
-//NOM, ENTREPRISE, DATE, TITRE, HEURE, NBINVITES, POURCENTAGE_ACTUEL, POURCENTAGE_RESTANT
+//NOM, ENTREPRISE, TITRE, HEURE, NBINVITES, POURCENTAGE_ACTUEL, POURCENTAGE_RESTANT
 //but you could add any if you want, because we iterate on the keys
 export function parseSentence(sentence, currentValues) {
 

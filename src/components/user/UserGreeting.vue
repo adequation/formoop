@@ -51,13 +51,12 @@
     },
 
     computed: {
-      //current variables : NOM, ENTREPRISE, HEURE, DATE, TITRE, NBINVITES, POURCENTAGE_ACTUEL, POURCENTAGE_RESTANT
+      //current variables : NOM, ENTREPRISE, HEURE, TITRE, NBINVITES, POURCENTAGE_ACTUEL, POURCENTAGE_RESTANT
       parsingVariables() {
         return {
           NOM: this.user.name,
           ENTREPRISE: this.user.company,
           HEURE: getFormattedHourMinutes(),
-          DATE: getFormattedToday(),
           TITRE: this.formTitle,
           NBINVITES: (this.invitedUsers ? Object.keys(this.invitedUsers) : []).length,
           POURCENTAGE_ACTUEL: this.percentage,
