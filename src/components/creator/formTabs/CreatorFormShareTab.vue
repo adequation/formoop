@@ -30,7 +30,7 @@
         <tr @click="selectGreetingMode(false)" :class="{notSelectedGreetingMode: randomGreeting}">
           <td><i class="material-icons md-26"> {{!randomGreeting ? 'check_box' : 'check_box_outline_blank'}}</i></td>
           <td>Phrase d'acceuil personalisée : </td>
-          <td><input type="text" placeholder="Phrase d'acceuil"
+          <td><input type="text" placeholder="Phrase d'accueil"
                      :value="greeting"
                      @change="changeCustomGreetingSentence($event)"/></td>
         </tr>
