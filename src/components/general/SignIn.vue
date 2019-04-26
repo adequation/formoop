@@ -70,4 +70,15 @@
     display: block;
     margin-top: 1em;
   }
+
+  @media screen and (max-width: 480px) {
+    input{
+      width: 200px;
+    }
+
+    button {
+      width: 150px;
+      padding: 0.5em;
+    }
+  }
 </style>
