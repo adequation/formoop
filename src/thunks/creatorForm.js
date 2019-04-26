@@ -234,7 +234,13 @@ const parseGenericEntry = (entry, entity) => {
 //be careful, we put the "nom" property (non open source perspective here...)
 const parseGenericFormToUser = (form, entity) => {
   const uniqueID = `${form.id}-${getEntityToken(entity.id)}`;
-  const parsedForm = {id: uniqueID, title: `${form.title} - ${entity.id}`, sections: form.sections || []};
+  const parsedForm = {
+    id: uniqueID,
+    title: `${form.title} - ${entity.id}`,
+    sections: form.sections || [],
+    greeting: form.greeting,
+    isRandomGreetingMode: form.isRandomGreetingMode || false
+  };
 
   //if there is contacts, add them as entry points and send them an email
 
