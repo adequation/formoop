@@ -248,6 +248,10 @@
     .campaigns-header {
       display: inline-block;
     }
+
+    .input-wrapper{
+      margin-bottom: 0.5em;
+    }
   }
 
 
