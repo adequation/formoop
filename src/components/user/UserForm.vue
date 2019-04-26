@@ -95,7 +95,7 @@
           <div class="user-form-filter-buttons-wrapper">
 
             <drawer v-if="showFilterDrawer" @close="showFilterDrawer=false">
-              <div slot="header">
+              <div slot="header" >
                 <h1> Filtres </h1>
               </div>
               <div slot="body">
@@ -109,7 +109,7 @@
             </drawer>
 
             <button class="user-form-filter-button" type="button" @click="showFilterDrawer=true">
-              <i v-if="filters.find(f => f.name === filter).icon" class="material-icons md-24">{{filters.find(f => f.name === filter).icon}}</i>
+              <i v-if="filters.find(f => f.name === filter).icon" class="material-icons md-36 menu-button">{{filters.find(f => f.name === filter).icon}}</i>
             </button>
 
             <drawer v-if="showSorterDrawer" @close="showSorterDrawer=false">
@@ -127,7 +127,7 @@
             </drawer>
 
             <button class="user-form-sort-button" type="button" @click="showSorterDrawer=true">
-              <i v-if="selectedSorter.icon" class="material-icons md-24">{{selectedSorter.icon}}</i>
+              <i v-if="selectedSorter.icon" class="material-icons md-36 menu-button">{{selectedSorter.icon}}</i>
             </button>
 
             <div class="vertical-separator"></div>
@@ -136,7 +136,7 @@
                     type="button"
                     :class="['user-form-clean-filters-button', !hasFilter ? 'disabled' : '']"
                     title="Enlever tous les filtres">
-              <i class="material-icons">{{hasFilter ? 'visibility_off' : 'visibility'}}</i>
+              <i class="material-icons md-36 menu-button">{{hasFilter ? 'visibility_off' : 'visibility'}}</i>
             </button>
 
           </div>
@@ -148,14 +148,14 @@
                    class="user-form-search-bar"
                    v-model="searchQuery"/>
             <button type="button" class="user-form-search-delete-button" @click="searchQuery = ''">
-              <i v-if="searchQuery" class="material-icons" role="button">clear</i>
+              <i v-if="searchQuery" class="material-icons menu-button" role="button">clear</i>
             </button>
           </div>
 
           <div class="user-form-utils-buttons-wrapper">
 
             <button class="user-form-save-button" @click="saveAnswers" type="button" title="Enregistrer le formulaire">
-              <i class="material-icons md-36">save</i>
+              <i class="material-icons md-36 menu-button">save</i>
             </button>
 
             <InviteModal class="user-form-invite-button" v-if="user"/>
@@ -536,6 +536,7 @@
   }
 
   .user-form-search-delete-button:hover {
+    cursor: pointer;
     color: tomato;
   }
 
@@ -560,7 +561,6 @@
   }
 
   .user-form-filter-button {
-    margin-right: 0.5em;
     padding: 0.5em;
     color: white;
     background: #4286f4;
@@ -623,7 +623,6 @@
   }
 
   .user-form-clean-filters-button {
-    margin-right: 0.5em;
     margin-left: 0.5em;
     padding: 0.5em;
     color: white;
@@ -683,6 +682,24 @@
 
   .drawer-content:hover{
     color: rgba(0, 0, 0, .5);
+  }
+
+  @media screen and (max-width: 550px) {
+    .user-form-menu-items{
+      padding: 0.5em;
+    }
+
+    .menu-button {
+      font-size: 24px;
+    }
+
+    .user-form-search-bar{
+      width: 75px;
+    }
+
+    .user-form-search-delete-button{
+      font-size: 16px;
+    }
   }
 
 

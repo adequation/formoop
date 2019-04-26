@@ -121,18 +121,18 @@
             <div class="creator-form-buttons-wrapper">
 
               <div class="creator-form-buttons-type">
-                <button class="bottom-button filter-button" title="Progression"><i class="material-icons">timeline</i>
+                <button class="bottom-button filter-button" title="Progression"><i class="material-icons md-36 menu-button">timeline</i>
                 </button>
-                <button class="bottom-button filter-button" title="Conflits"><i class="material-icons">event_busy</i>
+                <button class="bottom-button filter-button" title="Conflits"><i class="material-icons md-36 menu-button">event_busy</i>
                 </button>
               </div>
 
               <div class="creator-form-buttons-sort">
                 <button class="bottom-button sort-button" title="Filtrer">
-                  <i class="material-icons">sort</i>
+                  <i class="material-icons md-36 menu-button">sort</i>
                 </button>
                 <button class="bottom-button sort-button" title="Filtrer par ordre alphabetique">
-                  <i class="material-icons">sort_by_alpha</i>
+                  <i class="material-icons md-36 menu-button">sort_by_alpha</i>
                 </button>
               </div>
 
@@ -143,10 +143,10 @@
               <!--<download-campaign class="bottom-button tool-button" title="Récupérer les résultats" :campaign="campaign"
                                  :campaign-forms="campaignFullForms" :campaign-closed-forms="campaignClosedForms"/>-->
               <button class="bottom-button tool-button" title="Récupérer les résultats"
-              ><a :href="JsonParsing(campaign)" :download="campaign.name + '.json'"><i class="material-icons md-36">save_alt</i></a>
+              ><a :href="JsonParsing(campaign)" :download="campaign.name + '.json'"><i class="material-icons md-36 menu-button">save_alt</i></a>
               </button>
               <button class="bottom-button tool-button" title="Progression"><i
-                class="material-icons md-36">description</i></button>
+                class="material-icons md-36 menu-button">description</i></button>
             </div>
           </div>
 
@@ -604,6 +604,22 @@
 
   a {
     color: #fff;
+  }
+
+  @media screen and (max-width: 480px) {
+
+    .creator-form-buttons-type{
+      margin-right: 0;
+      margin-left: 0;
+    }
+
+    .menu-button {
+      font-size: 24px;
+    }
+
+    .creator-form-tools-wrapper{
+      padding: 0;
+    }
   }
 
 </style>

@@ -48,7 +48,7 @@
 
         <div
           class="smooth publish-button bad-publish-button"
-          @click="publishForm(true)">
+          @click="overwrite">
           Écraser le Formoop
         </div>
 
@@ -263,7 +263,16 @@
 
       changeCustomGreetingSentence(e){
         this.$parent.$emit('custom-greeting-sentence', e.target.value);
+      },
+
+      overwrite(){
+        if (confirm(`Es-tu sûr de vouloir écraser les donnée du formoop?
+                      \nAttention!
+                      \nLes réponses du formoop et les utilisateurs invités à y participer seront écrasés !`)) {
+          this.publishForm(true);
+        }
       }
+
     },
 
   }
