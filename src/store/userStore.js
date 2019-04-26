@@ -3,11 +3,11 @@ import Vue from 'vue'
 import Firebase from 'firebase'
 import {
   getAnsweringPath,
+  getPublishedFormEntryPointPath,
   getPublishedFormFromID,
-  getPublishedFormUserPath, getPublishedFormUsersPath,
-  publishedFormsPath,
-  userPath,
-  getPublishedFormEntryPointPath
+  getPublishedFormUserPath,
+  getPublishedFormUsersPath,
+  publishedFormsPath
 } from "@/helpers/firebaseHelpers";
 
 Vue.use(Vuex);
@@ -21,7 +21,9 @@ export default {
     formSections: [],
     invitedUsers: {},
     entryPoints: [],
-    user: null
+    user: null,
+    isRandomGreetingMode : true,
+    greeting : ''
   },
   getters: {
     getFormEntries: state => {
@@ -52,7 +54,11 @@ export default {
 
     user : state => state.user,
 
-    formSections : state => state.formSections
+    formSections : state => state.formSections,
+
+    isRandomGreetingMode : state => state.isRandomGreetingMode,
+    greeting : state => state.greeting,
+
   },
   mutations: {
     setFormEntries: (state) => {
@@ -114,6 +120,21 @@ export default {
         });
     },
 
+    setGreeting: (state) => {
+      Firebase.database().ref(getPublishedFormFromID(state.formID))
+        .on('value', function (snapshot) {
+          const value = snapshot.val();
+          if (value) {
+            state.isRandomGreetingMode = value.isRandomGreetingMode;
+            state.greeting = value.greeting;
+          }
+          else {
+            state.isRandomGreetingMode = true;
+            state.greeting = '';
+          }
+        });
+    },
+
     setUser: (state, {userID}) => {
       state.userID = userID;
       Firebase.database().ref(getPublishedFormUserPath(state.formID, state.userID))
@@ -157,6 +178,7 @@ export default {
         context.commit('setUserAnswers');
         context.commit('setInvitedUsers');
         context.commit('setEntryPoint');
+        context.commit('setGreeting');
       },
 
       setFormTitle: (context) => {
@@ -174,6 +196,10 @@ export default {
 
       setUser: (context, {userID}) => {
         context.commit('setUser', {userID});
+      },
+
+      setGreeting: (context) => {
+        context.commit('setGreeting');
       },
 
     }
