@@ -4,7 +4,8 @@ import {
   getCreatedFormFromID,
   getPublishedFormFromID,
   publishingPath,
-  getCreatedForms
+  getCreatedForms,
+  getPublishedFormEntryPointPath
 } from "@/helpers/firebaseHelpers";
 import * as uuid from "uuid";
 import {
@@ -18,7 +19,7 @@ import {getFormURL} from "@/helpers/rooterHelpers";
 import {areUserEntriesDifferent, updateAnswers, updateEntry, updatePublishedForm} from "@/helpers/generalHelpers";
 import {getEntityToken} from "@/helpers/csvParserHelpers";
 import {getPropArrayFromBlock} from "@/helpers/genericQuestionHelpers";
-import {deleteFormFromCreated, deleteFormFromPublished, deleteFormFromCampaigns} from "@/helpers/creatorHelpers";
+import {deleteFormFromCreated, deleteFormFromPublished, deleteFormFromCampaigns, deleteEntryPoint} from "@/helpers/creatorHelpers";
 
 export const saveCreatorFormFB = (creatorID, formID, form) => {
 
@@ -47,6 +48,13 @@ export const saveFormCampaignsFB = (campaigns) => {
 
   return Firebase.database().ref(campaignPath)
     .set(campaigns);
+
+};
+
+export const saveEntryPointFB = (entryPoints, formID) => {
+
+  return Firebase.database().ref(getPublishedFormEntryPointPath(formID))
+    .set(entryPoints);
 
 };
 
@@ -530,6 +538,19 @@ export function deleteCampaignFromFormCampaignsFB(campaignID) {
       if (value) {
         const campaignsAfterDelete = deleteCampaignFromFormCampaigns(value, campaignID);
         saveFormCampaignsFB(campaignsAfterDelete);
+      }
+    });
+}
+
+/////////////// DELETE ENTRY POINT  ////
+
+export function deleteEntryPointFB(formID, entryPointId) {
+  return Firebase.database().ref(getPublishedFormEntryPointPath(formID))
+    .once('value', function (snapshot) {
+      const value = snapshot.val();
+      if (value) {
+        const entryPointsAfterDelete = deleteEntryPoint(value, entryPointId);
+        saveEntryPointFB(entryPointsAfterDelete, formID );
       }
     });
 }

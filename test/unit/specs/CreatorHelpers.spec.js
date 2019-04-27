@@ -1,4 +1,4 @@
-import {deleteFormFromCreated, deleteFormFromPublished, deleteFormFromCampaigns, isUserInvitedToForm} from "@/helpers/creatorHelpers";
+import {deleteFormFromCreated, deleteFormFromPublished, deleteFormFromCampaigns, isUserInvitedToForm, deleteEntryPoint} from "@/helpers/creatorHelpers";
 import {getUserIdFromEmail} from "@/helpers/accountHelpers";
 
 const mockCreatedForms =
@@ -588,6 +588,46 @@ describe('creatorHelpers.js', () => {
     const mockUserEmail = "rené.castaign@formoop.com";
 
     expect(isUserInvitedToForm(mockFormID, mockUserEmail, mockPublishedForms)).toBe(false);
+  });
+
+  const mockFormEntryPoints = {
+  "user1ID":
+    {
+      "company":"formoop",
+      "email":"user1@formoop.com",
+      "id":"user1ID",
+      "name":"user1"
+    },
+    "user2ID":
+      {
+        "company":"formoop",
+        "email":"user2@formoop.com",
+        "id":"user2ID",
+        "name":"user2"
+      },
+  };
+
+  it('Should delete entry point when it exists', () => {
+
+    const mockEntryPointID = "user1ID";
+    const mockFormEntryAfterDelete = {
+      "user2ID":
+        {
+          "company":"formoop",
+          "email":"user2@formoop.com",
+          "id":"user2ID",
+          "name":"user2"
+        }
+    };
+
+    expect(deleteEntryPoint(mockFormEntryPoints, mockEntryPointID)).toEqual(mockFormEntryAfterDelete);
+  });
+
+  it('Should not delete entry point when it does not exists', () => {
+
+    const mockEntryPointID = "user25ID";
+
+    expect(deleteEntryPoint(mockFormEntryPoints, mockEntryPointID)).toEqual(mockFormEntryPoints);
   });
 
 });

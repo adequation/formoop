@@ -24,12 +24,12 @@
       <table class="greeting-mode-table">
         <tr @click="selectGreetingMode(true)" :class="{notSelectedGreetingMode: !randomGreeting}">
           <td><i class="material-icons md-26"> {{randomGreeting ? 'check_box' : 'check_box_outline_blank'}}</i></td>
-          <td>Phrase d'acceuil au hasard</td>
+          <td>Phrase d'accueil au hasard</td>
           <td></td>
         </tr>
         <tr @click="selectGreetingMode(false)" :class="{notSelectedGreetingMode: randomGreeting}">
           <td><i class="material-icons md-26"> {{!randomGreeting ? 'check_box' : 'check_box_outline_blank'}}</i></td>
-          <td>Phrase d'acceuil personalisée : </td>
+          <td>Phrase d'accueil personalisée : </td>
           <td><input type="text" placeholder="Phrase d'accueil"
                      :value="greeting"
                      @change="changeCustomGreetingSentence($event)"/></td>
@@ -54,7 +54,7 @@
 
         <div class="smooth publish-button good-publish-button"
              @click="publishForm(false)">
-          Mettre a jour le Formoop
+          Mettre à jour le Formoop
         </div>
       </div>
     </div>
@@ -78,7 +78,8 @@
                 <td>
                   <button type="button"
                           class="delete-entry-point-button"
-                          title="Retirer le point d'entrée">
+                          title="Retirer le point d'entrée"
+                          @click="removeEntryPoint(entryPoint)">
                     <i class="material-icons md-16">close</i>
                   </button>
                 </td>
@@ -102,7 +103,7 @@
 
 
       <div class="sharing-link">
-        <p>Partages le à l'aide du lien suivant :</p>
+        <p>Partage le à l'aide du lien suivant :</p>
         <CopyToClipboardInput :text-to-copy="formURL"/>
       </div>
 
@@ -116,7 +117,7 @@
 </template>
 
 <script>
-  import {publishCreatorFormFB, saveAndFilterCampaignsFB} from "@/thunks/creatorForm";
+  import {publishCreatorFormFB, saveAndFilterCampaignsFB, deleteEntryPointFB} from "@/thunks/creatorForm";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helpers/accountHelpers";
   import {inviteEntryPoint, inviteUser} from "@/thunks/userAccountThunks";
@@ -271,6 +272,10 @@
                       \nLes réponses du formoop et les utilisateurs invités à y participer seront écrasés !`)) {
           this.publishForm(true);
         }
+      },
+
+      removeEntryPoint(entryPoint){
+        deleteEntryPointFB(this.formID, entryPoint.id);
       }
 
     },
@@ -478,8 +483,8 @@
     margin-bottom: 6.5em;
   }
 
-  .greeting-mode-wrapper {
-
+  .greeting-mode-wrapper input {
+    width: 160px;
   }
 
   .greeting-mode-table {
@@ -498,7 +503,8 @@
   }
 
   .notSelectedGreetingMode input[type=text]{
-    color : #00000090
+    color : #00000090;
+
   }
 
 </style>

@@ -283,7 +283,7 @@
         ],
         currentTab: 'create',
 
-        greeting: 'Bienvenue sur le formulaire !',
+        greeting: 'Bienvenue sur le formoop !',
         randomGreeting: true,
 
         //boolean to check if we scroll down on a new entry or not
@@ -496,7 +496,7 @@
           this.formTitle = this.defaultFormTitle;
           this.currentSections = [];
           this.randomGreeting = true;
-          this.greeting = 'Bienvenue sur le formulaire !';
+          this.greeting = 'Bienvenue sur le formoop !';
           return;
         }
         this.formEntries = form.formEntries || [];

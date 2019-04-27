@@ -83,3 +83,22 @@ export function isUserInvitedToForm(formID, userEmail, publishedForms ) {
   });
   return isInvited
 }
+
+/////////////// DELETE ENTRY POINT ////
+
+export function deleteEntryPoint(formEntryPoints, entryPointId ) {
+  let formEntryCopy = {...formEntryPoints};
+
+  const entryPoints = Object.keys(formEntryPoints).map(id => {
+    return formEntryPoints[id];
+  });
+
+  entryPoints.forEach(ep => {
+    if (ep.id === entryPointId ) {
+      console.log("same")
+      delete formEntryCopy[ep.id];
+    }
+  });
+
+  return formEntryCopy;
+}
