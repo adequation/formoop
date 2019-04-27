@@ -95,7 +95,6 @@ export function deleteEntryPoint(formEntryPoints, entryPointId ) {
 
   entryPoints.forEach(ep => {
     if (ep.id === entryPointId ) {
-      console.log("same")
       delete formEntryCopy[ep.id];
     }
   });
