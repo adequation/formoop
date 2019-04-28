@@ -41,6 +41,10 @@
     font-size: 48px;
   }
 
+  .material-icons.md-60 {
+    font-size: 60px;
+  }
+
   .material-icons.md-dark {
     color: rgba(0, 0, 0, 0.54);
   }
