@@ -113,6 +113,7 @@
       },
 
       isUserInvited(form) {
+        if(!this.user) return false;
         return isUserInvitedToForm(form.id, this.user, this.publishedForms);
       },
 
@@ -264,7 +265,7 @@
   }
 
   .published-top-menu {
-    background-color: #3EB9DE !important;
+    background-color: #42b983 !important;
     padding-top: 10px;
     padding-bottom: 10px;
   }

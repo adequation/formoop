@@ -247,7 +247,7 @@
   }
 
   .closed-top-menu {
-    background-color: #e8742e !important;
+    background-color: #fa7d32 !important;
     padding-top: 10px;
     padding-bottom: 10px;
   }

@@ -1,6 +1,10 @@
 <template>
   <div>
 
+    <div class="formoop-title left-nav" @click="goTo('home')">
+      Formoop
+    </div>
+
     <DockingMenu class="campaigns-top-menu"
                  ref="top-menu"
                  top>
@@ -259,6 +263,9 @@
     },
 
     methods: {
+      goTo(path) {
+        this.$router.push(`/${path}`);
+      },
 
       changeTab(newTab) {
         if (this.currentTab === newTab) return;
@@ -421,7 +428,7 @@
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: center;
-    background-color: #4286f4;
+    background-color: #42548E;
     color: white;
 
     height: 20px;
@@ -562,7 +569,7 @@
   }
 
   .campaigns-top-menu {
-    background-color: #4286f4 !important;
+    background-color: #7f77a3 !important;
     padding-bottom: 2px;
   }
 
@@ -622,4 +629,10 @@
     }
   }
 
+  .left-nav {
+    z-index: 100;
+    position: fixed;
+    top: 5px;
+    left: 0;
+  }
 </style>

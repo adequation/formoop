@@ -162,13 +162,13 @@
   }
 
   .create-grid-element {
-    background: #42b983;
-    background: linear-gradient(#5cd167, #3f9f7a);
+    background: linear-gradient(#3EB9DE, #387bd6);
+
     color: white;
   }
 
   .published-grid-element {
-    background: linear-gradient(#3EB9DE, #387bd6);
+    background: linear-gradient(#5cd167, #3f9f7a);
     color: white;
   }
 
