@@ -79,7 +79,7 @@ export default {
     setCreatorID: (context) => {
       context.commit('setCreatorID');
       context.commit('setCreatedForms');
-      context.commit('setFinishedForms')
+      context.commit('setFinishedForms');
     }
   }
 }

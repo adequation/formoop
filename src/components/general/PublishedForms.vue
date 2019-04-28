@@ -94,7 +94,7 @@
       },
 
       isUserInvited(form) {
-        return isUserInvitedToForm(form.id, this.user.email, this.publishedForms);
+        return isUserInvitedToForm(form.id, this.user, this.publishedForms);
       }
 
     },

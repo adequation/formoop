@@ -5,60 +5,40 @@ import {getUserIdFromEmail} from "@/helpers/accountHelpers";
 export function deleteFormFromCreated(createdForms, formID) {
   let createdFormsCopy = {...createdForms};
 
-  const forms = Object.keys(createdForms).map(id => {
-    return createdFormsCopy[id];
-  });
+  delete createdFormsCopy[formID];
 
-  const index = forms.findIndex(f => f.id === formID);
-  if (index >= 0) {
-    forms.splice(index, 1);
-  }
-
-  let createdFormsChanged = {};
-
-  forms.forEach(f => {
-    createdFormsChanged[f.id] = {...f}
-  });
-
-  return createdFormsChanged;
+  return createdFormsCopy;
 }
 
 export function deleteFormFromPublished(publishedForms, formID) {
-  let publishedFormsCopy = {...publishedForms};
+  //Array copy with slice
+  const publishedFormsCopy = {...publishedForms};
 
-  const forms = Object.keys(publishedForms).map(id => {
-    return publishedFormsCopy[id];
-  });
+  delete publishedFormsCopy[formID];
 
-  const index = forms.findIndex(f => f.id === formID);
-  if (index >= 0) {
-    forms.splice(index, 1);
-  }
-
-  let publishedFormsChanged = {};
-
-  forms.forEach(f => {
-    publishedFormsChanged[f.id] = {...f}
-  });
-
-  return publishedFormsChanged;
+  return publishedFormsCopy;
 }
 
 export function deleteFormFromCampaigns(formCampaigns, formID) {
   let formCampaignCopy = {...formCampaigns};
 
-  const campaigns = Object.keys(formCampaigns).map(id => {
-    return formCampaigns[id];
-  });
+  //here we need to go through campaigns
+  //so going from object to array is great
+  const campaigns = Object.keys(formCampaigns).map(id => formCampaigns[id]);
 
   campaigns.forEach(c => {
+
     let campaignForms = [];
+
     if (c.forms) {
-      c.forms.forEach(cf => {
-        if (cf.id !== formID) campaignForms.push(cf);
-      });
+
+      //here we want to keep all the forms, except ours
+      //so use Array.filter
+      campaignForms = c.forms.filter(cf => cf.id !== formID);
+
       formCampaignCopy[c.id].forms = campaignForms;
-      if (formCampaignCopy[c.id].forms.length <= 0) {
+
+      if (campaignForms.length <= 0) {
         delete formCampaignCopy[c.id].forms
       }
     }
@@ -69,19 +49,17 @@ export function deleteFormFromCampaigns(formCampaigns, formID) {
 
 /////////////// IS USER INVITED TO FORM ////
 
-export function isUserInvitedToForm(formID, userEmail, publishedForms ) {
-  let isInvited = false;
+export function isUserInvitedToForm(formID, user, publishedForms ) {
+  //retrieve the wanted form
+  const myPublishedForm = publishedForms.find(f => f.id === formID);
 
-  publishedForms.forEach(f => {
-    if (f.id === formID) {
-      if(Object.keys(f).includes("users")){
-        Object.keys(f.users).forEach(formUser => {
-          if (formUser === getUserIdFromEmail(userEmail)) isInvited = true;
-        });
-      }
-    }
-  });
-  return isInvited
+  //if it doesn't exist, or doesn't contains users, return false
+  if(!myPublishedForm) return false;
+  if(!myPublishedForm.users) return false;
+
+  //finally, we check if he's invited
+  const userID = getUserIdFromEmail(user.email);
+  return !!myPublishedForm.users[userID];
 }
 
 /////////////// DELETE ENTRY POINT ////
@@ -89,15 +67,7 @@ export function isUserInvitedToForm(formID, userEmail, publishedForms ) {
 export function deleteEntryPoint(formEntryPoints, entryPointId ) {
   let formEntryCopy = {...formEntryPoints};
 
-  const entryPoints = Object.keys(formEntryPoints).map(id => {
-    return formEntryPoints[id];
-  });
-
-  entryPoints.forEach(ep => {
-    if (ep.id === entryPointId ) {
-      delete formEntryCopy[ep.id];
-    }
-  });
+  delete formEntryCopy[entryPointId];
 
   return formEntryCopy;
 }
