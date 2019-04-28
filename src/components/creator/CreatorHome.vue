@@ -1,6 +1,23 @@
 <template>
   <div class="creator-home">
 
+    <DockingMenu class="created-top-menu"
+                 ref="home-top-menu"
+                 top>
+      <div slot="body">
+        <div class="created-menu-content-wrapper">
+          <div class="formoop-title" @click="goTo('home')">
+            Formoop
+          </div>
+        </div>
+
+      </div>
+    </DockingMenu>
+
+    <div class="header-space">
+
+    </div>
+
     <h1>Formoops créés</h1>
 
     <div class="space-header"></div>
@@ -88,9 +105,11 @@
 <script>
   import * as uuid from "uuid";
   import {getCreatedForms} from "@/helpers/firebaseHelpers";
+  import DockingMenu from "@/components/containers/DockingMenu";
 
   export default {
     name: "CreatorHome",
+    components: {DockingMenu},
     data() {
       return {
         searchQuery: ''
@@ -150,6 +169,10 @@
 
         return containsGenericQuestion;
       },
+
+      goTo(path) {
+        this.$router.push(`/${path}`);
+      }
     },
 
     created() {
@@ -278,5 +301,22 @@
     .search-box {
       width: 150px;
     }
+  }
+
+  .created-top-menu {
+    background-color: #42b983 !important;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .created-menu-content-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .header-space {
+    margin: 7em;
   }
 </style>

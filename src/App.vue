@@ -118,4 +118,16 @@
     90% { transform: translate(1px, 2px) rotate(0deg); }
     100% { transform: translate(1px, -2px) rotate(-1deg); }
   }
+
+  .formoop-title {
+    color: white;
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-left: 5px;
+    margin-right: 15px;
+  }
+
+  .formoop-title:hover {
+    cursor: pointer;
+  }
 </style>

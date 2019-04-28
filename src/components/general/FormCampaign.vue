@@ -1,6 +1,23 @@
 <template>
   <div class="form-campaigns">
 
+    <DockingMenu class="campaign-top-menu"
+                 ref="home-top-menu"
+                 top>
+      <div slot="body">
+        <div class="campaign-menu-content-wrapper">
+          <div class="formoop-title" @click="goTo('home')">
+            Formoop
+          </div>
+        </div>
+
+      </div>
+    </DockingMenu>
+
+    <div class="header-space">
+
+    </div>
+
     <h1>Campagnes</h1>
 
     <div class="space-header"></div>
@@ -79,9 +96,11 @@
   import * as uuid from "uuid";
   import {saveFormCampaignFB} from "../../thunks/creatorForm";
   import {doesCampaignExists} from "../../helpers/campaignsHelpers";
+  import DockingMenu from "@/components/containers/DockingMenu";
 
   export default {
     name: "FormCampaign",
+    components: {DockingMenu},
     data() {
       return {
         newCampaignName: null,
@@ -111,7 +130,9 @@
         this.newCampaignName = null;
       },
 
-
+      goTo(path) {
+        this.$router.push(`/${path}`);
+      }
     },
 
     computed: {
@@ -255,4 +276,20 @@
   }
 
 
+  .campaign-top-menu {
+    background-color: #7f77a3 !important;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .campaign-menu-content-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .header-space {
+    margin: 7em;
+  }
 </style>

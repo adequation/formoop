@@ -1,8 +1,28 @@
 <template>
   <div>
-    <h1>Formoop</h1>
 
-    <Profile/>
+
+    <DockingMenu class="home-top-menu"
+                 ref="home-top-menu"
+                 top>
+      <div slot="body">
+        <div class="home-top-menu-content-wrapper">
+          <div class="formoop-title">
+            Formoop
+          </div>
+          <div class="home-top-menu-content-account">
+            <span class="account-name" :title="user.email">{{userName}}</span>
+            <button type="button" @click="signOut" class="signout-button">Déconnexion</button>
+          </div>
+        </div>
+
+      </div>
+    </DockingMenu>
+
+    <div class="header-space">
+
+    </div>
+
 
     <div class="navigation-grid-wrapper">
       <div class="navigation-grid">
@@ -44,19 +64,29 @@
     </div>
 
 
-    <button @click="signOut">Déconnexion</button>
   </div>
 </template>
 
 <script>
   import Profile from "@/components/general/Profile";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
+  import DockingMenu from "@/components/containers/DockingMenu";
+  import {getNameFromEmail} from "@/helpers/accountHelpers";
 
   export default {
     name: "Main",
-    components: {Profile},
+    components: {DockingMenu, Profile},
     data() {
       return {}
+    },
+    computed: {
+      user() {
+        return nativeFbFunctions.getCurrentUser();
+      },
+
+      userName() {
+        return this.user ? getNameFromEmail(this.user.email) : 'Non connecté';
+      }
     },
     methods: {
       signOut() {
@@ -93,6 +123,24 @@
       margin: auto;
       grid-template-columns: repeat(2, minmax(200px, 200px));
       grid-auto-rows: 200px;
+    }
+
+    .account-name {
+      font-size: 1rem;
+      color: white;
+      font-weight: bold;
+      margin-right: 3px;
+    }
+
+    .signout-button {
+      color: #4286f4;
+      background: white;
+      border: none;
+      padding: 6px;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 1rem;
+
     }
   }
 
@@ -134,11 +182,59 @@
     color: white;
   }
 
-  .grid-icon{
+  .grid-icon {
     margin: auto;
     width: 50%;
     padding: 10px;
     text-align: center;
     vertical-align: center;
+  }
+
+  .home-top-menu {
+    background-color: #4286f4 !important;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .header-space {
+    margin: 7em;
+  }
+
+  .home-top-menu-content-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .home-top-menu-content-account {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 5px;
+  }
+
+
+
+  .account-name {
+    font-size: 1.3rem;
+    color: white;
+    font-weight: bold;
+    margin-right: 15px;
+  }
+
+  .signout-button {
+    color: #4286f4;
+    background: white;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+
+  .signout-button:hover {
+    cursor: pointer;
   }
 </style>
