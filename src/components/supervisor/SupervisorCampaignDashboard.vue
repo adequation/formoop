@@ -573,9 +573,10 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    width: 200px;
+    width: 210px;
     border-radius: 16px;
     padding-right: 5px;
+    font-weight: bold;
   }
 
   .delete-campaign-button:hover {

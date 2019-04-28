@@ -150,7 +150,7 @@
     <div v-if="currentTab === 'delete'" class="delete-area">
       <p class="delete-infos-message">
         Attention ! <br/>
-        Supprimer un formoop implique la suppresion de celui-ci : <br/>
+        Supprimer un formoop implique sa disparition : <br/>
         - Des formoops créés <br/>
         - Des campagnes auxquelles il appartient <br/>
         - Des formoop publiés <br/>
@@ -1062,6 +1062,7 @@
     width: 200px;
     border-radius: 16px;
     padding-right: 5px;
+    font-weight: bold;
   }
 
   .delete-form-button:hover {
