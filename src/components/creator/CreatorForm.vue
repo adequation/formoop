@@ -563,7 +563,7 @@
 
         //remove the form where we don't want it to be
         //and add it where it is not
-        //if (!isFormGeneric(this.formEntries))
+        if (!isFormGeneric(this.formEntries))
         saveAndFilterCampaignsFB({
           id: this.formID,
           title: this.formTitle

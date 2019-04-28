@@ -333,7 +333,7 @@ const generateAndPublishForms = (creatorForm, entities, override = false) => {
 };
 
 
-export const publishGenericFormsFB = (creatorID, formID, entities, formCampaigns = [], override = false) => {
+export const publishGenericFormsFB = (creatorID, formID, entities, publishingCampaigns = [], formCampaigns, override = false) => {
 
   //we fetch the form in firebase
   //then we publish it
@@ -345,7 +345,11 @@ export const publishGenericFormsFB = (creatorID, formID, entities, formCampaigns
       if (value) {
         const createdForms = generateAndPublishForms(value, entities, override);
 
-        formCampaigns.forEach(campaignID => setFormsCampaignFB(campaignID, createdForms));
+        createdForms.forEach(cf => {
+          saveAndFilterCampaignsFB(cf, formCampaigns, publishingCampaigns);
+        })
+
+        //formCampaigns.forEach(campaignID => setFormsCampaignFB(campaignID, createdForms));
 
       }
     });

@@ -111,7 +111,7 @@
 
       generateAndPublishForms() {
 
-        publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities.data, this.publishingCampaigns || [], this.override);
+        publishGenericFormsFB(this.creatorID, this.formID, this.importedEntities.data, this.publishingCampaigns || [], this.formCampaigns, this.override);
 
         this.closeModal();
       },
