@@ -1,111 +1,134 @@
 <template>
   <div class="closed-forms">
 
-      <h3>Formulaires terminés</h3>
-
-      <div class="space-header"></div>
-
-      <div class="closed-forms-header">
-
-        <div class="search-form">
-          <input class="search-box"
-                 type="text"
-                 placeholder="Rechercher un formoop"
-                 v-model="searchQuery"
-                 @click.stop=""/>
-          <div class="clean-search-button">
-            <i v-if="searchQuery" class="material-icons md-18" role="button" @click.stop=""
-               @click="searchQuery = ''">clear</i>
+    <DockingMenu class="closed-top-menu"
+                 ref="home-top-menu"
+                 top>
+      <div slot="body">
+        <div class="closed-menu-content-wrapper">
+          <div class="formoop-title" @click="goTo('home')">
+            Formoop
           </div>
         </div>
 
       </div>
+    </DockingMenu>
 
-      <div v-if="finishedForms.length > 0">
+    <div class="header-space">
 
-        <div v-if="searchedForm.length > 0 ">
+    </div>
 
-          <div class="forms-grid">
+    <h1>Formulaires terminés</h1>
 
-            <a v-for="form in searchedForm"
-                 :key="form.id"
-                 class="form-grid-entry"
-                 @click="download(form)"
-                 :title="form.title"
-                 :href="JsonConvert(form)" :download="form.title + '.json'"
-            >
-              <div class="form-content">
-                  <div class="form-grid-title">
-                    {{ form.title }}
-                  </div>
+    <div class="space-header"></div>
 
-                <hr/>
+    <div class="closed-forms-header">
 
-                  <div class="form-question-number">
-                    {{Object.keys(form.entries).length}} question{{Object.keys(form.entries).length > 1 ? 's' : ''}}
-                  </div>
-              </div>
-            </a>
-          </div>
+      <div class="search-form">
+        <input class="search-box"
+               type="text"
+               placeholder="Rechercher un formoop"
+               v-model="searchQuery"
+               @click.stop=""/>
+        <div class="clean-search-button">
+          <i v-if="searchQuery" class="material-icons md-18" role="button" @click.stop=""
+             @click="searchQuery = ''">clear</i>
         </div>
+      </div>
 
-        <div v-else>
-          <h3>Aucun formulaire correspondant à la recherche trouvé</h3>
+    </div>
+
+    <div v-if="finishedForms.length > 0">
+
+      <div v-if="searchedForm.length > 0 ">
+
+        <div class="forms-grid">
+
+          <a v-for="form in searchedForm"
+             :key="form.id"
+             class="form-grid-entry"
+             @click="download(form)"
+             :title="form.title"
+             :href="JsonConvert(form)" :download="form.title + '.json'"
+          >
+            <div class="form-content">
+              <div class="form-grid-title">
+                {{ form.title }}
+              </div>
+
+              <hr/>
+
+              <div class="form-question-number">
+                {{Object.keys(form.entries).length}} question{{Object.keys(form.entries).length > 1 ? 's' : ''}}
+              </div>
+            </div>
+          </a>
         </div>
       </div>
 
       <div v-else>
-        <h1>Aucun formoop terminé</h1>
+        <h3>Aucun formulaire correspondant à la recherche trouvé</h3>
       </div>
+    </div>
+
+    <div v-else>
+      <h1>Aucun formoop terminé</h1>
+    </div>
 
   </div>
 </template>
 
 <script>
-  import  {parseForm } from '@/helpers/jsonExportHelpers'
+  import {parseForm} from '@/helpers/jsonExportHelpers'
+  import DockingMenu from "@/components/containers/DockingMenu";
 
-    export default {
-      name: "CreatorClosedForms",
-      data() {
-        return {
-          searchQuery: ''
-        }
+  export default {
+    name: "CreatorClosedForms",
+    components: {DockingMenu},
+    data() {
+      return {
+        searchQuery: ''
+      }
+    },
+    computed: {
+      finishedForms() {
+        return this.$store.getters.finishedForms;
       },
-      computed:{
-        finishedForms(){
-          return this.$store.getters.finishedForms;
-        },
 
-        searchedForm() {
-          return this.finishedForms.filter(f =>
-            this.searchTokens.every(t =>
-              f.title.toLowerCase().includes(t.toLowerCase())
-            ));
-        },
-
-        searchTokens() {
-          return this.searchQuery.split(' ');
-        },
+      searchedForm() {
+        return this.finishedForms.filter(f =>
+          this.searchTokens.every(t =>
+            f.title.toLowerCase().includes(t.toLowerCase())
+          ));
       },
-      methods: {
 
-        /**  @return {string} */
-        JsonConvert(form){
-          return "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.JsonParsing(form), null, 2));
-        },
+      searchTokens() {
+        return this.searchQuery.split(' ');
+      },
+    },
+    methods: {
 
-        JsonParsing(BrutForm){
-          return parseForm(BrutForm);
-        }
+      /**  @return {string} */
+      JsonConvert(form) {
+        return "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.JsonParsing(form), null, 2));
       },
-      created() {
-        this.$store.dispatch('setCreatorID', {formID: null})
+
+      JsonParsing(BrutForm) {
+        return parseForm(BrutForm);
       },
-    }
+
+      goTo(path) {
+        this.$router.push(`/${path}`);
+      }
+    },
+    created() {
+      this.$store.dispatch('setCreatorID', {formID: null})
+    },
+  }
 </script>
 
 <style scoped>
-  .closed-forms{
+  .closed-forms {
     margin-left: 20%;
     margin-right: 20%;
   }
@@ -221,6 +244,23 @@
     border: 0;
     border-top: 1px solid #ccc;
     padding: 0;
+  }
+
+  .closed-top-menu {
+    background-color: #e8742e !important;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .closed-menu-content-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .header-space {
+    margin: 7em;
   }
 
 </style>

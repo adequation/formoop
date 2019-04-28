@@ -33,16 +33,6 @@ export function getSections(formEntries, userAnswers) {
 
 export function getSectionColor(currentSection, sections, interpolator = d3.interpolateRainbow) {
 
-  /*
-  colorize = (text) => {
-  let acc = text.length;
-  for (let i = 0; i < text.length; i++) {
-    acc += text.charCodeAt(i) + i;
-  }
-  return (acc ** 8 % 777) / 777;
-};
-   */
-
   if (!currentSection || sections.length <= 0) return null;
 
   const index = sections.findIndex(s => s === currentSection);

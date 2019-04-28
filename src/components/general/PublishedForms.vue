@@ -1,6 +1,23 @@
 <template>
   <div class="published-forms">
 
+    <DockingMenu class="published-top-menu"
+                 ref="home-top-menu"
+                 top>
+      <div slot="body">
+        <div class="published-menu-content-wrapper">
+          <div class="formoop-title" @click="goTo('home')">
+            Formoop
+          </div>
+        </div>
+
+      </div>
+    </DockingMenu>
+
+    <div class="header-space">
+
+    </div>
+
     <h1>Formoops en cours</h1>
 
     <div class="space-header"></div>
@@ -76,9 +93,11 @@
   import {getUserIdFromEmail} from "@/helpers/accountHelpers";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import {isUserInvitedToForm} from "@/helpers/creatorHelpers";
+  import DockingMenu from "@/components/containers/DockingMenu";
 
   export default {
     name: "PublishedForms",
+    components: {DockingMenu},
     data() {
       return {
         searchQuery: ''
@@ -95,6 +114,10 @@
 
       isUserInvited(form) {
         return isUserInvitedToForm(form.id, this.user, this.publishedForms);
+      },
+
+      goTo(path) {
+        this.$router.push(`/${path}`);
       }
 
     },
@@ -238,6 +261,23 @@
 
   .user-is-invited {
     color: #4286f4;
+  }
+
+  .published-top-menu {
+    background-color: #3EB9DE !important;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .published-menu-content-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .header-space {
+    margin: 7em;
   }
 
 </style>

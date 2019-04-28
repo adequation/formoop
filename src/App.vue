@@ -41,6 +41,10 @@
     font-size: 48px;
   }
 
+  .material-icons.md-60 {
+    font-size: 60px;
+  }
+
   .material-icons.md-dark {
     color: rgba(0, 0, 0, 0.54);
   }
@@ -113,5 +117,17 @@
     80% { transform: translate(-1px, -1px) rotate(1deg); }
     90% { transform: translate(1px, 2px) rotate(0deg); }
     100% { transform: translate(1px, -2px) rotate(-1deg); }
+  }
+
+  .formoop-title {
+    color: white;
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-left: 5px;
+    margin-right: 15px;
+  }
+
+  .formoop-title:hover {
+    cursor: pointer;
   }
 </style>
