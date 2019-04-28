@@ -264,6 +264,244 @@ describe('creatorHelpers.js', () => {
       }
     ];
 
+  const mockPublishedFormsAsObject =
+    {
+      form1: {
+        "entries":
+          {
+            "entry1":
+              {
+                "answer":
+                  {
+                    "answers":
+                      [
+                        {"id": "option1", "text": "Option 1"},
+                        {"id": "option2", "text": "Option 2"}
+                      ],
+                    "type":
+                      "radio"
+                  }
+                ,
+                "id":
+                  "entry1",
+                "index":
+                  0,
+                "question":
+                  {
+                    "title":
+                      "Question 1"
+                  }
+                ,
+                "type":
+                  "radio"
+              }
+          }
+        ,
+        "id":
+          "form1",
+        "questionNumber":
+          1,
+        "title":
+          "Formulaire 1",
+        "users":
+          {
+            "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=":
+              {
+                "company":
+                  "formoop",
+                "email":
+                  "bob.michelo@formoop.com",
+                "id":
+                  "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=",
+                "name":
+                  "Bob Michelo"
+              }
+          }
+      }
+      ,
+      form2: {
+        "entries":
+          {
+            "entry1":
+              {
+                "answer":
+                  {
+                    "answers":
+                      [
+                        {"id": "option1", "text": "Option 1"},
+                        {"id": "option2", "text": "Option 2"},
+                        {"id": "option3", "text": "Option 3"},
+                      ],
+                    "type":
+                      "select"
+                  }
+                ,
+                "id":
+                  "entry1",
+                "index":
+                  0,
+                "question":
+                  {
+                    "title":
+                      "Question 1"
+                  }
+                ,
+                "type":
+                  "select"
+              }
+            ,
+            "entry2":
+              {
+                "answer":
+                  {
+                    "answers":
+                      [
+                        {"id": "option1", "text": "Option 1"},
+                        {"id": "option2", "text": "Option 2"}
+                      ],
+                    "type":
+                      "radio"
+                  }
+                ,
+                "id":
+                  "entry2",
+                "index":
+                  1,
+                "question":
+                  {
+                    "title":
+                      "Question 2"
+                  }
+                ,
+                "section":
+                  "Section 1",
+                "type":
+                  "radio"
+              }
+            ,
+            "entry3":
+              {
+                "answer":
+                  {
+                    "answers":
+                      [
+                        {"id": "option1", "text": "Option 1"},
+                        {"id": "option2", "text": "Option 2"}
+                      ],
+                    "type":
+                      "radio"
+                  }
+                ,
+                "id":
+                  "entry3",
+                "index":
+                  2,
+                "question":
+                  {
+                    "title":
+                      "Question 3"
+                  }
+                ,
+                "section":
+                  "Section 2",
+                "type":
+                  "radio"
+              }
+          }
+        ,
+        "entryPoint":
+          {
+            "entryPoint1":
+              {
+                "company":
+                  "formoop",
+                "email":
+                  "bob.michelo@formoop.com",
+                "id":
+                  "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=",
+                "name":
+                  "Bob Michelo"
+              }
+          }
+        ,
+        "id":
+          "form2",
+        "questionNumber":
+          3,
+        "sections":
+          [
+            "Section 1", "Section 2", "Section 3"
+          ],
+        "title":
+          "Formulaire 2",
+        "users":
+          {
+            "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=":
+              {
+                "company":
+                  "formoop",
+                "email":
+                  "bob.michelo@formoop.com",
+                "id":
+                  "Ym9iLm1pY2hlbG9AZm9ybW9vcC5jb20=",
+                "name":
+                  "Bob Michelo"
+              }
+            ,
+            "user2":
+              {
+                "company":
+                  "formoop",
+                "email":
+                  "marcel.mazout@formoop.com",
+                "id":
+                  "user2",
+                "name":
+                  "Marcel Mazout"
+              }
+          }
+      }
+      ,
+      form3: {
+        "entries":
+          {
+            "entry1":
+              {
+                "answer":
+                  {
+                    "answers":
+                      [
+                        {"id": "option1", "text": "Option 1"},
+                        {"id": "option2", "text": "Option 2"}
+                      ],
+                    "type":
+                      "radio"
+                  }
+                ,
+                "id":
+                  "entry1",
+                "index":
+                  0,
+                "question":
+                  {
+                    "title":
+                      "Question 1"
+                  }
+                ,
+                "type":
+                  "radio"
+              }
+          }
+        ,
+        "id":
+          "form3",
+        "questionNumber":
+          1,
+        "title":
+          "Formulaire 3"
+      }
+    };
+
   it('Should delete the form from published when it exists', () => {
 
     const mockFormID = "form1";
@@ -392,8 +630,8 @@ describe('creatorHelpers.js', () => {
             "title": "Formulaire 3",
           }
       };
-//broken mock
-    //expect(deleteFormFromPublished(mockPublishedForms, mockFormID)).toEqual(mockPublishedFormsAfterDelete);
+
+    expect(deleteFormFromPublished(mockPublishedFormsAsObject, mockFormID)).toEqual(mockPublishedFormsAfterDelete);
   });
 
   it('Should not delete the form from published when it does not exists', () => {
@@ -562,8 +800,8 @@ describe('creatorHelpers.js', () => {
             "title": "Formulaire 3",
           }
       };
-//broken mock
-    //expect(deleteFormFromPublished(mockPublishedForms, mockFormID)).toEqual(mockPublishedFormsAfterDelete);
+
+    expect(deleteFormFromPublished(mockPublishedFormsAsObject, mockFormID)).toEqual(mockPublishedFormsAfterDelete);
   });
 
   it('Should be true when the user is invited to the form', () => {
