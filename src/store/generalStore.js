@@ -62,6 +62,7 @@ export default {
 
             if (value) {
               const fullForms = [];
+              if(state.currentCampaign.forms)
               state.currentCampaign.forms.forEach(cf => {
                 if(value[cf.id]) fullForms.push(value[cf.id]);
               });
@@ -91,6 +92,7 @@ export default {
             if (value) {
               const fullForms = [];
 
+              if(state.currentCampaign.forms)
               state.currentCampaign.forms.forEach(cf => {
                 if(value[cf.id]) fullForms.push(value[cf.id]);
               });
