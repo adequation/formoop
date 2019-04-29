@@ -29,7 +29,7 @@
         <div
           @click="goTo('create')"
           class="grid-element create-grid-element">
-          <div>Formulaires créés</div>
+          <div>Mes Formoops créés</div>
           <div class="grid-icon">
             <i class="material-icons md-60">note_add</i>
           </div>
@@ -38,7 +38,7 @@
         <div
           @click="goTo('published')"
           class="grid-element published-grid-element">
-          <div>Formulaires en cours</div>
+          <div>Formoops en cours</div>
           <div class="grid-icon">
             <i class="material-icons md-60">description</i>
           </div>
@@ -46,7 +46,7 @@
 
         <div @click="goTo('campaigns')"
              class="grid-element campaigns-grid-element">
-          <div>Campagnes de formulaires</div>
+          <div>Campagnes de Formoops</div>
           <div class="grid-icon">
             <i class="material-icons md-60">folder</i>
           </div>
@@ -54,7 +54,7 @@
 
         <div @click="goTo('closed')"
              class="grid-element closed-grid-element">
-          <div>Formulaires terminés</div>
+          <div>Formoops terminés</div>
           <div class="grid-icon">
             <i class="material-icons md-60">lock</i>
           </div>
