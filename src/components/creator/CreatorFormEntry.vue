@@ -200,7 +200,7 @@
   }
 
   .question-title {
-    width: 175px;
+    width: 500px;
     background: none;
     border: none;
     border-bottom: 2px solid rgb(217, 217, 217);
@@ -241,5 +241,19 @@
     margin-left: 10px;
   }
 
+
+  @media screen and (max-width: 800px) {
+    .question-title{
+      width: 300px;
+    }
+
+  }
+
+  @media screen and (max-width: 450px) {
+    .question-title{
+      width: 175px;
+    }
+
+  }
 
 </style>
