@@ -8,7 +8,7 @@
              class="parse-link-input"
              type="text"
              v-model="entityIdProp"
-             placeholder="Colonne d'identifiant unique"
+             placeholder="Clé de regroupement"
              ref="formLinkInput"/>
 
       <button

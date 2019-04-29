@@ -203,7 +203,7 @@
 
 
   .option-list-input {
-    color: #00000077;
+    color: #2c3e50;
     outline: none;
   }
 

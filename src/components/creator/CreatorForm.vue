@@ -1043,7 +1043,7 @@
   .creator-form-title {
     margin-top: 1em;
     margin-bottom: 0.5em;
-    width: 300px;
+    width: 600px;
     background: none;
     border: none;
     border-bottom: 2px solid rgb(217, 217, 217);
@@ -1102,6 +1102,20 @@
     }
   }
 
+
+  @media screen and (max-width: 800px) {
+    .creator-form-title{
+      width: 300px;
+    }
+
+  }
+
+  @media screen and (max-width: 450px) {
+    .creator-form-title{
+      width: 175px;
+    }
+
+  }
 
 
 </style>
