@@ -1,6 +1,8 @@
 <template>
   <div class="creator-form">
-
+    <div class="formoop-title left-nav" @click="goTo('home')">
+      Formoop
+    </div>
     <DockingMenu class="creator-form-top-menu"
                  ref="top-menu"
                  top>
@@ -9,6 +11,8 @@
 
       </div>
     </DockingMenu>
+
+
 
     <div class="space-header"></div>
 
@@ -559,7 +563,7 @@
 
         //remove the form where we don't want it to be
         //and add it where it is not
-        //if (!isFormGeneric(this.formEntries))
+        if (!isFormGeneric(this.formEntries))
         saveAndFilterCampaignsFB({
           id: this.formID,
           title: this.formTitle
@@ -597,6 +601,10 @@
 
           this.$router.replace("/create");
         }
+      },
+
+      goTo(path) {
+        this.$router.push(`/${path}`);
       }
     },
     created: function () {
@@ -1100,6 +1108,13 @@
     .menu-button {
       font-size: 24px;
     }
+  }
+
+  .left-nav {
+    z-index: 100;
+    position: fixed;
+    top: 5px;
+    left: 0;
   }
 
 

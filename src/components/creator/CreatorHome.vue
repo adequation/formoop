@@ -304,7 +304,7 @@
   }
 
   .created-top-menu {
-    background-color: #42b983 !important;
+    background-color: #4286f4 !important;
     padding-top: 10px;
     padding-bottom: 10px;
   }

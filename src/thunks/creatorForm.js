@@ -183,8 +183,8 @@ const parseGenericEntry = (entry, entity) => {
 
   delete parsedEntry.generic;
 
-  //answers are all the same
-  const answer = {type: parsedEntry.type, answers: parsedEntry.answers};
+  //answers are all the same for the moment
+  const answer = {type: parsedEntry.type, answers: parsedEntry.answers.map(a => ({...a, id: a.id}))};
 
   //To make a full question out of variables,
   //we need to get the amount of entries that we will generate.
@@ -231,7 +231,7 @@ const parseGenericEntry = (entry, entity) => {
         id: uniqueID,
         question: {...question},
         answers: null,
-        answer: {...answer}
+        answer: {type: parsedEntry.type, answers: parsedEntry.answers.map(a => ({...a, id: a.id.concat('-').concat(i)}))}
       }
     );
   }
@@ -298,7 +298,7 @@ const parseGenericFormToUser = (form, entity) => {
 
   //parse entries
   const entriesObject = {};
-  form.entries.forEach(e => {
+  form.entries.forEach((e,i) => {
 
     if (e.generic) {
       if (e.grouped) e.group = `${e.id}-group`;
@@ -333,7 +333,7 @@ const generateAndPublishForms = (creatorForm, entities, override = false) => {
 };
 
 
-export const publishGenericFormsFB = (creatorID, formID, entities, formCampaigns = [], override = false) => {
+export const publishGenericFormsFB = (creatorID, formID, entities, publishingCampaigns = [], formCampaigns, override = false) => {
 
   //we fetch the form in firebase
   //then we publish it
@@ -345,7 +345,11 @@ export const publishGenericFormsFB = (creatorID, formID, entities, formCampaigns
       if (value) {
         const createdForms = generateAndPublishForms(value, entities, override);
 
-        formCampaigns.forEach(campaignID => setFormsCampaignFB(campaignID, createdForms));
+        createdForms.forEach(cf => {
+          saveAndFilterCampaignsFB(cf, formCampaigns, publishingCampaigns);
+        })
+
+        //formCampaigns.forEach(campaignID => setFormsCampaignFB(campaignID, createdForms));
 
       }
     });

@@ -1,7 +1,7 @@
 <template>
   <div class="form" v-if="formEntries">
 
-    <user-close-form class="user-form-close-button" v-if="isEntryPoint" />
+    <user-close-form class="user-form-close-button" v-if="isEntryPoint"/>
 
 
     <h1>{{formTitle}}</h1>
@@ -95,7 +95,7 @@
           <div class="user-form-filter-buttons-wrapper">
 
             <drawer v-if="showFilterDrawer" @close="showFilterDrawer=false">
-              <div slot="header" >
+              <div slot="header">
                 <h1> Filtres </h1>
               </div>
               <div slot="body">
@@ -109,7 +109,7 @@
             </drawer>
 
             <button class="user-form-filter-button" type="button" @click="showFilterDrawer=true">
-              <i v-if="filters.find(f => f.name === filter).icon" class="material-icons md-36 menu-button">{{filters.find(f => f.name === filter).icon}}</i>
+              <i v-if="filters.find(f => f.name === filter).icon" class="material-icons md-28 menu-button">{{filters.find(f => f.name === filter).icon}}</i>
             </button>
 
             <drawer v-if="showSorterDrawer" @close="showSorterDrawer=false">
@@ -127,7 +127,7 @@
             </drawer>
 
             <button class="user-form-sort-button" type="button" @click="showSorterDrawer=true">
-              <i v-if="selectedSorter.icon" class="material-icons md-36 menu-button">{{selectedSorter.icon}}</i>
+              <i v-if="selectedSorter.icon" class="material-icons md-28 menu-button">{{selectedSorter.icon}}</i>
             </button>
 
             <div class="vertical-separator"></div>
@@ -136,7 +136,7 @@
                     type="button"
                     :class="['user-form-clean-filters-button', !hasFilter ? 'disabled' : '']"
                     title="Enlever tous les filtres">
-              <i class="material-icons md-36 menu-button">{{hasFilter ? 'visibility_off' : 'visibility'}}</i>
+              <i class="material-icons md-28 menu-button">{{hasFilter ? 'visibility_off' : 'visibility'}}</i>
             </button>
 
           </div>
@@ -199,7 +199,8 @@
       DropUpMenu,
       UserGetFormLinkModal,
       UserCloseForm,
-      UserSectionList, UserEntryGrid, DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
+      UserSectionList, UserEntryGrid, DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry
+    },
     data() {
       return {
         showModal: false,
@@ -218,13 +219,21 @@
         ],
 
         selectedSorter: {
-          name: 'alphabetical',
-          description: 'Filtrer par ordre alphabetique',
-          icon: 'sort_by_alpha',
+          name: 'default',
+          description: 'Ordre par défaut',
+          icon: 'sort',
           sortingLayer: 0,
-          sort: (a, b) => a.question.title.localeCompare(b.question.title)
+          sort: (a, b) => a.index - b.index
         },
+
         sorters: [
+          {
+            name: 'default',
+            description: 'Ordre par défaut',
+            icon: 'sort',
+            sortingLayer: 0,
+            sort: (a, b) => a.index - b.index
+          },
           {
             name: 'alphabetical',
             description: 'Filtrer par ordre alphabetique',
@@ -254,15 +263,15 @@
       },
 
       formEntries() {
-        return this.$store.getters.getFormEntries || []
+        return (this.$store.getters.getFormEntries || [])
       },
 
       singleEntries() {
         return this.sortedEntries.filter(fe => !fe.grouped);
       },
 
-      isEntryPoint(){
-        return this.user ? !!this.$store.getters.entryPoints.find(e=>e.id === this.user.id) : false;
+      isEntryPoint() {
+        return this.user ? !!this.$store.getters.entryPoints.find(e => e.id === this.user.id) : false;
       },
 
       groupedEntries() {
@@ -277,7 +286,7 @@
         });
 
         return Object.keys(groups).map(key => {
-          groups[key].entries.sort((a, b) => a.question.title.localeCompare(b.question.title));
+          groups[key].entries.sort((a, b) => a.index - b.index);
 
           return groups[key];
         });
@@ -337,14 +346,14 @@
         return this.searchQuery.split(' ');
       },
 
-      formSectionSortOrder(){
+      formSectionSortOrder() {
         return this.$store.getters.formSections || []
       },
 
       sections() {
         const sections = getSections(this.formEntries, this.userAnswers);
 
-        return sections.sort((a,b) =>
+        return sections.sort((a, b) =>
           this.formSectionSortOrder.indexOf(a.name) - this.formSectionSortOrder.indexOf(b.name))
       },
 
@@ -352,7 +361,7 @@
         return this.filter !== 'all' || this.searchQuery || this.focusedSection
       },
 
-      currentFormPercentage(){
+      currentFormPercentage() {
         return getPercentage('answered', this.formEntries, this.userAnswers);
       }
 
@@ -388,7 +397,7 @@
       setSelectedAnswers(id, answers) {
         const tmp = {...this.selectedAnswers};
 
-        if(Array.isArray(answers))  tmp[id] = answers;
+        if (Array.isArray(answers)) tmp[id] = answers;
         else tmp[id] = answers;
 
         this.selectedAnswers = tmp;
@@ -418,7 +427,7 @@
         }
       },
 
-      changeSorter (sorter){
+      changeSorter(sorter) {
         this.selectedSorter = this.sorters.find(s => s.name === sorter);
       },
 
@@ -439,9 +448,9 @@
         return !!userAnswer
       },
 
-      redirect(event){
+      redirect(event) {
 
-        if(areAnswersUpdated(this.userAnswers, this.selectedAnswers, this.formEntries, this.user.id)) {
+        if (areAnswersUpdated(this.userAnswers, this.selectedAnswers, this.formEntries, this.user.id)) {
           return "Êtes vous sûr de vouloir quitter? Certaines réponses ne sont pas enregistrées.";
         }
         return void(0);
@@ -556,7 +565,7 @@
     width: 75%;
   }
 
-  .user-form-section-list-wrapper svg{
+  .user-form-section-list-wrapper svg {
     overflow-x: auto;
   }
 
@@ -673,19 +682,19 @@
     top: 10px;
   }
 
-  .drawer-content{
+  .drawer-content {
     float: left;
     font-size: large;
     cursor: pointer;
     padding: 8px 8px 8px 10px;
   }
 
-  .drawer-content:hover{
+  .drawer-content:hover {
     color: rgba(0, 0, 0, .5);
   }
 
   @media screen and (max-width: 550px) {
-    .user-form-menu-items{
+    .user-form-menu-items {
       padding: 0.5em;
     }
 
@@ -693,15 +702,14 @@
       font-size: 24px;
     }
 
-    .user-form-search-bar{
+    .user-form-search-bar {
       width: 75px;
     }
 
-    .user-form-search-delete-button{
+    .user-form-search-delete-button {
       font-size: 16px;
     }
   }
-
 
   .help-button {
     position: fixed;
@@ -719,7 +727,7 @@
     border-radius: 18px 18px 18px 18px;
   }
 
-  .help-button:hover{
+  .help-button:hover {
     background: #dddddd;
     border: 1px solid #000000aa;
   }
