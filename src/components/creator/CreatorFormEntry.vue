@@ -1,25 +1,15 @@
 <template>
   <div class="full-entry-wrapper">
 
-
     <div class="creator-form-entry smooth"
          :style="{ borderLeft: `10px solid ${borderColor}`}">
 
+      <CustomSelect :options="formSections" :optionType="optionType" :selected="entry.section" class="section-select"/>
 
       <div class="creator-form-entry-tools-wrapper">
 
-        <select title="" @change="onChangeSection($event.target)" @click.stop>
-          <option :value="null">Aucune</option>
-          <option v-for="t in formSections"
-                  :key="t"
-                  :name="t"
-                  :value="t"
-                  :selected="t === entry.section">
-            {{t}}
-          </option>
-        </select>
 
-        <div class="form-entry-title">
+        <div :class="[opened ? 'form-entry-title-opened' : 'form-entry-title-closed']">
           <h3 v-if="!opened">
             <span v-if="entry.generic">{{getGenericTitle(entry.question.blocks)}}</span>
             <span v-else>{{entry.question.title}}</span>
@@ -29,7 +19,7 @@
 
           <div v-else @click.stop>
             <CreatorGenericQuestionBlock v-if="entry.generic" :entry="entry"/>
-            <input v-else title="" type="text" class="questionTitle" v-model="entry.question.title"
+            <input v-else title="" type="text" class="question-title" v-model="entry.question.title"
                    placeholder="Titre de la question"/>
           </div>
 
@@ -74,10 +64,11 @@
   import {getGenericQuestionTitle} from "@/helpers/genericQuestionHelpers";
   import {getSectionColor} from "@/helpers/sectionsHelpers";
   import expandAnimationMixin from "@/mixins/expandAnimationMixin";
+  import CustomSelect from "../general/CustomSelect";
 
   export default {
     name: 'CreatorFormEntry',
-    components: {CreatorFormEntryTypeSelect, CreatorGenericQuestionBlock, CreatorAnswer, Collapse},
+    components: {CustomSelect, CreatorFormEntryTypeSelect, CreatorGenericQuestionBlock, CreatorAnswer, Collapse},
     mixins: [expandAnimationMixin],
     props: {
       entry: {
@@ -100,14 +91,15 @@
     },
     data() {
       return {
-        // fetch types into FB later
+        // maybe put the types into FB later
         types: [
           {value: 'radio', displayName: 'Choix multiples'},
           {value: 'text', displayName: 'Réponse courte'},
           {value: 'textarea', displayName: 'Paragraphe'},
           {value: 'checkbox', displayName: 'Cases à cocher'},
           {value: 'select', displayName: 'Liste déroulante'}
-        ]
+        ],
+        optionType: "Section"
       }
     },
     computed: {
@@ -127,9 +119,6 @@
       setEntryType(type) {
         this.$parent.$emit('set-entry-type', this.entry.id, type);
       },
-      onChangeSection(target) {
-        this.setEntrySection(target.value);
-      },
       setEntrySection(section) {
         this.$parent.$emit('set-form-section', this.entry.id, section);
       },
@@ -148,6 +137,11 @@
     },
     mounted() {
       this.$root.$emit('mounted-entry', this.entry.id);
+    },
+    created() {
+      this.$on('set-option-selection', option => {
+        this.setEntrySection(option)
+      });
     }
   }
 </script>
@@ -173,8 +167,13 @@
     padding: 0.5em;
   }
 
-  .form-entry-title {
+  .form-entry-title-closed {
+    margin-top: 2em;
+    margin-bottom: 2em;
+  }
 
+  .form-entry-title-opened {
+    margin-top: 2em;
   }
 
   .creator-form-entry-tools-wrapper {
@@ -183,22 +182,31 @@
     padding-left: 2em;
     padding-right: 2em;
 
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-
   }
 
   .creator-form-entry-requirement {
+    position: absolute;
+    top: 0;
+    right: 0;
     background: none;
     border: none;
   }
 
   .form-entry-required {
+
     color: tomato;
     font-weight: bold;
     font-size: 30px;
+  }
+
+  .question-title {
+    width: 500px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid rgb(217, 217, 217);
+    font-size: 1em;
+    text-align: center;
+    color: #2c3e50;
   }
 
   .creator-form-entry-required {
@@ -223,5 +231,29 @@
     cursor: pointer;
   }
 
+  .section-select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 180px;
+    margin-top: 0.5em;
+    margin-right: auto;
+    margin-left: 10px;
+  }
+
+
+  @media screen and (max-width: 800px) {
+    .question-title{
+      width: 300px;
+    }
+
+  }
+
+  @media screen and (max-width: 450px) {
+    .question-title{
+      width: 175px;
+    }
+
+  }
 
 </style>

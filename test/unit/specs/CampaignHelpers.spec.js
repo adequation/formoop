@@ -3,7 +3,8 @@ import {
   doesCampaignExists,
   doesCampaignContainsForm,
   removeFormFromUnwantedCampaigns,
-  addFormToWantedCampaigns
+  addFormToWantedCampaigns,
+  deleteCampaignFromFormCampaigns
 } from "@/helpers/campaignsHelpers";
 
 const mockFormCampaigns = {
@@ -157,6 +158,64 @@ describe('campaignsHelpers.js', () => {
     };
 
     expect(addFormToWantedCampaigns(mockFormToAdd, mockFormCampaigns, mockWantedCampaigns)).toEqual(expected);
+  });
+
+  it('Should not delete a campaign form formCampaigns when the campaign does not exists', () => {
+
+    const mockCampaignID = "c-008";
+
+    expect(deleteCampaignFromFormCampaigns(mockFormCampaigns, mockCampaignID)).toEqual(mockFormCampaigns);
+  });
+
+  it('Should delete a campaign form formCampaigns', () => {
+    const mockFormCampaigns = {
+      "c-001": {
+        forms: [
+          {id: "aaa", title: "Formulaire A"},
+          {id: "bbb", title: "Formulaire B"},
+          {id: "ccc", title: "Formulaire C"}
+        ],
+        id: "c-001",
+        name: "campaign 001"
+      },
+      "c-002": {
+        forms: [
+          {id: "aaa", title: "Formulaire A"},
+          {id: "ddd", title: "Formulaire D"},
+          {id: "eee", title: "Formulaire E"}
+        ],
+        id: "c-002",
+        name: "campaign 002"
+      },
+      "c-003": {
+        id: "c-003",
+        name: "campaign 003"
+      }
+    };
+
+    const mockCampaignID = "c-003";
+    const expected = {
+      "c-001": {
+        forms: [
+          {id: "aaa", title: "Formulaire A"},
+          {id: "bbb", title: "Formulaire B"},
+          {id: "ccc", title: "Formulaire C"}
+        ],
+        id: "c-001",
+        name: "campaign 001"
+      },
+      "c-002": {
+        forms: [
+          {id: "aaa", title: "Formulaire A"},
+          {id: "ddd", title: "Formulaire D"},
+          {id: "eee", title: "Formulaire E"}
+        ],
+        id: "c-002",
+        name: "campaign 002"
+      }
+    };
+
+    expect(deleteCampaignFromFormCampaigns(mockFormCampaigns, mockCampaignID)).toEqual(expected);
   });
 
 });

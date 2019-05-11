@@ -62,6 +62,7 @@ export default {
 
             if (value) {
               const fullForms = [];
+              if(state.currentCampaign.forms)
               state.currentCampaign.forms.forEach(cf => {
                 if(value[cf.id]) fullForms.push(value[cf.id]);
               });
@@ -88,10 +89,10 @@ export default {
         Firebase.database().ref(closedPath)
           .on('value', function (snapshot) {
             const value = snapshot.val();
-            console.log(value)
             if (value) {
               const fullForms = [];
 
+              if(state.currentCampaign.forms)
               state.currentCampaign.forms.forEach(cf => {
                 if(value[cf.id]) fullForms.push(value[cf.id]);
               });

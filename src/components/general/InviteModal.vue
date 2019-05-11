@@ -1,7 +1,7 @@
 <template>
   <div class="invite-modal">
     <button id="show-modal" class="invite-modal-show-button" @click="showModal = true" title="Inviter au formulaire">
-      <i class="material-icons md-36">person</i>
+      <i class="material-icons md-36 menu-button">person</i>
     </button>
 
     <Modal v-if="showModal" @close="showModal = false">
@@ -184,6 +184,12 @@
   .invited-user-table tr:hover {
     background-color: #eeeeee;
     overflow: auto;
+  }
+
+  @media screen and (max-width: 550px) {
+    .menu-button {
+      font-size: 24px;
+    }
   }
 
 

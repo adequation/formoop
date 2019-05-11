@@ -58,5 +58,6 @@
     border: 1px solid #00000055;
 
     border-radius: 5px;
+    margin-bottom: 7px;
   }
 </style>

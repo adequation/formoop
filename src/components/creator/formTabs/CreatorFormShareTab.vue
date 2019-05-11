@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="share-tab-header"> </div>
+    <div class="share-tab-header"></div>
 
     <h1 class="share-form-title">
       <span v-if="isPublished" class="published-form-title">
@@ -12,7 +12,30 @@
       </span>
     </h1>
 
-    <CSVImportModal :show-modal="showCSVImportModal" :form-entries="this.formEntries" :save-form="this.saveForm" :publishing-campaigns="publishingCampaigns" @close="closeJsonImportModal"/>
+    <CSVImportModal :show-modal="showCSVImportModal"
+                    :form-entries="this.formEntries"
+                    :save-form="this.saveForm"
+                    :publishing-campaigns="publishingCampaigns"
+                    @close="closeCSVImportModal"
+                    :override="this.overrideCSVForm"/>
+
+    <div class="greeting-mode-wrapper">
+
+      <table class="greeting-mode-table">
+        <tr @click="selectGreetingMode(true)" :class="{notSelectedGreetingMode: !randomGreeting}">
+          <td><i class="material-icons md-26"> {{randomGreeting ? 'check_box' : 'check_box_outline_blank'}}</i></td>
+          <td>Phrase d'accueil au hasard</td>
+          <td></td>
+        </tr>
+        <tr @click="selectGreetingMode(false)" :class="{notSelectedGreetingMode: randomGreeting}">
+          <td><i class="material-icons md-26"> {{!randomGreeting ? 'check_box' : 'check_box_outline_blank'}}</i></td>
+          <td>Phrase d'accueil personalisée : </td>
+          <td><input type="text" placeholder="Phrase d'accueil"
+                     :value="greeting"
+                     @change="changeCustomGreetingSentence($event)"/></td>
+        </tr>
+      </table>
+    </div>
 
     <div class="publish-wrapper">
       <div class="smooth publish-button good-publish-button"
@@ -25,13 +48,13 @@
 
         <div
           class="smooth publish-button bad-publish-button"
-          @click="publishForm(true)">
+          @click="overwrite">
           Écraser le Formoop
         </div>
 
         <div class="smooth publish-button good-publish-button"
              @click="publishForm(false)">
-          Mettre a jour le Formoop
+          Mettre à jour le Formoop
         </div>
       </div>
     </div>
@@ -55,7 +78,8 @@
                 <td>
                   <button type="button"
                           class="delete-entry-point-button"
-                          title="Retirer le point d'entrée">
+                          title="Retirer le point d'entrée"
+                          @click="removeEntryPoint(entryPoint)">
                     <i class="material-icons md-16">close</i>
                   </button>
                 </td>
@@ -79,7 +103,7 @@
 
 
       <div class="sharing-link">
-        <p>Partages le à l'aide du lien suivant :</p>
+        <p>Partage le à l'aide du lien suivant :</p>
         <CopyToClipboardInput :text-to-copy="formURL"/>
       </div>
 
@@ -93,13 +117,13 @@
 </template>
 
 <script>
-  import {publishCreatorFormFB, saveAndFilterCampaignsFB} from "@/thunks/creatorForm";
+  import {publishCreatorFormFB, saveAndFilterCampaignsFB, deleteEntryPointFB} from "@/thunks/creatorForm";
   import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
   import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "@/helpers/accountHelpers";
   import {inviteEntryPoint, inviteUser} from "@/thunks/userAccountThunks";
   import CopyToClipboardInput from "@/components/general/CopyToClipboardInput";
   import MailSender from "@/components/general/MailSender";
-  import CSVImportModal from "@/components/creator/CSVImportModal";
+  import CSVImportModal from "@/components/creator/CsvImportModal";
   import {getFormURL} from "@/helpers/rooterHelpers";
   import {getInvitationEntryPointText} from "@/helpers/mailHelpers";
   import {clipText} from "@/helpers/generalHelpers";
@@ -112,6 +136,7 @@
         justCopied: false,
         showCSVImportModal: false,
         showEntryPointModal: false,
+        overrideCSVForm: false,
       }
     },
     props: {
@@ -138,6 +163,14 @@
       formTitle: {
         type: String,
         required: true
+      },
+      greeting: {
+        type: String,
+        required: true
+      },
+      randomGreeting: {
+        type: Boolean,
+        required: true
       }
     },
     computed: {
@@ -158,7 +191,17 @@
       },
       invitationContent() {
         return getInvitationEntryPointText(this.formTitle, this.user.displayName, this.formURL)
-      }
+      },
+      containsGenericQuestion() {
+        let containsGenericQuestion = false;
+
+        this.formEntries.forEach(fe => {
+          if (fe.generic) containsGenericQuestion = true;
+        });
+
+        return containsGenericQuestion;
+      },
+
     },
     methods: {
       getShortName(name) {
@@ -178,7 +221,9 @@
       async publishForm(override = false) {
         await this.saveForm();
 
-        if (this.formContainsGenericQuestion()) {
+
+        if (this.containsGenericQuestion) {
+          this.overrideCSVForm = override;
           this.showCSVImportModal = true;
         }
         else {
@@ -191,12 +236,11 @@
             title: this.formTitle
           }, this.formCampaigns, this.publishingCampaigns);
 
-          this.showEntryPointModal = true;
-
         }
       },
 
       async directPublishForm(override = false) {
+
         await publishCreatorFormFB(this.creatorID, this.formID, override);
 
         //add admin as an user
@@ -209,22 +253,31 @@
         });
       },
 
-      formContainsGenericQuestion() {
-        let containsGenericQuestion = false;
 
-        this.formEntries.forEach(fe => {
-          if (fe.generic) containsGenericQuestion = true;
-        });
-
-        return containsGenericQuestion;
-      },
-
-      closeEntryPointModal() {
-        this.showEntryPointModal = false;
-      },
-      closeJsonImportModal() {
+      closeCSVImportModal() {
         this.showCSVImportModal = false;
       },
+
+      selectGreetingMode(isRandom) {
+        this.$parent.$emit('greeting-mode', isRandom);
+      },
+
+      changeCustomGreetingSentence(e){
+        this.$parent.$emit('custom-greeting-sentence', e.target.value);
+      },
+
+      overwrite(){
+        if (confirm(`Es-tu sûr de vouloir écraser les donnée du formoop?
+                      \nAttention!
+                      \nLes réponses du formoop et les utilisateurs invités à y participer seront écrasés !`)) {
+          this.publishForm(true);
+        }
+      },
+
+      removeEntryPoint(entryPoint){
+        deleteEntryPointFB(this.formID, entryPoint.id);
+      }
+
     },
 
   }
@@ -250,7 +303,7 @@
 
     height: 90%;
 
-    overflow: scroll;
+    overflow: auto;
   }
 
   .entry-points-table-wrapper-content::-webkit-scrollbar {
@@ -323,7 +376,7 @@
     width: auto;
   }
 
-  .sharing-wrapper{
+  .sharing-wrapper {
     height: fit-content;
   }
 
@@ -362,6 +415,7 @@
   }
 
   .delete-entry-point-button:hover {
+    cursor: pointer;
     color: tomato;
   }
 
@@ -403,7 +457,7 @@
     background: #dc472f;
   }
 
-  .publish-wrapper{
+  .publish-wrapper {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -421,12 +475,36 @@
     margin: 3em;
   }
 
-  .share-tab-footer{
+  .share-tab-footer {
     margin-bottom: 9em;
   }
 
-  .share-tab-header{
+  .share-tab-header {
     margin-bottom: 6.5em;
+  }
+
+  .greeting-mode-wrapper input {
+    width: 160px;
+  }
+
+  .greeting-mode-table {
+    border-collapse: collapse;
+    text-align: left;
+    margin: auto;
+  }
+
+  .greeting-mode-table tr:hover {
+    background: #eeeeee;
+    cursor: pointer;
+  }
+
+  .notSelectedGreetingMode {
+    color : #00000090
+  }
+
+  .notSelectedGreetingMode input[type=text]{
+    color : #00000090;
+
   }
 
 </style>

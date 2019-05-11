@@ -11,7 +11,7 @@ export default {
     formID: '',
     createdForms: [],
     finishedForms: [],
-    creatorID:''
+    creatorID: ''
   },
   getters: {
     getCreatorFormID: state => {
@@ -31,15 +31,22 @@ export default {
     },
 
     setCreatedForms: (state) => {
-      if(state.creatorID)
+      if (state.creatorID)
         Firebase.database().ref(getCreatedForms(state.creatorID))
           .on('value', (snapshot) => {
             const value = snapshot.val();
-            if(value){
-              state.createdForms = Object.keys(value).map(k => ({title:value[k].title,
-                id:value[k].id,
-                questionNumber: value[k].entries ? Object.keys(value[k].entries).length : 0}));
-            }else{
+            if (value) {
+              state.createdForms = Object.keys(value).map(k => (
+                {
+                  title: value[k].title,
+                  entries: value[k].entries,
+                  id: value[k].id,
+                  sections: value.sections || [],
+                  questionNumber: value[k].entries ? Object.keys(value[k].entries).length : 0,
+                  greeting: value[k].greeting || '',
+                  isRandomGreetingMode: !!value[k].isRandomGreetingMode
+                }));
+            } else {
               state.createdForms = [];
             }
           })
@@ -50,11 +57,11 @@ export default {
     },
 
     setFinishedForms: (state) => {
-      if(state.creatorID){
+      if (state.creatorID) {
         Firebase.database().ref(closedPath)
           .on('value', (snapshot) => {
             const value = snapshot.val();
-            if(value){
+            if (value) {
               const closedforms = Object.keys(value).map(form => value[form]);
               state.finishedForms = closedforms.filter(form => !!state.createdForms.find(Cform => Cform.id === form.id))
             }
@@ -72,7 +79,7 @@ export default {
     setCreatorID: (context) => {
       context.commit('setCreatorID');
       context.commit('setCreatedForms');
-      context.commit('setFinishedForms')
+      context.commit('setFinishedForms');
     }
   }
 }

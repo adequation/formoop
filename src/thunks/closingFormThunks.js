@@ -5,7 +5,7 @@ export const closePublishedForm = (formID) => {
   Firebase.database().ref(getPublishedFormFromID(formID))
     .once('value', function (snapshot){
       Firebase.database().ref(getClosedFormFromID(formID))
-        .set(snapshot.val())
+        .set(snapshot.val());
       Firebase.database().ref(getPublishedFormFromID(formID)).remove();
     })
 };

@@ -23,7 +23,7 @@ export default {
     getWindowSize() {
       if (this.$el) {
         this.windowHeight = this.$el.clientHeight;
-        this.windowWidth = this.$el.clientWidth
+        this.windowWidth = this.$el.clientWidth;
       }
     }
   }

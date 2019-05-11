@@ -1,7 +1,7 @@
 <template>
   <div class="form" v-if="formEntries">
 
-    <user-close-form class="user-form-close-button" v-if="isEntryPoint" />
+    <user-close-form class="user-form-close-button" v-if="isEntryPoint"/>
 
 
     <h1>{{formTitle}}</h1>
@@ -10,12 +10,15 @@
 
     <div v-if="!user && sortedEntries.length > 0">
       <h2>Aie ! Tu n'es pas connecté !</h2>
-      <UserGetFormLinkModal />
+      <UserGetFormLinkModal :showGetLinkModal="showGetFormLinkModal"/>
     </div>
 
+    <div v-else-if="user">
+      <UserGreeting v-if="!user.visited" :percentage="currentFormPercentage" :showGreetingsModal="showGreetingsModal"/>
+    </div>
 
     <div class="user-form-section-list-wrapper">
-      <UserSectionList v-if="sections.length > 0"
+      <UserSectionList v-if="sections.length > 0 && user"
                        :sections="sections" :focusedSection="focusedSection"
                        :formEntries="formEntries" :userAnswers="userAnswers"></UserSectionList>
     </div>
@@ -76,40 +79,64 @@
 
     </div>
 
+    <div class="help-button">
+      ?
+    </div>
+
     <DockingMenu class="user-form-menu">
       <div slot="body">
 
 
         <div class="user-form-progress-bar smooth"
-             :style="{width: Math.floor(Object.keys(userAnswers).length/formEntries.length * 100) + '%'}">
+             :style="{width: currentFormPercentage + '%'}">
         </div>
 
         <div class="user-form-menu-items">
           <div class="user-form-filter-buttons-wrapper">
-            <button v-for="f in filters" @click="changeFilter(f.name)"
-                    type="button"
-                    :class="filter===f.name ? 'user-form-filter-button-selected' : 'user-form-filter-button'"
-                    :title=f.description>
-              <i class="material-icons">{{f.icon}}</i>
+
+            <drawer v-if="showFilterDrawer" @close="showFilterDrawer=false">
+              <div slot="header">
+                <h1> Filtres </h1>
+              </div>
+              <div slot="body">
+                <div v-for="elem in filters"
+                     v-if="elem.name !== filter"
+                     :title="elem.description"
+                     @click="changeFilter(elem.name); showFilterDrawer=false">
+                  <span class="drawer-content"><i v-if="elem.icon" class="material-icons md-16">{{elem.icon}}</i> {{elem.description}}</span>
+                </div>
+              </div>
+            </drawer>
+
+            <button class="user-form-filter-button" type="button" @click="showFilterDrawer=true">
+              <i v-if="filters.find(f => f.name === filter).icon" class="material-icons md-28 menu-button">{{filters.find(f => f.name === filter).icon}}</i>
+            </button>
+
+            <drawer v-if="showSorterDrawer" @close="showSorterDrawer=false">
+              <div slot="header">
+                <h1> Tris </h1>
+              </div>
+              <div slot="body">
+                <div v-for="elem in sorters"
+                     v-if="elem.name !== selectedSorter.name"
+                     :title="elem.description"
+                     @click="changeSorter(elem.name); showSorterDrawer=false">
+                  <span class="drawer-content"><i v-if="elem.icon" class="material-icons md-16">{{elem.icon}}</i> {{elem.description}}</span>
+                </div>
+              </div>
+            </drawer>
+
+            <button class="user-form-sort-button" type="button" @click="showSorterDrawer=true">
+              <i v-if="selectedSorter.icon" class="material-icons md-28 menu-button">{{selectedSorter.icon}}</i>
             </button>
 
             <div class="vertical-separator"></div>
-
-            <button v-for="s in sorters" @click="selectedSorter = s"
-                    type="button"
-                    class="user-form-sort-button"
-                    :title="s.description">
-              <i class="material-icons">{{s.icon}}</i>
-            </button>
-
-            <div class="vertical-separator"></div>
-
 
             <button @click="cleanAllFilters"
                     type="button"
                     :class="['user-form-clean-filters-button', !hasFilter ? 'disabled' : '']"
                     title="Enlever tous les filtres">
-              <i class="material-icons">{{hasFilter ? 'visibility_off' : 'visibility'}}</i>
+              <i class="material-icons md-28 menu-button">{{hasFilter ? 'visibility_off' : 'visibility'}}</i>
             </button>
 
           </div>
@@ -121,14 +148,14 @@
                    class="user-form-search-bar"
                    v-model="searchQuery"/>
             <button type="button" class="user-form-search-delete-button" @click="searchQuery = ''">
-              <i v-if="searchQuery" class="material-icons" role="button">clear</i>
+              <i v-if="searchQuery" class="material-icons menu-button" role="button">clear</i>
             </button>
           </div>
 
           <div class="user-form-utils-buttons-wrapper">
 
             <button class="user-form-save-button" @click="saveAnswers" type="button" title="Enregistrer le formulaire">
-              <i class="material-icons md-36">save</i>
+              <i class="material-icons md-36 menu-button">save</i>
             </button>
 
             <InviteModal class="user-form-invite-button" v-if="user"/>
@@ -156,21 +183,31 @@
   import UserEntryGrid from "@/components/user/UserEntryGrid";
   import UserSectionList from "@/components/user/UserSectionList";
   import {getSections} from "@/helpers/sectionsHelpers";
-  import {areAnswersUpdated, isAnswered} from "@/helpers/userAnswersHelpers";
+  import {areAnswersUpdated, getPercentage, isAnswered} from "@/helpers/userAnswersHelpers";
   import {decodeEmailToken} from "@/helpers/accountHelpers";
   import UserCloseForm from "./UserCloseForm";
   import UserGetFormLinkModal from "./UserGetFormLinkModal";
+  import DropUpMenu from "../containers/DropUpMenu";
+  import Drawer from "../containers/Drawer";
+  import UserGreeting from "@/components/user/UserGreeting";
 
   export default {
     name: 'UserForm',
     components: {
+      UserGreeting,
+      Drawer,
+      DropUpMenu,
       UserGetFormLinkModal,
       UserCloseForm,
-      UserSectionList, UserEntryGrid, DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry},
+      UserSectionList, UserEntryGrid, DockingMenu, UserGroupedQuestion, InviteModal, UserFormEntry
+    },
     data() {
       return {
         showModal: false,
-        showIdentificationModal : false,
+        showFilterDrawer: false,
+        showSorterDrawer: false,
+        showGetFormLinkModal: false,
+        showGreetingsModal: true,
         selectedAnswers: {},
 
         filter: 'all',
@@ -181,8 +218,22 @@
           {name: 'grid', description: 'Afficher en grille', icon: 'apps'},
         ],
 
-        selectedSorter: '',
+        selectedSorter: {
+          name: 'default',
+          description: 'Ordre par défaut',
+          icon: 'sort',
+          sortingLayer: 0,
+          sort: (a, b) => a.index - b.index
+        },
+
         sorters: [
+          {
+            name: 'default',
+            description: 'Ordre par défaut',
+            icon: 'sort',
+            sortingLayer: 0,
+            sort: (a, b) => a.index - b.index
+          },
           {
             name: 'alphabetical',
             description: 'Filtrer par ordre alphabetique',
@@ -199,44 +250,6 @@
           },
         ],
 
-        /*
-
-        {
-            name: 'answered',
-            description: 'Avec réponse en premier',
-            icon: 'expand_less',
-            sortingLayer: 1,
-            sort: (a, b) => {
-              const aAnswered = this.hasAnsweredToEntry(a);
-              const bAnswered = this.hasAnsweredToEntry(b);
-
-              if (!aAnswered) {
-                if (!bAnswered) return 0;
-                return 1;
-              }
-              if (!bAnswered) return 0;
-              return 0;
-            }
-          },
-          {
-            name: 'notAnswered',
-            description: 'Sans réponse en premier',
-            icon: 'expand_more',
-            sortingLayer: 1,
-            sort: (a, b) => {
-              const aAnswered = this.hasAnsweredToEntry(a);
-              const bAnswered = this.hasAnsweredToEntry(b);
-              if (aAnswered) {
-                if (bAnswered) return 0;
-                return 1;
-              }
-              if (bAnswered) return 0;
-              return 0;
-            }
-          },
-
-         */
-
         searchQuery: '',
 
         focusedSection: null,
@@ -250,15 +263,15 @@
       },
 
       formEntries() {
-        return this.$store.getters.getFormEntries || []
+        return (this.$store.getters.getFormEntries || [])
       },
 
       singleEntries() {
         return this.sortedEntries.filter(fe => !fe.grouped);
       },
 
-      isEntryPoint(){
-        return this.user ? !!this.$store.getters.entryPoints.find(e=>e.id === this.user.id) : false;
+      isEntryPoint() {
+        return this.user ? !!this.$store.getters.entryPoints.find(e => e.id === this.user.id) : false;
       },
 
       groupedEntries() {
@@ -273,7 +286,7 @@
         });
 
         return Object.keys(groups).map(key => {
-          groups[key].entries.sort((a, b) => a.question.title.localeCompare(b.question.title));
+          groups[key].entries.sort((a, b) => a.index - b.index);
 
           return groups[key];
         });
@@ -333,14 +346,14 @@
         return this.searchQuery.split(' ');
       },
 
-      formSectionSortOrder(){
-          return this.$store.getters.formSections || []
+      formSectionSortOrder() {
+        return this.$store.getters.formSections || []
       },
 
       sections() {
         const sections = getSections(this.formEntries, this.userAnswers);
 
-        return sections.sort((a,b) =>
+        return sections.sort((a, b) =>
           this.formSectionSortOrder.indexOf(a.name) - this.formSectionSortOrder.indexOf(b.name))
       },
 
@@ -348,7 +361,9 @@
         return this.filter !== 'all' || this.searchQuery || this.focusedSection
       },
 
-
+      currentFormPercentage() {
+        return getPercentage('answered', this.formEntries, this.userAnswers);
+      }
 
     },
     created() {
@@ -359,6 +374,14 @@
 
       this.$root.$on('set-selected-answers', (id, answers) => {
         this.setSelectedAnswers(id, answers);
+      });
+
+      this.$on('close-get-link-modal', () => {
+        this.showGetFormLinkModal = false;
+      });
+
+      this.$on('close-greetings-modal', () => {
+        this.showGreetingsModal = false;
       });
 
       this.$on('section-list-choice', (section) => {
@@ -374,7 +397,7 @@
       setSelectedAnswers(id, answers) {
         const tmp = {...this.selectedAnswers};
 
-        if(Array.isArray(answers))  tmp[id] = answers;
+        if (Array.isArray(answers)) tmp[id] = answers;
         else tmp[id] = answers;
 
         this.selectedAnswers = tmp;
@@ -384,7 +407,7 @@
         if (this.user)
           setSelectedAnswersFB(this.formID, this.selectedAnswers, this.user.id);
 
-        else alert("Vous n'êtes pas connecté !");
+        else this.showGetFormLinkModal = true
       },
 
       changeFilter(filter) {
@@ -404,6 +427,10 @@
         }
       },
 
+      changeSorter(sorter) {
+        this.selectedSorter = this.sorters.find(s => s.name === sorter);
+      },
+
       cleanAllFilters() {
         this.filter = 'all';
         this.searchQuery = '';
@@ -421,9 +448,9 @@
         return !!userAnswer
       },
 
-      redirect(event){
+      redirect(event) {
 
-        if(areAnswersUpdated(this.userAnswers, this.selectedAnswers, this.formEntries, this.user.id)) {
+        if (areAnswersUpdated(this.userAnswers, this.selectedAnswers, this.formEntries, this.user.id)) {
           return "Êtes vous sûr de vouloir quitter? Certaines réponses ne sont pas enregistrées.";
         }
         return void(0);
@@ -518,6 +545,7 @@
   }
 
   .user-form-search-delete-button:hover {
+    cursor: pointer;
     color: tomato;
   }
 
@@ -537,8 +565,11 @@
     width: 75%;
   }
 
+  .user-form-section-list-wrapper svg {
+    overflow-x: auto;
+  }
+
   .user-form-filter-button {
-    margin-right: 0.5em;
     padding: 0.5em;
     color: white;
     background: #4286f4;
@@ -601,7 +632,6 @@
   }
 
   .user-form-clean-filters-button {
-    margin-right: 0.5em;
     margin-left: 0.5em;
     padding: 0.5em;
     color: white;
@@ -652,5 +682,53 @@
     top: 10px;
   }
 
+  .drawer-content {
+    float: left;
+    font-size: large;
+    cursor: pointer;
+    padding: 8px 8px 8px 10px;
+  }
 
+  .drawer-content:hover {
+    color: rgba(0, 0, 0, .5);
+  }
+
+  @media screen and (max-width: 550px) {
+    .user-form-menu-items {
+      padding: 0.5em;
+    }
+
+    .menu-button {
+      font-size: 24px;
+    }
+
+    .user-form-search-bar {
+      width: 75px;
+    }
+
+    .user-form-search-delete-button {
+      font-size: 16px;
+    }
+  }
+
+  .help-button {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    height: 36px;
+    text-align: center;
+    width: 36px;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 1px solid #00000088;
+    border-radius: 18px 18px 18px 18px;
+  }
+
+  .help-button:hover {
+    background: #dddddd;
+    border: 1px solid #000000aa;
+  }
 </style>

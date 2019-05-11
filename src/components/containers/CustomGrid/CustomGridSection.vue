@@ -6,9 +6,10 @@
          height:`${cellHeight}px`,
          margin: `${padding}px`,
          lineHeight: `${cellHeight}px`
-       }">
+       }"
+       :title="this.section">
 
-      {{smallTitle}}
+    {{smallTitle}}
 
   </div>
 </template>
@@ -50,7 +51,7 @@
     computed: {
       smallTitle() {
         const trimmed = this.section.trim();
-        return trimmed.length > 8 ? `${trimmed.substring(0, 5)}...` : trimmed ;
+        return trimmed.length > 8 ? `${trimmed.substring(0, 5)}...` : trimmed;
       }
     }
   }

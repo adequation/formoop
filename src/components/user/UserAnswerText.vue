@@ -55,5 +55,7 @@
     padding: 0.3em 0.3em 0.3em 0.75em;
 
     border-radius: 20px;
+
+    margin-bottom: 7px;
   }
 </style>

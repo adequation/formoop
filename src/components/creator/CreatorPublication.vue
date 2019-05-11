@@ -4,7 +4,7 @@
     <button type="button" class="creator-form-save-button" title="Publier le formulaire"
             @click="publishForm"><i class="material-icons md-36">send</i></button>
 
-    <CSVImportModal :show-modal="showCSVImportModal" :form-entries="this.formEntries" :save-form="this.saveForm" :publishing-campaigns="publishingCampaigns" @close="closeJsonImportModal"/>
+    <CsvImportModal :show-modal="showCSVImportModal" :form-entries="this.formEntries" :save-form="this.saveForm" :publishing-campaigns="publishingCampaigns" @close="closeJsonImportModal"/>
     <EntryPointModal :show-modal="showEntryPointModal" @close="closeEntryPointModal" />
 
   </div>
@@ -14,7 +14,7 @@
 <script>
   import EntryPointModal from "./EntryPointModal";
   import {nativeFbFunctions} from "../../helpers/firebaseHelpers";
-  import CSVImportModal from "./CSVImportModal";
+  import CsvImportModal from "./CsvImportModal";
   import {publishCreatorFormFB} from "../../thunks/creatorForm";
   import {inviteUser} from "../../thunks/userAccountThunks";
   import {getDomainFromEmail, getNameFromEmail, getUserIdFromEmail} from "../../helpers/accountHelpers";
@@ -22,7 +22,7 @@
 
   export default {
     name: "CreatorPublication",
-    components: {CSVImportModal, EntryPointModal},
+    components: {CsvImportModal, EntryPointModal},
     data() {
       return {
         showCSVImportModal: false,

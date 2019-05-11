@@ -6,7 +6,7 @@
       Obtenir mon lien
     </button>
 
-    <Modal v-if="showIdentificationModal" @close="closeModal">
+    <Modal v-if="showIdentificationModal || showGetLinkModal" @close="closeModal">
       <div slot="body" >
 
         <h1>Tu n'es pas connecté &#x1F625</h1>
@@ -58,12 +58,19 @@
     components: {Modal},
     data() {
       return {
-        showIdentificationModal: false,
+        showIdentificationModal: true,
         mailAddress: "",
         invalidAddress: false,
         notInvited: false,
         mailSend: false
       }
+    },
+    props: {
+      showGetLinkModal: {
+        type: Boolean,
+        required: false,
+        default: false
+      },
     },
     methods: {
       verifyEmail() {
@@ -98,6 +105,7 @@
       },
 
       closeModal() {
+        this.$parent.$emit('close-get-link-modal');
         this.showIdentificationModal = false;
         this.mailSend = false;
       }
@@ -113,9 +121,17 @@
 
       formTitle() {
         return this.$store.getters.getFormTitle;
-      }
+      },
+      user() {
+        return this.$store.getters.user;
+      },
 
-    }
+    },
+    watch: {
+      user(){
+        if(user) this.showIdentificationModal = false
+      }
+  }
   }
 </script>
 
@@ -146,6 +162,13 @@
 
   .mail-address-error-message{
     font-size: 14px;
+  }
+
+
+  @media screen and (max-width: 480px) {
+    .mail-input{
+      width: 100px;
+    }
   }
 
 </style>

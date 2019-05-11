@@ -1,15 +1,20 @@
 <template>
   <div class="creator-form">
-
+    <div class="formoop-title left-nav" @click="goTo('home')">
+      Formoop
+    </div>
     <DockingMenu class="creator-form-top-menu"
                  ref="top-menu"
                  top>
       <div slot="body">
         <Tabs :current-tab="currentTab" :tabs="tabs" @change-tab="changeTab($event)"/>
+
       </div>
     </DockingMenu>
 
-    <div class="creator-form-header"></div>
+
+
+    <div class="space-header"></div>
 
     <!-- ////////////////////////////////////////// CREATE AREA ////////////////////////////////////////// !-->
 
@@ -17,22 +22,24 @@
 
       <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
 
-      <CreatorCampaignSelect/>
 
-      <div v-for="(entry, i) in formEntries"
-           :key="entry.id"
-           @click="focusEntry(entry)"
-           :ref="`top_${entry.id}`"
-           :class="['smooth', {focusedEntry: focusedEntry ? focusedEntry.id === entry.id : false}]">
+      <div v-for="(entry, i) in formEntries">
 
-        <CreatorFormEntry
+        <div
           :key="entry.id"
-          :entry="entry"
-          :opened="focusedEntry ? focusedEntry.id === entry.id : false"
-          :ref="entry.id"
-          :formSections="formSections"
-          :currentSection="entry.section"
-        />
+          @click="focusEntry(entry)"
+          :ref="`top_${entry.id}`"
+          :class="['smooth', {focusedEntry: focusedEntry ? focusedEntry.id === entry.id : false}]">
+
+          <CreatorFormEntry
+            :key="entry.id"
+            :entry="entry"
+            :opened="focusedEntry ? focusedEntry.id === entry.id : false"
+            :ref="entry.id"
+            :formSections="formSections"
+            :currentSection="entry.section"
+          />
+        </div>
       </div>
 
       <div class="fake-entry">
@@ -129,12 +136,46 @@
                            :publishing-campaigns="publishingCampaigns"
                            :save-form="saveForm"
                            :form-title="formTitle"
-                           :entryPoints="entryPoints"/>
+                           :entryPoints="entryPoints"
+                           :greeting="greeting"
+                           :randomGreeting="randomGreeting"/>
+    </div>
+
+    <!-- ////////////////////////////////////////// CAMPAIGNS AREA ////////////////////////////////////////// !-->
+
+    <div v-if="currentTab === 'campaigns'">
+
+      <CreatorCampaignSelect/>
+
+    </div>
+
+    <!-- ////////////////////////////////////////// DELETE AREA ////////////////////////////////////////// !-->
+
+    <div v-if="currentTab === 'delete'" class="delete-area">
+      <p class="delete-infos-message">
+        Attention ! <br/>
+        Supprimer un formoop implique sa disparition : <br/>
+        - Des formoops créés <br/>
+        - Des campagnes auxquelles il appartient <br/>
+        - Des formoop publiés <br/>
+        <br/>
+        Toute progression liée à ce formoop sera donc perdue.
+      </p>
+
+      <div class="delete-area">
+        <div class="delete-form-button" title="Supprimer le formulaire" @click="deleteForm">
+          <i class="material-icons md-36" role="button" @click.stop=""
+          >delete</i>
+          <p>Supprimer le formoop</p>
+        </div>
+      </div>
     </div>
 
     <div v-else>
 
     </div>
+
+    <!-- ////////////////////////////////////////// MENU AREA ////////////////////////////////////////// !-->
 
     <DockingMenu class="creator-form-bottom-menu">
       <div slot="body">
@@ -144,12 +185,12 @@
           <div class="creator-form-entry-buttons-wrapper">
             <button type="button" class="creator-form-entry-button"
                     @click="addEntry(false)" title="Ajouter une question">
-              <i class="material-icons md-36">add_box</i>
+              <i class="material-icons md-36 menu-button">add_box</i>
             </button>
 
             <button type="button" class="creator-form-entry-button"
                     @click="addEntry(true)" title="Ajouter une question générique">
-              <i class="material-icons md-36">ballot</i>
+              <i class="material-icons md-36 menu-button">ballot</i>
             </button>
 
             <div class="vertical-separator"></div>
@@ -162,7 +203,7 @@
 
               <button type="button" class="creator-form-section-button"
                       @click="addSection" title="Créer une nouvelle Section">
-                <i class="material-icons md-36">create_new_folder</i>
+                <i class="material-icons md-36 menu-button">create_new_folder</i>
               </button>
             </div>
 
@@ -171,7 +212,7 @@
           <div class="creator-form-utils-buttons-wrapper">
             <button type="button" @click="saveForm" class="creator-form-save-button md-36"
                     title="Enregistrer le formulaire">
-              <i class="material-icons md-36">save</i>
+              <i class="material-icons md-36 menu-button">save</i>
             </button>
 
           </div>
@@ -202,11 +243,14 @@
   import CustomGridSection from "@/components/containers/CustomGrid/CustomGridSection";
   import autoScrollMixin from "@/mixins/autoScrollMixin";
   import CreatorFormShareTab from "@/components/creator/formTabs/CreatorFormShareTab";
+  import CreatorFormLabel from "@/components/creator/CreatorFormLabel";
+  import {deleteFormFromCreatedFB, deleteFormFromPublishedFB, deleteFormFromCampaignsFB} from "@/thunks/creatorForm"
 
   export default {
     name: 'CreatorForm',
     mixins: [autoScrollMixin],
     components: {
+      CreatorFormLabel,
       CreatorFormShareTab,
       CustomGridSection,
       Tabs,
@@ -217,11 +261,13 @@
       return {
         focusedEntry: null,
         formEntries: [],
+        labels: [],
         defaultFormEntry: {
           question: {title: ''},
           type: 'radio',
           answers: [],
-          initialyOpened: true //Opened collapse by default
+          initialyOpened: true, //Opened collapse by default
+          required: false
         },
         defaultQuestion: {title: 'Titre de la question'},
         defaultAnswers: [{id: "", text: 'Option'}],
@@ -234,11 +280,15 @@
         publishingCampaigns: [],
         tabs: [
           {title: 'Créer', value: 'create', icon: 'edit'},
-          {title: 'Parramètrer', value: 'sort', icon: 'settings'},
+          {title: 'Paramétrer', value: 'sort', icon: 'settings'},
+          {title: 'Campagnes', value: 'campaigns', icon: 'insert_chart'},
           {title: 'Partager', value: 'share', icon: 'share'},
-          {title: 'Résultats', value: 'results', icon: 'insert_chart'}
+          {title: 'Supprimer', value: 'delete', icon: 'delete'},
         ],
         currentTab: 'create',
+
+        greeting: 'Bienvenue sur le formoop !',
+        randomGreeting: true,
 
         //boolean to check if we scroll down on a new entry or not
         firstMount: true
@@ -273,8 +323,6 @@
         this.formEntries = this.$refs.entrySortingGrid.getListClone();
         this.formSections = this.$refs.sectionSortingGrid.getListClone();
 
-        console.log(this.formSections)
-        console.log(this.$refs.sectionSortingGrid.getListClone())
       },
 
       getEntryColor(entry) {
@@ -327,6 +375,19 @@
         e.preventDefault();
       },
 
+      addLabel(under) {
+        const id = uuid.v4();
+
+        const label = {
+          title: 'Séparateur !',
+          content: 'Avec du contenu !',
+          id,
+          under
+        };
+
+        //this.labels.push(label);
+      },
+
       addEntry(generic) {
         const id = uuid.v4();
 
@@ -344,12 +405,12 @@
             {
               id: uuid.v4(),
               type: 'text',
-              content: "Texte standard"
+              content: "Une question avec"
             },
             {
               id: uuid.v4(),
               type: 'variable',
-              content: "nom_variable"
+              content: "variable"
             }
           ];
         }
@@ -370,14 +431,14 @@
 
       },
 
-      changeOptionIndex(id, optionIndex, newOptionIndex){
+      changeOptionIndex(id, optionIndex, newOptionIndex) {
         const tmp = [...this.formEntries];
         const fe = tmp.find(e => e.id === id);
-        if(!(optionIndex === 0 && newOptionIndex < 0)){
-          if(!(optionIndex === fe.answers.length-1 && newOptionIndex >= fe.answers.length)){
+        if (!(optionIndex === 0 && newOptionIndex < 0)) {
+          if (!(optionIndex === fe.answers.length - 1 && newOptionIndex >= fe.answers.length)) {
             if (fe) {
               const el = fe.answers[optionIndex];
-              fe.answers.splice(optionIndex,1, fe.answers[newOptionIndex]);
+              fe.answers.splice(optionIndex, 1, fe.answers[newOptionIndex]);
               fe.answers[newOptionIndex] = el;
               this.formEntries = tmp;
             }
@@ -425,24 +486,42 @@
         this.publishingCampaigns = publishingCampaigns;
       },
 
+      setGreetingMode(isRandomMode) {
+        this.randomGreeting = isRandomMode;
+      },
+
+      setGreetingSentence(greetingSentence) {
+        this.greeting = greetingSentence;
+      },
+
       setForm(form) {
         if (!form) {
           this.formEntries = [];
           this.formTitle = this.defaultFormTitle;
           this.currentSections = [];
+          this.randomGreeting = true;
+          this.greeting = 'Bienvenue sur le formoop !';
           return;
         }
         this.formEntries = form.formEntries || [];
         this.formTitle = form.formTitle || this.defaultFormTitle;
         this.currentSections = form.currentSections || [];
+        this.randomGreeting = form.isRandomGreetingMode || false;
+        this.greeting = form.greeting || '';
       },
 
       async getFormFromFB(creatorID, formID) {
         await Firebase.database().ref(getCreatedFormFromID(creatorID, formID))
-          .on('value', (snapshot) => {
+          .once('value', (snapshot) => {
             const value = snapshot.val();
             if (value) {
-              this.setForm({formEntries: value.entries, formTitle: value.title, currentSections: value.sections || []});
+              this.setForm({
+                formEntries: value.entries,
+                formTitle: value.title,
+                currentSections: value.sections || [],
+                isRandomGreetingMode: value.isRandomGreetingMode || false,
+                greeting: value.greeting || ''
+              })
             } else {
               this.setForm(null);
             }
@@ -465,6 +544,7 @@
       //save form into firebase
       //then reset data from what we saved on firebase to stay in sync
       async saveForm() {
+
         this.validateEntries();
 
         await saveCreatorFormFB(this.creatorID,
@@ -473,20 +553,21 @@
             id: this.formID,
             title: this.formTitle,
             entries: this.formEntries,
-            sections: this.formSections || []
+            sections: this.formSections || [],
+            isRandomGreetingMode: this.randomGreeting,
+            greeting: this.greeting
           });
 
         //if everything is done, we reset the form's data
         await this.getFormFromFB(this.creatorID, this.formID);
 
-
         //remove the form where we don't want it to be
         //and add it where it is not
         if (!isFormGeneric(this.formEntries))
-          saveAndFilterCampaignsFB({
-            id: this.formID,
-            title: this.formTitle
-          }, this.formCampaigns, this.publishingCampaigns);
+        saveAndFilterCampaignsFB({
+          id: this.formID,
+          title: this.formTitle
+        }, this.formCampaigns, this.publishingCampaigns);
 
       },
 
@@ -503,6 +584,27 @@
             e.preventDefault();
             break;
         }
+      },
+
+
+      deleteForm() {
+        if (confirm(`Es-tu sûr de vouloir supprimer ce formoop?
+                      \nAttention!
+                      \nCelui-ci perdra ses questions, et sera supprimé des campagnes et des formoops publiés.
+                      \nTu n'auras plus accès aux réponses du formoop `)) {
+
+          deleteFormFromCreatedFB(this.creatorID, this.formID);
+
+          deleteFormFromCampaignsFB(this.formID);
+
+          deleteFormFromPublishedFB(this.formID);
+
+          this.$router.replace("/create");
+        }
+      },
+
+      goTo(path) {
+        this.$router.push(`/${path}`);
       }
     },
     created: function () {
@@ -527,7 +629,6 @@
       });
 
 
-
       //emitting the type of an entry
       this.$on('set-entry-type', (id, type) => {
         this.setFormEntryType(id, type)
@@ -550,6 +651,14 @@
         this.setFormPublishingCampaign(publishingCampaigns)
       });
 
+      this.$on('greeting-mode', isRandomMode => {
+        this.setGreetingMode(isRandomMode);
+      });
+
+      this.$on('custom-greeting-sentence', greetingSentence => {
+        this.setGreetingSentence(greetingSentence);
+      });
+
       //when an entry is mounted
       this.$root.$on('mounted-entry', (id) => {
         //we don't want to be at the bottom of the page when arriving
@@ -569,6 +678,16 @@
           if (optionToEdit) {
             optionToEdit.text = optionText;
           }
+        }
+      });
+
+      //emitting of the removal of a label
+      this.$on('delete-label', (labelID) => {
+        const tmp = [...this.labels];
+        const labelToDeleteIndex = tmp.findIndex(l => l.id === labelID);
+        if (labelToDeleteIndex >= 0) {
+          tmp.splice(labelToDeleteIndex, 1);
+          this.labels = tmp;
         }
       });
 
@@ -603,7 +722,25 @@
       },
 
       isPublished() {
-        return !!this.$store.getters.publishedForms.find(pe => pe.id === this.formID)
+        return !!this.$store.getters.publishedForms.find(pe => pe.id === this.formID) || this.hasPublishedGenericForms;
+      },
+
+      hasPublishedGenericForms() {
+        if (this.containsGenericQuestion) {
+          return !!this.$store.getters.publishedForms.find(pe => pe.id.includes(this.formID));
+        }
+
+        return false;
+      },
+
+      containsGenericQuestion() {
+        let containsGenericQuestion = false;
+
+        this.formEntries.forEach(fe => {
+          if (fe.generic) containsGenericQuestion = true;
+        });
+
+        return containsGenericQuestion;
       },
 
       entryPoints() {
@@ -628,6 +765,14 @@
 
       sections() {
         return this.currentSections;
+      },
+
+      publishedForms() {
+        return this.$store.getters.publishedForms || [];
+      },
+
+      createdForms() {
+        return this.$store.getters.createdForms || [];
       },
     },
     watch: {
@@ -674,7 +819,7 @@
     margin: 9em;
   }
 
-  .creator-form-header {
+  .space-header {
     margin: 4em;
   }
 
@@ -779,7 +924,7 @@
   }
 
   .creator-form-sections-buttons-wrapper input {
-    width: 90%;
+    width: auto;
     color: #ffffff;
     border-bottom: 1px solid #00000055;
   }
@@ -849,4 +994,143 @@
   .focusedEntry {
     background: #00000015;
   }
+
+  .label-buttons-wrapper {
+    width: 90%;
+    margin: 5px auto;
+
+    height: 0;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+  }
+
+  .add-label-button-left {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+
+    border-left: 15px solid #00000000;
+  }
+
+  .add-label-button-left:hover {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+
+    border-left: 20px solid #00000090;
+
+    cursor: pointer;
+  }
+
+  .add-label-button-right {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+
+    border-right: 15px solid #00000000;
+  }
+
+  .add-label-button-right:hover {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+
+    border-right: 15px solid #00000090;
+
+    cursor: pointer;
+  }
+
+  .creator-form-title {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    width: 600px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid rgb(217, 217, 217);
+    font-size: 1.5em;
+    text-align: center;
+    color: #2c3e50;
+  }
+
+  .delete-form-button {
+    color: white;
+    background: tomato;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    border-radius: 16px;
+    padding-right: 5px;
+    font-weight: bold;
+  }
+
+  .delete-form-button:hover {
+    cursor: pointer;
+    background: #dc472f;
+  }
+
+  .delete-infos-message {
+    width: 100%;
+    text-align: left;
+  }
+
+  .delete-area {
+    display: inline-block;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
+  @media screen and (max-width: 370px) {
+    .space-header {
+      margin: 8em;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .creator-form-sections-buttons-wrapper input{
+      width: 100px;
+    }
+
+    .creator-form-buttons-wrapper{
+      padding: 0.5em;
+    }
+
+    .menu-button {
+      font-size: 24px;
+    }
+  }
+
+  .left-nav {
+    z-index: 100;
+    position: fixed;
+    top: 5px;
+    left: 0;
+  }
+
+
+  @media screen and (max-width: 800px) {
+    .creator-form-title{
+      width: 300px;
+    }
+
+  }
+
+  @media screen and (max-width: 450px) {
+    .creator-form-title{
+      width: 175px;
+    }
+
+  }
+
+
 </style>

@@ -49,4 +49,8 @@
   .position-top {
     top: 0;
   }
+
+  .docking-menu-body{
+    overflow-x: auto;
+  }
 </style>
