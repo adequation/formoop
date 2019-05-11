@@ -1,7 +1,7 @@
 import {filterEntries, getEntryAnswers, answerAmount, answeredEntries} from '@/helpers/userAnswersHelpers'
 
 //Get the result for 1 entry
-function entryResult(entry, usersAnswers) {
+export function entryResult(entry, usersAnswers) {
   let answersAmount = answerAmount(entry, usersAnswers);
   let result = [];
   //All the answers for text answers
@@ -26,7 +26,7 @@ function entryResult(entry, usersAnswers) {
   }
 }
 
-function parseAnswered(brutForm){
+export function parseAnswered(brutForm){
   //Get Only the answered entries
   let answered = filterEntries("answered", Object.values(brutForm.entries), brutForm.usersAnswers);
   let answeredEntries = [];
@@ -36,7 +36,7 @@ function parseAnswered(brutForm){
   return answeredEntries;
 }
 
-function parseNotAnswered(brutForm) {
+export function parseNotAnswered(brutForm) {
   //Get only the unanswered entries
   let notanswered = filterEntries("notAnswered", Object.values(brutForm.entries), brutForm.usersAnswers);
   let notAnsweredEntries = [];
@@ -54,7 +54,7 @@ function parseNotAnswered(brutForm) {
 }
 
 //Get the text for the Answers given for readability
-function convertAnswerIdToText(answer, entry){
+export function convertAnswerIdToText(answer, entry){
   if(entry.type === 'checkbox'){
     let textAnswer = [];
     answer.forEach(ua => {
@@ -63,7 +63,7 @@ function convertAnswerIdToText(answer, entry){
     return textAnswer;
   }
   if(entry.type === 'radio' || entry.type === 'select') return entry.answer.answers.find(a => a.id === answer).text;
-  if(entry.type === 'text' || entry.type ==='textarea') return answer;
+  if(entry.type === 'text' || entry.type === 'textarea') return answer;
   return answer;
 }
 
@@ -80,7 +80,7 @@ function givenAnswers(userID, answeredentries, brutForm, usersAnswers){
   return givenanswers;
 }
 
-function parseUsers(brutForm){
+export function parseUsers(brutForm){
   let users = [];
   if(brutForm.users)
     Object.keys(brutForm.users).forEach(userID =>{

@@ -1,16 +1,13 @@
-import {entryResult} from "@/helpers/jsonExportHelpers";
+import {entryResult, parseAnswered, parseNotAnswered, convertAnswerIdToText, parseUsers, parseForm, parseCampaign} from "@/helpers/jsonExportHelpers";
 
 
 describe('jsonExportHelpers.js', () => {
-  const mockedEntries = {
+  let mockedEntries = {
     e1: {
       answer: {
-        answers: [
-          {
-            e1a1: {
-              id: "e1a1",
-              text: "option 1",
-            }
+        answers: [{
+            id: "e1a1",
+            text: "option 1",
           }
         ],
         type: "textarea",
@@ -27,10 +24,8 @@ describe('jsonExportHelpers.js', () => {
     e2: {
       answer: {
         answers: [{
-            e2a1: {
               id: "e2a1",
               text: "option 1",
-            }
           }
         ],
         type: "text",
@@ -46,28 +41,20 @@ describe('jsonExportHelpers.js', () => {
     },
     e3: {
       answer: {
-        answers: [{
-
-
-          e3a1: {
+        answers: [
+           {
             id: "e3a1",
             text: "option 1",
           }
-        }, {
-          e3a2: {
+        , {
             id: "e3a2",
             text: "option 2",
-          }
         }, {
-          e3a3: {
             id: "e3a3",
             text: "option 3",
-          }
         }, {
-          e3a4: {
             id: "e3a4",
             text: "option 4",
-          }
         }],
         type: "select",
       },
@@ -83,25 +70,17 @@ describe('jsonExportHelpers.js', () => {
     e4:{
       answer: {
         answers: [{
-          e4a1: {
             id: "e4a1",
             text: "option 1",
-          }
         }, {
-          e4a2: {
             id: "e4a2",
             text: "option 2",
-          }
         }, {
-          e4a3: {
             id: "e4a3",
             text: "option 3",
-          }
         }, {
-          e4a4: {
             id: "e4a4",
             text: "option 4",
-          }
         }],
         type: "checkbox",
       },
@@ -117,29 +96,21 @@ describe('jsonExportHelpers.js', () => {
     e5: {
       answer: {
         answers: [{
-          e5a1: {
             id: "e5a1",
             text: "option 1",
-          }
         }, {
-          e5a2: {
             id: "e5a2",
             text: "option 2",
-          }
         }, {
-          e5a3: {
             id: "e5a3",
             text: "option 3",
-          }
         }, {
-          e5a4: {
             id: "e5a4",
             text: "option 4",
-          }
         }],
         type: "radio",
       },
-      id: "e4",
+      id: "e5",
       index: 0,
       question: {
         title: "choix"
@@ -152,14 +123,133 @@ describe('jsonExportHelpers.js', () => {
   };
 
 
-  const mockedUserAnswers = {
+  /*const mockedUserAnswers = {
     e1: { cUBxLmZy : "azeaze aze"},
     e2: { cUBxLmZy : "aze"},
     e3: { cUBxLmZy : "e3a2"},
     e4: { cUBxLmZy : ["e4a2","e4a3"]},
     e5: { cUBxLmZy : ["e5a3","e5a4"]},
+  }*/
+
+  const mockedUserAnswers = {
+    e1: ["azeaze aze"],
+    e2: ["aze"],
+    e3: ["e3a2"],
+    e4: ["e4a2","e4a3"],
+    e5: ["e5a3","e5a4"],
   }
 
+  const mockedUsers = {
+    cUBxLmZy: {
+      company : "q",
+      email: "q@q.fr",
+      id: "cUBxLmZy",
+      name: "q"
+    }
+  }
+
+  const mockedForm = {
+    entries: mockedEntries,
+    id: "form1",
+    title: "TestForm",
+    users: mockedUsers,
+    usersAnswers: mockedUserAnswers
+  }
+
+  const expectedParsedAnswers =  [
+    {
+      answers: ["azeaze aze"],
+      id: "e1",
+      question: "Texte",
+      type: "textarea"
+    },
+    {
+      answers: ["aze"],
+      id: "e2",
+      question: "Courte",
+      type: "text"
+    },
+    {
+      answers: [
+        {
+          id: "e3a1",
+          nbanswers: 0,
+          text: "option 1"
+        },
+        {
+          id: "e3a2",
+          nbanswers: 1,
+          text: "option 2"
+        },
+        {
+          id: "e3a3",
+          nbanswers: 0,
+          text: "option 3"
+        },
+        {
+          id: "e3a4",
+          nbanswers: 0,
+          text: "option 4"
+        }],
+      id: "e3",
+      question: "Liste",
+      type: "select"
+    },
+    {
+      answers: [
+        {
+          id: "e4a1",
+          nbanswers: 0,
+          text: "option 1"
+        },
+        {
+          id: "e4a2",
+          nbanswers: 1,
+          text: "option 2"
+        },
+        {
+          id: "e4a3",
+          nbanswers: 1,
+          text: "option 3"
+        },
+        {
+          id: "e4a4",
+          nbanswers: 0,
+          text: "option 4"
+        }
+        ],
+      id: "e4",
+      question: "Cases",
+      type: "checkbox"
+    },
+    {
+      answers: [
+        {
+          id: "e5a1",
+          nbanswers: 0,
+          text: "option 1"
+        },
+        {
+          id: "e5a2",
+          nbanswers: 0,
+          text: "option 2"
+        },
+        {
+          id: "e5a3",
+          nbanswers: 1,
+          text: "option 3"
+        },
+        {
+          id: "e5a4",
+          nbanswers: 1,
+          text: "option 4"
+        }
+        ],
+      id: "e5",
+      question: "choix",
+      type: "radio"
+    }
+    ]
 
 
   it('Should  return expected object for entry 1', () => {
@@ -173,20 +263,692 @@ describe('jsonExportHelpers.js', () => {
   });
 
   it('Should  return expected object for entry 3', () => {
-    const expectedObject = {question: "Liste", id: "e3", type: "select", answers: ["e3a2"]};
+    const expectedObject ={
+      answers: [
+          {id: "e3a1", text: "option 1", nbanswers: 0},
+          {id: "e3a2", text: "option 2", nbanswers: 1},
+          {id: "e3a3", text: "option 3", nbanswers: 0},
+          {id: "e3a4", text: "option 4", nbanswers: 0}
+        ],
+      id: "e3",
+      question: "Liste",
+      type: "select"
+    };
     expect(entryResult(mockedEntries.e3,mockedUserAnswers)).toEqual(expectedObject )
   });
 
   it('Should  return expected object for entry 4', () => {
-    const expectedObject = {question: "Cases", id: "e4", type: "checkbox", answers: ["e4a2","e4a3"]};
+    const expectedObject ={
+      answers: [
+          {id: "e4a1", text: "option 1", nbanswers: 0},
+          {id: "e4a2", text: "option 2", nbanswers: 1},
+          {id: "e4a3", text: "option 3", nbanswers: 1},
+          {id: "e4a4", text: "option 4", nbanswers: 0}
+        ],
+      id: "e4",
+      question: "Cases",
+      type: "checkbox"
+    };
     expect(entryResult(mockedEntries.e4,mockedUserAnswers)).toEqual(expectedObject )
   });
 
   it('Should  return expected object for entry 5', () => {
-    const expectedObject = {question: "choix", id: "e5", type: "radio", answers: ["e5a3","e5a4"]};
+    const expectedObject ={
+      answers: [
+          {id: "e5a1", text: "option 1", nbanswers: 0},
+          {id: "e5a2", text: "option 2", nbanswers: 0},
+          {id: "e5a3", text: "option 3", nbanswers: 1},
+          {id: "e5a4", text: "option 4", nbanswers: 1}
+        ],
+      id: "e5",
+      question: "choix",
+      type: "radio"
+    };
     expect(entryResult(mockedEntries.e5,mockedUserAnswers)).toEqual(expectedObject )
   });
 
+
+  ////////////////////////////////////////////////////////////////////
+
+  it ('should return expected object for brut form', () =>{
+
+    expect(parseAnswered(mockedForm)).toEqual(expectedParsedAnswers)
+
+  });
+
+  it ('should return expected object for brut form', () =>{
+
+    expect(parseNotAnswered(mockedForm)).toEqual([])
+
+  });
+
+
+  const secondExpectedParsedAnswers = [
+    {
+      answers: [
+        {
+          id: "e3a1",
+          nbanswers: 0,
+          text: "option 1"
+        },
+        {
+          id: "e3a2",
+          nbanswers: 1,
+          text: "option 2"
+        },
+        {
+          id: "e3a3",
+          nbanswers: 0,
+          text: "option 3"
+        },
+        {
+          id: "e3a4",
+          nbanswers: 0,
+          text: "option 4"
+        }],
+      id: "e3",
+      question: "Liste",
+      type: "select"
+    },
+    {
+      answers: [
+        {
+          id: "e4a1",
+          nbanswers: 0,
+          text: "option 1"
+        },
+        {
+          id: "e4a2",
+          nbanswers: 1,
+          text: "option 2"
+        },
+        {
+          id: "e4a3",
+          nbanswers: 1,
+          text: "option 3"
+        },
+        {
+          id: "e4a4",
+          nbanswers: 0,
+          text: "option 4"
+        }
+      ],
+      id: "e4",
+      question: "Cases",
+      type: "checkbox"
+    },
+    {
+      answers: [
+        {
+          id: "e5a1",
+          nbanswers: 0,
+          text: "option 1"
+        },
+        {
+          id: "e5a2",
+          nbanswers: 0,
+          text: "option 2"
+        },
+        {
+          id: "e5a3",
+          nbanswers: 1,
+          text: "option 3"
+        },
+        {
+          id: "e5a4",
+          nbanswers: 1,
+          text: "option 4"
+        }
+      ],
+      id: "e5",
+      question: "choix",
+      type: "radio"
+    }
+  ]
+
+  /*const secondMockedUserAnswers = {
+    e3: { cUBxLmZy : "e3a2"},
+    e4: { cUBxLmZy : ["e4a2","e4a3"]},
+    e5: { cUBxLmZy : ["e5a3","e5a4"]},
+  }*/
+
+  const secondMockedUserAnswers = {
+    e3:  ["e3a2"],
+    e4:  ["e4a2","e4a3"],
+    e5:  ["e5a3","e5a4"],
+  }
+
+  const secondMockedForm = {
+    entries: mockedEntries,
+    id: "form2",
+    title: "TestForm2",
+    users: mockedUsers,
+    usersAnswers: secondMockedUserAnswers
+  }
+
+
+  it ('should return expected object for brut form', () =>{
+
+    expect(parseAnswered(secondMockedForm)).toEqual(secondExpectedParsedAnswers)
+
+  });
+
+  it ('should return expected object for brut form', () =>{
+
+    expect(parseNotAnswered(secondMockedForm)).toEqual([
+      {"answers": "no Answers", "id": "e1", "question": "Texte", "type": "textarea"},
+      {"answers": "no Answers", "id": "e2", "question": "Courte", "type": "text"}])
+
+  });
+
+///////////////////////////////////////////////////////////////////////////////////////////:
+
+  it ('should return only one text answer', () => {
+
+    expect(convertAnswerIdToText(mockedUserAnswers.e1, mockedEntries.e1)).toEqual(
+      ["azeaze aze"]
+    );
+  });
+
+
+  it ('should return an array of multiple text answers', () => {
+
+    expect(convertAnswerIdToText(mockedUserAnswers.e4, mockedEntries.e4)).toEqual(
+      ["option 2", "option 3"]
+    );
+  });
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+
+  it ('should return an arrays of user objects', () => {
+
+    expect(parseUsers(mockedForm)).toEqual(
+      [{
+        email: "q@q.fr",
+        givenAnswers: [],
+        name: "q"
+      }]
+    );
+  });
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+  const expectedParsedForm =
+    {
+      answeredEntries:
+        [
+          {
+            answers: ["azeaze aze"],
+            id: "e1",
+            question: "Texte",
+            type: "textarea"
+          },
+          {
+            answers: ["aze"],
+            id: "e2",
+            question: "Courte",
+            type: "text"
+          },
+          {
+            answers:
+              [
+                {
+                  id: "e3a1",
+                  nbanswers: 0,
+                  text: "option 1"
+                },
+                {
+                  id: "e3a2",
+                  nbanswers: 1,
+                  text: "option 2"
+                },
+                {
+                  id: "e3a3",
+                  nbanswers: 0,
+                  text: "option 3"
+                },
+                {
+                  id: "e3a4",
+                  nbanswers: 0,
+                  text: "option 4"
+                }
+              ],
+            id: "e3",
+            question: "Liste",
+            type: "select"
+          },
+          {
+            answers:
+              [
+                {
+                  id: "e4a1",
+                  nbanswers: 0,
+                  text: "option 1"
+                },
+                {
+                  id: "e4a2",
+                  nbanswers: 1,
+                  text: "option 2"
+                },
+                {
+                  id: "e4a3",
+                  nbanswers: 1,
+                  text: "option 3"
+                },
+                {
+                  id: "e4a4",
+                  nbanswers: 0,
+                  text: "option 4"
+                }
+              ],
+            id: "e4",
+            question: "Cases",
+            type: "checkbox"
+          },
+          {
+            answers:
+              [
+                {
+                  id: "e5a1",
+                  nbanswers: 0,
+                  text: "option 1"
+                },
+                {
+                  id: "e5a2",
+                  nbanswers: 0,
+                  text: "option 2"
+                },
+                {
+                  id: "e5a3",
+                  nbanswers: 1,
+                  text: "option 3"
+                },
+                {
+                  id: "e5a4",
+                  nbanswers: 1,
+                  text: "option 4"
+                }
+              ],
+            id: "e5",
+            question: "choix",
+            type: "radio"
+          }
+          ],
+      notAnsweredEntries: [],
+      title: "TestForm",
+      users: [
+        {
+          email: "q@q.fr",
+          givenAnswers: [],
+          name: "q"
+        }
+        ]
+    }
+
+  it ('should return expectedParsedForm', () => {
+
+    expect(parseForm(mockedForm)).toEqual(expectedParsedForm);
+  });
+
+  const secondExpectedParsedFrom =
+    {
+      answeredEntries:
+        [
+          {
+            answers:
+              [
+                {
+                  id: "e3a1",
+                  nbanswers: 0,
+                  text: "option 1"
+                },
+                {
+                  id: "e3a2",
+                  nbanswers: 1,
+                  text: "option 2"
+                },
+                {
+                  id: "e3a3",
+                  nbanswers: 0,
+                  text: "option 3"
+                },
+                {
+                  id: "e3a4",
+                  nbanswers: 0,
+                  text: "option 4"
+                }
+              ],
+            id: "e3",
+            question: "Liste",
+            type: "select"
+          },
+          {
+            answers:
+              [
+                {
+                  id: "e4a1",
+                  nbanswers: 0,
+                  text: "option 1"
+                },
+                {
+                  id: "e4a2",
+                  nbanswers: 1,
+                  text: "option 2"
+                },
+                {
+                  id: "e4a3",
+                  nbanswers: 1,
+                  text: "option 3"
+                },
+                {
+                  id: "e4a4",
+                  nbanswers: 0,
+                  text: "option 4"
+                }
+              ],
+            id: "e4",
+            question: "Cases",
+            type: "checkbox"
+          },
+          {
+            answers:
+              [
+                {
+                  id: "e5a1",
+                  nbanswers: 0,
+                  text: "option 1"
+                },
+                {
+                  id: "e5a2",
+                  nbanswers: 0,
+                  text: "option 2"
+                },
+                {
+                  id: "e5a3",
+                  nbanswers: 1,
+                  text: "option 3"
+                },
+                {
+                  id: "e5a4",
+                  nbanswers: 1,
+                  text: "option 4"
+                }
+              ],
+            id: "e5",
+            question: "choix",
+            type: "radio"
+          }
+        ],
+      notAnsweredEntries:
+        [
+          {
+            answers: "no Answers",
+            id: "e1",
+            question: "Texte",
+            type: "textarea"
+          },
+          {
+            answers: "no Answers",
+            id: "e2",
+            question: "Courte",
+            type: "text"
+          }
+        ],
+      title: "TestForm2",
+      users:
+        [
+          {
+            email: "q@q.fr",
+            givenAnswers: [],
+            name: "q"
+          }
+        ]
+    }
+
+
+  it ('should return secondExpectedParsedFrom', () => {
+
+    expect(parseForm(secondMockedForm)).toEqual(secondExpectedParsedFrom);
+  });
+
+
+  const campagne = {
+    closedForms : [
+      mockedForm,
+      secondMockedForm
+    ],
+    id: "campagne1",
+    name: "testCampagne",
+    publishedForms: []
+  }
+
+
+  const expectedParsedCampaign =
+    {
+      closedForms: [
+        {
+          answeredEntries: [
+            {
+              answers: ["azeaze aze"],
+              id: "e1",
+              question: "Texte",
+              type: "textarea"
+            },
+            {
+              answers: ["aze"],
+              id: "e2",
+              question: "Courte",
+              type: "text"
+            },
+            {
+              answers: [
+                {
+                  id: "e3a1",
+                  nbanswers: 0,
+                  text: "option 1"
+                },
+                {
+                  id: "e3a2",
+                  nbanswers: 1,
+                  text: "option 2"
+                },
+                {
+                  id: "e3a3",
+                  nbanswers: 0,
+                  text: "option 3"
+                },
+                {
+                  id: "e3a4",
+                  nbanswers: 0,
+                  text: "option 4"
+                }
+              ],
+              id: "e3",
+              question: "Liste",
+              type: "select"
+            },
+            {
+              answers: [
+                {
+                  id: "e4a1",
+                  nbanswers: 0,
+                  text: "option 1"
+                },
+                {
+                  id: "e4a2",
+                  nbanswers: 1,
+                  text: "option 2"
+                },
+                {
+                  id: "e4a3",
+                  nbanswers: 1,
+                  text: "option 3"
+                },
+                {
+                  id: "e4a4",
+                  nbanswers: 0,
+                  text: "option 4"
+                }
+              ],
+              id: "e4",
+              question: "Cases",
+              type: "checkbox"
+            },
+            {
+              answers: [
+                {
+                  id: "e5a1",
+                  nbanswers: 0,
+                  text: "option 1"
+                },
+                {
+                  id: "e5a2",
+                  nbanswers: 0,
+                  text: "option 2"
+                },
+                {
+                  id: "e5a3",
+                  nbanswers: 1,
+                  text: "option 3"
+                },
+                {
+                  id: "e5a4",
+                  nbanswers: 1,
+                  text: "option 4"
+                }
+              ],
+              id: "e5",
+              question: "choix",
+              type: "radio"
+            }
+          ],
+          notAnsweredEntries: [],
+          title: "TestForm",
+          users: [
+            {
+              email: "q@q.fr",
+              givenAnswers: [],
+              name: "q"
+            }
+          ]
+        },
+        {
+          answeredEntries: [
+            {
+              answers: [
+                {
+                  id: "e3a1",
+                  nbanswers: 0,
+                  text: "option 1"
+                },
+                {
+                  id: "e3a2",
+                  nbanswers: 1,
+                  text: "option 2"
+                },
+                {
+                  id: "e3a3",
+                  nbanswers: 0,
+                  text: "option 3"
+                },
+                {
+                  id: "e3a4",
+                  nbanswers: 0,
+                  text: "option 4"
+                }
+              ],
+              id: "e3",
+              question: "Liste",
+              type: "select"
+            },
+            {
+              answers: [
+                {
+                  id: "e4a1",
+                  nbanswers: 0,
+                  text: "option 1"
+                },
+                {
+                  id: "e4a2",
+                  nbanswers: 1,
+                  text: "option 2"
+                },
+                {
+                  id: "e4a3",
+                  nbanswers: 1,
+                  text: "option 3"
+                },
+                {
+                  id: "e4a4",
+                  nbanswers: 0,
+                  text: "option 4"
+                }
+              ],
+              id: "e4",
+              question: "Cases",
+              type: "checkbox"
+            },
+            {
+              answers: [
+                {
+                  id: "e5a1",
+                  nbanswers: 0,
+                  text: "option 1"
+                },
+                {
+                  id: "e5a2",
+                  nbanswers: 0,
+                  text: "option 2"
+                },
+                {
+                  id: "e5a3",
+                  nbanswers: 1,
+                  text: "option 3"
+                },
+                {
+                  id: "e5a4",
+                  nbanswers: 1,
+                  text: "option 4"
+                }
+              ],
+              id: "e5",
+              question: "choix",
+              type: "radio"
+            }
+          ],
+          notAnsweredEntries: [
+            {
+              answers: "no Answers",
+              id: "e1",
+              question: "Texte",
+              type: "textarea"
+            },
+            {
+              answers: "no Answers",
+              id: "e2",
+              question: "Courte",
+              type: "text"
+            }
+          ],
+          title: "TestForm2",
+          users: [
+            {
+              email: "q@q.fr",
+              givenAnswers: [],
+              name: "q"
+            }
+          ]
+        }
+      ],
+      id: "campagne1",
+      name: "testCampagne",
+      publishedForms: []
+    }
+
+  it ('should return expectedParsedCampaign', () => {
+
+    expect(parseCampaign(campagne)).toEqual(expectedParsedCampaign);
+  });
 
 });
 
