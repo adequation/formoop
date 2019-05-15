@@ -65,7 +65,7 @@
               rows="5"
               cols="25"></textarea>
 
-    <button @click="sendMailToUser" class="send-mail-button smooth" title="Envoyer !">
+    <button @click="sendMailToUser" class="button-send-mail smooth" title="Envoyer !">
       <i class="material-icons md-36">send</i>
     </button>
 
@@ -213,6 +213,7 @@
 
     border: none;
   }
+
 
   .send-mail-button:hover {
     color: white;
@@ -408,6 +409,18 @@
     transform: scale(1.1);
     color: tomato;
     cursor: pointer;
+  }
+
+
+  .button-send-mail{
+    padding: 0.5em;
+    color: #3462ad;
+    background: none;
+
+    cursor: pointer;
+    font-size: large;
+
+    border: none;
   }
 
 
