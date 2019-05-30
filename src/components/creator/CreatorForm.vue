@@ -20,7 +20,7 @@
 
     <div v-if="currentTab === 'create'">
 
-      <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du formulaire"/>
+      <input title="" type="text" class="creator-form-title" v-model="formTitle" placeholder="Titre du Formoop"/>
 
 
       <div v-for="(entry, i) in formEntries">
@@ -271,8 +271,8 @@
         },
         defaultQuestion: {title: 'Titre de la question'},
         defaultAnswers: [{id: "", text: 'Option'}],
-        formTitle: 'Formulaire sans titre',
-        defaultFormTitle: 'Formulaire sans titre',
+        formTitle: 'Formoop sans titre',
+        defaultFormTitle: 'Formoop sans titre',
         showDrawer: false,
         newSection: null,
         formSections: [],
@@ -287,7 +287,7 @@
         ],
         currentTab: 'create',
 
-        greeting: 'Bienvenue sur le formoop !',
+        greeting: 'Bienvenue sur le Formoop !',
         randomGreeting: true,
 
         //boolean to check if we scroll down on a new entry or not
