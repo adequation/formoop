@@ -18,7 +18,7 @@
 
     </div>
 
-    <h1>Formulaires terminés</h1>
+    <h1>Formoops terminés</h1>
 
     <div class="space-header"></div>
 

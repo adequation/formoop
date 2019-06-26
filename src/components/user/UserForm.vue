@@ -79,7 +79,7 @@
 
     </div>
 
-    <div class="help-button">
+    <div class="help-button" @click="redirectDoc">
       ?
     </div>
 
@@ -456,7 +456,9 @@
         return void(0);
       },
 
-
+      redirectDoc() {
+        window.location.href = "https://github.com/adequation/formoop/wiki/Notice-d'utilisation-Formoop"
+      }
     },
     watch: {
       '$route'(to, from) {

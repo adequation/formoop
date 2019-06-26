@@ -15,7 +15,8 @@
         </div>
 
         <div class="user-help-message">
-          Et si tu as besoin d'un coup de main pour commencer, c'est <span class="user-help-link" @click="">par ici</span> !
+          Et si tu as besoin d'un coup de main pour commencer, c'est <span class="user-help-link" @click="redirectDoc">par ici</span>
+          !
         </div>
 
       </div>
@@ -35,8 +36,7 @@
     components: {Modal},
 
     data() {
-      return {
-      }
+      return {}
     },
 
     props: {
@@ -80,11 +80,11 @@
         return this.$store.getters.user;
       },
 
-      greeting(){
+      greeting() {
         return this.$store.getters.greeting;
       },
 
-      isRandomGreetingMode(){
+      isRandomGreetingMode() {
         return this.$store.getters.isRandomGreetingMode;
       },
 
@@ -97,14 +97,18 @@
       },
 
       getGreeting() {
-        if(this.isRandomGreetingMode){
+        if (this.isRandomGreetingMode) {
           const rawGreeting = getRandomGreeting();
           //we use
           return parseSentence(rawGreeting, this.parsingVariables);
-        }else{
+        } else {
           return parseSentence(this.greeting, this.parsingVariables);
         }
 
+      },
+
+      redirectDoc() {
+        window.location.href = "https://github.com/adequation/formoop/wiki/Notice-d'utilisation-Formoop"
       }
     },
   }
@@ -113,8 +117,8 @@
 <style scoped>
   @import url('../../style/animations.css');
 
-  .greeting{
-    color : #16161d;
+  .greeting {
+    color: #16161d;
     font-weight: bold;
     width: 85%;
     margin: auto;
@@ -151,7 +155,7 @@
     cursor: pointer;
   }
 
-  .user-help-link:hover{
+  .user-help-link:hover {
     text-decoration: underline;
   }
 
