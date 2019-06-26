@@ -3,8 +3,13 @@
     <h1>Inscription</h1>
 
     <form>
-      <span><input class="loginInput" type="text" placeholder="Identifiant" v-model="login"/></span>
-      <label><input class="passwordInput" type="password" placeholder="Mot de passe" v-model="password"/></label>
+      <span><input class="firstNameInput" type="text" placeholder="Prénom" v-model="userMetadata.firstName" v-on:keydown="keyHandler"/></span>
+      <span><input class="lastNameInput" type="text" placeholder="Nom" v-model="userMetadata.lastName" v-on:keydown="keyHandler"/></span>
+
+      <span><input class="companyName" type="text" placeholder="Entreprise" v-model="userMetadata.company"></span>
+
+      <span><input class="loginInput" type="text" placeholder="Adresse email" v-model="userMetadata.email"/></span>
+      <span><input class="passwordInput" type="password" placeholder="Mot de passe" v-model="password"/></span>
     </form>
 
     <button @click="signUp">S'inscrire</button>
@@ -18,27 +23,46 @@
 </template>
 
 <script>
-  import Firebase from 'firebase';
+  import { updateUserProfileDisplayName, updateUserProfileMetadata } from '@/thunks/userAccountThunks'
+  import {handleError} from "@/helpers/loginErrorHandlingHelpers";
+  import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
   export default {
     name: "SignUp",
     data() {
       return {
-        login: null,
-        password: null
+        password: null,
+
+        userMetadata: {
+          email: null,
+          firstName: null,
+          lastName: null,
+          company: null,
+        },
       }
     },
     methods: {
       signUp() {
         const router = this.$router;
-        Firebase.auth().createUserWithEmailAndPassword(this.login, this.password).then(
+        nativeFbFunctions.createUserWithEmailAndPassword(this.userMetadata.email, this.password).then(
           (user) => {
-            this.$router.replace("/home");
+                updateUserProfileMetadata(nativeFbFunctions.getCurrentUser(), this.userMetadata)
+                .then(() => {
+                  this.$router.replace("/home");
+                })
+                .catch(e=>{
+                  console.log(e);
+                  this.$router.replace("/home");
+                })
           },
           function (err) {
-            alert(err.message);
+            alert(handleError(err));
           }
         );
+      },
+
+      keyHandler(event){
+        if(event.key === ' ') event.preventDefault();
       }
     }
   }
@@ -64,5 +88,16 @@
   span {
     display: block;
     margin-top: 1em;
+  }
+
+  @media screen and (max-width: 800px) {
+    input{
+      width: 200px;
+    }
+
+    button {
+      width: 150px;
+      padding: 0.5em;
+    }
   }
 </style>

@@ -20,7 +20,7 @@ export default {
     },
     getSupervisorFormTitle: state => {
       return state.formTitle
-    }
+    },
   },
   mutations: {
     setSupervisorFormEntries: state => {
@@ -31,9 +31,11 @@ export default {
           else state.formEntries = null
         })
     },
+
     setFormID: (state, {formID}) => {
       state.formID = formID
     },
+
     setSupervisorFormTitle: state => {
       Firebase.database().ref(getPublishedFormFromID(state.formID))
         .on('value', function (snapshot){
@@ -41,7 +43,7 @@ export default {
           if (value) state.formTitle = value.title;
           else state.formTitle = null
         })
-    }
+    },
   },
   actions: {
     setSupervisorFormEntries: context => {
@@ -51,6 +53,6 @@ export default {
       context.commit('setFormID', {formID});
       context.commit('setSupervisorFormTitle');
       context.commit('setSupervisorFormEntries')
-    }
+    },
   }
 }

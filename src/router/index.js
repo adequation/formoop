@@ -6,11 +6,15 @@ import CreatorForm from '@/components/creator/CreatorForm'
 import SignUp from '@/components/general/SignUp'
 import SignIn from '@/components/general/SignIn'
 import CreatorHome from '@/components/creator/CreatorHome'
-import SupervisorForm from '@/components/supervisor/SupervisorForm'
 import SupervisorDashboard from '@/components/supervisor/SupervisorDashboard'
 import PublishedForms from '@/components/general/PublishedForms'
-
+import FormCampaign from '@/components/general/FormCampaign'
+import CreatorCampaign from '@/components/creator/CreatorCampaign'
+import ClosedForm from '@/components/general/ClosedForm'
+import SupervisorCampaignDashboard from '@/components/supervisor/SupervisorCampaignDashboard'
 import Firebase from 'firebase';
+import CreatorClosedForms from "../components/creator/CreatorClosedForms";
+import CsvHelpPage from "../components/general/CsvHelpPage";
 
 Vue.use(Router);
 
@@ -19,7 +23,8 @@ const router = new Router({
     {
       path: '*',
       redirect: '/sign-in'
-    }, {
+    },
+    {
       path: '/',
       redirect: '/sign-in\''
     },
@@ -28,7 +33,8 @@ const router = new Router({
       name: 'Main',
       component: Main,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
+        any: false
       }
     },
     {
@@ -50,6 +56,15 @@ const router = new Router({
       }
     },
     {
+      path: '/closedForm',
+      name: 'ClosedForm',
+      component: ClosedForm,
+      meta: {
+        requiresAuth: false,
+        any: true
+      }
+    },
+    {
       path: '/published',
       name: 'PublishedForms',
       component: PublishedForms,
@@ -59,11 +74,30 @@ const router = new Router({
       }
     },
     {
+      path: '/campaigns',
+      name: 'FormCampaign',
+      component: FormCampaign,
+      meta: {
+        requiresAuth: true,
+        any: false
+      }
+    },
+    {
+      path: '/campaigns/:campaignID',
+      name: 'CreatorCampaign',
+      component: CreatorCampaign,
+      meta: {
+        requiresAuth: true,
+        any: false
+      }
+    },
+    {
       path: '/create/',
       name: 'CreatorHome',
       component: CreatorHome,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
+        any: false
       }
     },
     {
@@ -71,7 +105,8 @@ const router = new Router({
       name: 'creatorForm',
       component: CreatorForm,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
+        any: false
       }
     },
     {
@@ -84,9 +119,9 @@ const router = new Router({
       }
     },
     {
-      path: '/supervisor/:formID',
-      name: 'supervisorForm',
-      component: SupervisorForm,
+      path: '/answer/:formID/:userID',
+      name: 'userFormWithID',
+      component: UserForm,
       meta: {
         requiresAuth: false,
         any: true
@@ -98,8 +133,37 @@ const router = new Router({
       component: SupervisorDashboard,
       meta: {
         requiresAuth: true,
+        any: false
       }
-    }
+    },
+    {
+      path: '/monitor/campaign/:campaignID',
+      name: 'SupervisorCampaign',
+      component: SupervisorCampaignDashboard,
+      meta: {
+        requiresAuth: true,
+        any: false
+      }
+    },
+    {
+      path: '/closed/',
+      name: 'ClosedForms',
+      component: CreatorClosedForms,
+      meta: {
+        requiresAuth: true,
+        any: false
+      }
+    },
+    {
+      path: '/csv-help',
+      name: 'CsvHelp',
+      component: CsvHelpPage,
+      meta: {
+        requiresAuth: false,
+        any: true
+      }
+    },
+
   ]
 });
 

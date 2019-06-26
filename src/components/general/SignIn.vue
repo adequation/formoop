@@ -3,8 +3,8 @@
     <h1>Connexion</h1>
 
     <form>
-      <span><input class="loginInput" type="text" placeholder="Identifiant" v-model="login"/></span>
-      <label><input class="passwordInput" type="password" placeholder="Mot de passe" v-model="password"/></label>
+      <span><input class="loginInput" type="email" placeholder="Identifiant" v-model="login"/></span>
+      <label><input class="passwordInput" type="password" placeholder="Mot de passe" v-model="password" @keyup.enter="signIn"/></label>
     </form>
 
     <button @click="signIn">Se connecter</button>
@@ -19,6 +19,8 @@
 
 <script>
   import Firebase from 'firebase';
+  import {handleError} from "@/helpers/loginErrorHandlingHelpers";
+  import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
 
   export default {
     name: "SignIn",
@@ -29,14 +31,17 @@
       }
     },
     methods: {
+      redirect(path){
+        this.$router.replace(path);
+      },
       signIn() {
-        const router = this.$router;
-        Firebase.auth().signInWithEmailAndPassword(this.login, this.password).then(
+
+        nativeFbFunctions.signInWithEmailAndPassword(this.login, this.password).then(
           (user) => {
-            this.$router.replace("/home");
+            this.redirect('/home');
           },
           function (err) {
-            alert(err.message);
+            alert(handleError(err));
           }
         );
       }
@@ -64,5 +69,16 @@
   span {
     display: block;
     margin-top: 1em;
+  }
+
+  @media screen and (max-width: 800px) {
+    input{
+      width: 200px;
+    }
+
+    button {
+      width: 150px;
+      padding: 0.5em;
+    }
   }
 </style>

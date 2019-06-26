@@ -23,7 +23,6 @@ Firebase.auth().onAuthStateChanged(() => {
       components: { App },
       template: '<App/>',
       created () {
-        this.$store.dispatch('setFormEntries');
         this.$store.dispatch('setFormID', {formID: null});
 
       }

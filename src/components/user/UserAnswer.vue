@@ -1,30 +1,35 @@
 <template>
-  <div class="answer">
-    <div v-if="(user) || (usersAnswers ? Object.keys(usersAnswers).length <= 0 : true)"> <!-- && invited !-->
-      <div v-if="answer.type === 'textarea'">
-        <UserAnswerTextarea :entryID="entryID"/>
+    <div>
+      <!-- && invited !-->
+      <div class="user-answer" v-if="answer.type === 'textarea'">
+        <UserAnswerTextarea :entryID="entryID"
+                            :currentUserAnswers="currentUserAnswers"
+                            :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
-      <div v-if="answer.type === 'text'">
-        <UserAnswerText :entryID="entryID"/>
+      <div class="user-answer" v-if="answer.type === 'text'">
+        <UserAnswerText :entryID="entryID"
+                        :currentUserAnswers="currentUserAnswers"
+                        :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
-      <div v-if="answer.type === 'radio'">
-        <UserAnswerRadio :answers="answer.answers" :entryID="entryID"/>
+      <div class="user-answer" v-if="answer.type === 'radio'">
+        <UserAnswerRadio :answers="answer.answers"
+                         :entryID="entryID"
+                         :currentUserAnswers="currentUserAnswers"
+                         :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
-      <div v-if="answer.type === 'checkbox'">
-        <UserAnswerCheckbox :answers="answer.answers" :entryID="entryID"/>
+      <div class="user-answer" v-if="answer.type === 'checkbox'">
+        <UserAnswerCheckbox :answers="answer.answers"
+                            :entryID="entryID"
+                            :currentUserAnswers="currentUserAnswers"
+                            :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
-      <div v-if="answer.type === 'select'">
-        <UserAnswerSelect :answers="answer.answers" :entryID="entryID"/>
+      <div class="user-answer" v-if="answer.type === 'select'">
+        <UserAnswerSelect :answers="answer.answers"
+                          :entryID="entryID"
+                          :currentUserAnswers="currentUserAnswers"
+                          :currentSelectedAnswers="selectedUserAnswers"/>
       </div>
-      <div>
-        {{(usersAnswers ? Object.keys(usersAnswers).map(u => u.substr(0,10).concat('...')).join(" | ") || '' : '')}}
-      </div>
-    </div>
-    <div v-else-if="(!user) && (usersAnswers ? !Object.keys(usersAnswers).length <= 0 : true)" class="alreadyAnsweredDiv">
-      <h3>Cette question a déjà une réponse</h3>
-    </div>
-    <div v-else>
-    </div>
+
   </div>
 
 </template>
@@ -35,44 +40,63 @@
   import UserAnswerRadio from './UserAnswerRadio'
   import UserAnswerCheckbox from './UserAnswerCheckbox'
   import UserAnswerSelect from './UserAnswerSelect'
-  import * as Firebase from "firebase";
-  import {firebaseConfig} from "@/firebaseConfig";
+  import {deleteUserAnswerFB, setSelectedAnswerFB} from "@/thunks/userFormEntriesThunks";
+
   export default {
     name: 'UserAnswer',
     components: {UserAnswerText, UserAnswerTextarea, UserAnswerRadio, UserAnswerCheckbox, UserAnswerSelect},
-    computed:{
-      user(){
+    computed: {
+      user() {
+        return this.$store.getters.user;
+      },
 
-        /////test debug, remove when a cleaner solution is found...
-        if (!Firebase.apps.length) {
-          Firebase.initializeApp(firebaseConfig);
-        }////test debug, remove when a cleaner solution is found...
+      formID() {
+        return this.$store.getters.getFormID
+      },
 
-        return Firebase.auth().currentUser;
-      }
+      currentEntryAnswers() {
+        return this.userAnswers[this.entryID] || {};
+      },
+
+      currentUserAnswers() {
+        if (!this.user) return null;
+
+        return this.currentEntryAnswers ? this.currentEntryAnswers[this.user.id] : null;
+      },
+
+      selectedUserAnswers(){
+        return this.selectedAnswers[this.entryID];
+      },
     },
-    props:{
-      answer:{
+    props: {
+      answer: {
         type: Object,
         required: true
       },
-      entryID:{
+      entryID: {
         type: String,
         required: true
       },
-      usersAnswers:{
+      userAnswers: {
         type: Object,
         required: false
+      },
+      selectedAnswers: {
+        type: Object,
+        required: true
+      },
+      display: {
+        type: String,
+        required: false
       }
-    }
+    },
   }
 </script>
 
 <style scoped>
-  .answer{
-    margin: 1em;
+
+  .user-answer {
+    display: inline;
   }
-  .alreadyAnsweredDiv {
-    color: #42b983;
-  }
+
 </style>

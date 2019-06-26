@@ -6,28 +6,61 @@ import UserAnswerRadio from '@/components/user/UserAnswerRadio'
 import UserAnswerCheckbox from '@/components/user/UserAnswerCheckbox'
 import UserAnswerSelect from '@/components/user/UserAnswerSelect'
 import { mount } from '@vue/test-utils'
+import * as firebaseHelpers from '@/helpers/firebaseHelpers'
+import {nativeFbFunctions} from "@/helpers/firebaseHelpers";
+import Vuex from "vuex";
+
+const mockedUser = {
+  id: 'abcdefgh123',
+  email: 'mock@mocked.com',
+  displayName: 'mock mocked'
+};
+
+
+Vue.use(Vuex);
+
+let getters;
+let store;
+
+
+getters = {
+  user: () => mockedUser
+};
+
+store = new Vuex.Store({
+  getters
+});
 
 const mockProps =
   {
     answer: {type: 'text', answers: []},
     entryID: 'A1',
-    alreadyAnswered: false
+    alreadyAnswered: false,
+    userAnswers : {},
+    selectedAnswers : {}
   };
 
 const mockAlreadyAnswered =
   {
     answer: {type: 'select', answers: [{text: 'a'}, {text: 'b'}, {text: 'c'}, {text: 'd'}, {text: 'e'}]},
     entryID: 'A1',
-    alreadyAnswered: true
+    alreadyAnswered: true,
+    userAnswers : {},
+    selectedAnswers : {}
   };
 
+
 describe('UserAnswer.vue', () => {
+
+  //Overrides the current connected user
+  nativeFbFunctions.getCurrentUser = jest.fn(() => (mockedUser));
 
   const vmText = mount(UserAnswer, {
     propsData: {
       ...mockProps,
       answer: {type: 'text', answers: []},
-    }
+    },
+    store
   });
 
   it('when type equals text, there should be a UserAnswerText', () => {
@@ -40,7 +73,8 @@ describe('UserAnswer.vue', () => {
     propsData: {
       ...mockProps,
       answer: {type: 'textarea', answers: []},
-    }
+    },
+    store
   });
 
   it('when type equals textarea, there should be a UserAnswerTextarea', () => {
@@ -53,7 +87,8 @@ describe('UserAnswer.vue', () => {
     propsData: {
       ...mockProps,
       answer: {type: 'radio', answers: [{text: 'a'}, {text: 'b'}, {text: 'c'}, {text: 'd'}, {text: 'e'}]},
-    }
+    },
+    store
   });
 
   it('when type equals radio, there should be a UserAnswerRadio', () => {
@@ -66,7 +101,8 @@ describe('UserAnswer.vue', () => {
     propsData: {
       ...mockProps,
       answer: {type: 'checkbox', answers: [{text: 'a'}, {text: 'b'}, {text: 'c'}, {text: 'd'}, {text: 'e'}]},
-    }
+    },
+    store
   });
 
   it('when type equals checkbox, there should be a UserAnswerCheckbox', () => {
@@ -79,7 +115,8 @@ describe('UserAnswer.vue', () => {
     propsData: {
       ...mockProps,
       answer: {type: 'select', answers: [{text: 'a'}, {text: 'b'}, {text: 'c'}, {text: 'd'}, {text: 'e'}]},
-    }
+    },
+    store
   });
 
   it('when type equals select, there should be a UserAnswerSelect', () => {
@@ -92,7 +129,8 @@ describe('UserAnswer.vue', () => {
     propsData: {
       ...mockAlreadyAnswered,
       answer: {type: 'select', answers: [{text: 'a'}, {text: 'b'}, {text: 'c'}, {text: 'd'}, {text: 'e'}]},
-    }
+    },
+    store
   });
 
   it('when already aswered, it should not contains any UserAnswer', () => {

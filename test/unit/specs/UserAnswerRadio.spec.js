@@ -10,7 +10,6 @@ const mockEntry =
     entryID: 'A1'
   };
 
-Firebase.initializeApp(firebaseConfig);
 
 describe('UserAnswerRadio.vue', () => {
   const vm = mount(UserAnswerRadio, {
@@ -20,8 +19,8 @@ describe('UserAnswerRadio.vue', () => {
   });
 
 
-  it('should have the same number of elem as mock data', () => {
-    const radios = vm.findAll('input');
+  it('should have the same number of elements as mock data', () => {
+    const radios = vm.findAll('.user-answer-radio');
 
     expect(radios.length).toBe(5);
 
